@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}Project {{ project }} - Keystone browser{% endblock %}
+
+{% block content %}
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('index') }}">Projects</a></li>
+  <li class="active">{{ project }}</li>
+</ol>
+
+<div class="panel-group" role="tablist">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-user"></span>
+        Administrators
+      </h3>
+    </div>
+    <div class="panel-body">
+      <ul class="list-unstyled user-list">
+        {% for user in admins %}
+        <li>{{ user }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% if users %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-user"></span>
+        Users
+      </h3>
+    </div>
+    <div class="panel-body">
+      <ul class="list-unstyled user-list">
+        {% for user in users %}
+        <li>{{ user }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

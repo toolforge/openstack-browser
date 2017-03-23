@@ -1,0 +1,8 @@
+.user-list {
+  -webkit-column-gap: 2em;
+  -moz-column-gap: 2em;
+  column-gap: 2em;
+  -webkit-column-width: 30ch;
+  -moz-column-width: 30ch;
+  column-width: 30ch;
+}

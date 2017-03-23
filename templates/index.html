@@ -8,7 +8,7 @@
   </div>
   <ul class="list-group">
     {% for project in projects %}
-    <li class="list-group-item">{{ project.name }}</li>
+    <a class="list-group-item" href="{{ url_for('project', name=project) }}">{{ project }}</a>
     {% endfor %}
   </ul>
 </div>

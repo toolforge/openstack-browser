@@ -18,8 +18,6 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-
 import flask
 import werkzeug.contrib.fixers
 
@@ -27,6 +25,8 @@ from keystoneauth1 import session
 from keystoneauth1.identity import v3
 from keystoneclient.v3 import client
 
+ROLE_PROJECTADMIN = '4d8cad783d6342efa8414d7d36fbc034'
+ROLE_USER = 'f473273fac7146b3bdbf22e5d4504f95'
 
 app = flask.Flask(__name__)
 app.wsgi_app = werkzeug.contrib.fixers.ProxyFix(app.wsgi_app)
@@ -50,5 +50,20 @@ keystone = client.Client(
 
 @app.route('/')
 def index():
-    projects = keystone.projects.list(enabled=True)
+    projects = [p.name for p in keystone.projects.list(enabled=True)]
     return flask.render_template('index.html', projects=projects)
+
+
+@app.route('/project/<name>')
+def project(name):
+    admins = [
+        r.user['id'] for r in keystone.role_assignments.list(
+            project=name, role=ROLE_PROJECTADMIN)
+    ]
+    users = [
+        r.user['id'] for r in keystone.role_assignments.list(
+            project=name, role=ROLE_USER)
+        if r.user['id'] not in admins
+    ]
+    return flask.render_template(
+        'project.html', project=name, admins=admins, users=users)
