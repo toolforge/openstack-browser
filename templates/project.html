@@ -8,7 +8,9 @@
   <li class="active">{{ project }}</li>
 </ol>
 
+{% if admin or users %}
 <div class="panel-group" role="tablist">
+  {% if admin %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
       <h3 class="panel-title">
@@ -24,6 +26,7 @@
       </ul>
     </div>
   </div>
+  {% endif %}
   {% if users %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
@@ -42,4 +45,7 @@
   </div>
   {% endif %}
 </div>
+{% else %}
+<p>Unknown project '{{ project }}'. Are you just guessing?</p>
+{% endif %}
 {% endblock %}
