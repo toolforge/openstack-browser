@@ -46,7 +46,7 @@ def project(name):
         'admins': ldap.get_users_by_uid(admins),
         'users': ldap.get_users_by_uid(users['user']),
         'servers': nova.project_servers(name),
-        'flavors': nova.flavors(),
+        'flavors': nova.flavors(name),
         'images': glance.images(),
     }
     return flask.render_template('project.html', **ctx)

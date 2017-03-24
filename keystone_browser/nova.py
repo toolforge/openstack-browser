@@ -51,10 +51,9 @@ def project_servers(project):
     ]
 
 
-@functools.lru_cache(maxsize=1)
-def flavors():
+def flavors(project):
     """Get a dict of flavor details indexed by id."""
-    nova = nova_client('observer')
+    nova = nova_client(project)
     return {
         f._info['id']: f._info for f in nova.flavors.list()
     }
