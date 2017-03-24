@@ -51,6 +51,8 @@ def in_list(attr, items):
 def get_users_by_uid(uids):
     """Get a list of dicts of user information."""
     ret = []
+    if not uids:
+        return ret
     with ldap_conn() as conn:
         conn.search(
             'ou=people,dc=wikimedia,dc=org',
