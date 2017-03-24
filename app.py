@@ -21,49 +21,25 @@
 import flask
 import werkzeug.contrib.fixers
 
-from keystoneauth1 import session
-from keystoneauth1.identity import v3
-from keystoneclient.v3 import client
-
-ROLE_PROJECTADMIN = '4d8cad783d6342efa8414d7d36fbc034'
-ROLE_USER = 'f473273fac7146b3bdbf22e5d4504f95'
+from keystone_browser import keystone
+from keystone_browser import ldap
 
 app = flask.Flask(__name__)
 app.wsgi_app = werkzeug.contrib.fixers.ProxyFix(app.wsgi_app)
 
-# TODO: read settings from /etc/novaobserver.yaml once we get it mounted into
-# the kubernetes pods (<https://gerrit.wikimedia.org/r/#/c/327235>)
-auth = v3.Password(
-    auth_url='http://labcontrol1001.wikimedia.org:5000/v3',
-    password='Fs6Dq2RtG8KwmM2Z',
-    username='novaobserver',
-    project_id='observer',
-    user_domain_name='Default',
-    project_domain_name='Default',
-)
-keystone = client.Client(
-    session=session.Session(auth=auth),
-    interface='public',
-    timeout=2,
-)
-
 
 @app.route('/')
 def index():
-    projects = [p.name for p in keystone.projects.list(enabled=True)]
+    projects = keystone.all_projects()
     return flask.render_template('index.html', projects=projects)
 
 
 @app.route('/project/<name>')
 def project(name):
-    admins = [
-        r.user['id'] for r in keystone.role_assignments.list(
-            project=name, role=ROLE_PROJECTADMIN)
-    ]
-    users = [
-        r.user['id'] for r in keystone.role_assignments.list(
-            project=name, role=ROLE_USER)
-        if r.user['id'] not in admins
-    ]
+    users = keystone.project_users_by_role(name)
+    for role in users:
+        if users[role]:
+            users[role] = ldap.get_users_by_uid(users[role])
+
     return flask.render_template(
-        'project.html', project=name, admins=admins, users=users)
+            'project.html', project=name, **users)
