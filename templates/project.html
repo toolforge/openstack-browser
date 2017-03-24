@@ -76,9 +76,9 @@
           <td>{{ flavor.name|default('UNKNOWN') }}</td>
           <td>{{ image.name|default('UNKNOWN') }}</td>
           <td>{{ server.addresses.public[0].addr }}</td>
-          <td class="text-left">{{ flavor.vcpus|default('?') }}</td>
-          <td class="text-left">{{ flavor.ram|default('?') }}M</td>
-          <td class="text-left">{{ flavor.disk|default('?') }}G</td>
+          <td class="text-right">{{ flavor.vcpus|default('?') }}</td>
+          <td class="text-right">{{ flavor.ram|default('?') }}M</td>
+          <td class="text-right">{{ flavor.disk|default('?') }}G</td>
           <td>{{ server.updated }}</td>
         </tr>
         {% endfor %}
