@@ -29,13 +29,15 @@
   {% endif %}
   {% if users %}
   <div class="panel panel-default">
-    <div class="panel-heading" role="tab">
+    <div id="users-heading" class="panel-heading" role="tab">
       <h3 class="panel-title">
-        <span class="glyphicon glyphicon-user"></span>
-        Users
+        <a href="#users-body" class="collapsed" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="users-body">
+          <span class="glyphicon glyphicon-user"></span>
+          Users
+        </a>
       </h3>
     </div>
-    <div class="panel-body">
+    <div id="users-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="users-heading">
       <ul class="list-unstyled user-list">
         {% for u in users|sort(attribute='cn') %}
         <li>{{ u.cn }}</li>
