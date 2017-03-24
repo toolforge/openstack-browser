@@ -37,7 +37,7 @@ def index():
 @app.route('/project/<name>')
 def project(name):
     ctx = {
-        'name': name,
+        'project': name,
     }
     users = keystone.project_users_by_role(name)
     ctx['admins'] = ldap.get_users_by_uid(
