@@ -53,4 +53,6 @@ def user(uid):
         'user': ldap.get_users_by_uid([uid]),
         'projects': keystone.projects_for_user(uid),
     }
+    if ctx['user']:
+        ctx['user'] = ctx['user'][0]
     return flask.render_template('user.html', **ctx)
