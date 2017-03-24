@@ -60,5 +60,11 @@ def get_users_by_uid(uids):
             time_limit=5
         )
         for resp in conn.response:
-            ret.append(resp.get('attributes'))
+            attribs = resp.get('attributes')
+            # LDAP attributes come back as a dict of lists. We know that there
+            # is only one value for each list, so unwrap it
+            ret.append({
+                'uid': attribs['uid'][0],
+                'cn': attribs['cn'][0],
+            })
     return ret
