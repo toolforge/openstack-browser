@@ -1,3 +1,5 @@
 flask
 ldap3
+python-glanceclient
 python-keystoneclient
+python-novaclient

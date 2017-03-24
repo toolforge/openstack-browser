@@ -19,8 +19,9 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import collections
+import functools
 
-from keystoneauth1 import session
+from keystoneauth1 import session as keystone_session
 from keystoneauth1.identity import v3
 from keystoneclient.v3 import client
 
@@ -34,19 +35,25 @@ ROLES = collections.OrderedDict([
 ])
 
 
-def keystone_client():
+@functools.lru_cache(maxsize=None)
+def session(project='observer'):
+    """Get a session for the novaobserver user scoped to the given project."""
     # TODO: read settings from /etc/novaobserver.yaml once we get it mounted
     # into the kubernetes pods (<https://gerrit.wikimedia.org/r/#/c/327235>)
     auth = v3.Password(
         auth_url='http://labcontrol1001.wikimedia.org:5000/v3',
         password='Fs6Dq2RtG8KwmM2Z',
         username='novaobserver',
-        project_id='observer',
+        project_id=project,
         user_domain_name='Default',
         project_domain_name='Default',
     )
+    return keystone_session.Session(auth=auth)
+
+
+def keystone_client():
     return client.Client(
-        session=session.Session(auth=auth),
+        session=session(),
         interface='public',
         timeout=2,
     )

@@ -21,8 +21,11 @@
 import flask
 import werkzeug.contrib.fixers
 
+from keystone_browser import glance
 from keystone_browser import keystone
 from keystone_browser import ldap
+from keystone_browser import nova
+
 
 app = flask.Flask(__name__)
 app.wsgi_app = werkzeug.contrib.fixers.ProxyFix(app.wsgi_app)
@@ -36,13 +39,16 @@ def index():
 
 @app.route('/project/<name>')
 def project(name):
+    users = keystone.project_users_by_role(name)
+    admins = users['admin'] + users['projectadmin']
     ctx = {
         'project': name,
+        'admins': ldap.get_users_by_uid(admins),
+        'users': ldap.get_users_by_uid(users['user']),
+        'servers': nova.project_servers(name),
+        'flavors': nova.flavors(),
+        'images': glance.images(),
     }
-    users = keystone.project_users_by_role(name)
-    ctx['admins'] = ldap.get_users_by_uid(
-        users['admin'] + users['projectadmin'])
-    ctx['users'] = ldap.get_users_by_uid(users['user'])
     return flask.render_template('project.html', **ctx)
 
 

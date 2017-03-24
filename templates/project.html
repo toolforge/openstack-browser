@@ -8,7 +8,7 @@
   <li class="active">{{ project }}</li>
 </ol>
 
-{% if admins or users %}
+{% if admins or users or servers %}
 <div class="panel-group" role="tablist">
   {% if admins %}
   <div class="panel panel-default">
@@ -44,6 +44,46 @@
         {% endfor %}
       </ul>
     </div>
+  </div>
+  {% endif %}
+  {% if servers %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-hdd"></span>
+        Instances
+      </h3>
+    </div>
+    <table class="table table-condensed table-hover">
+      <thead>
+        <tr>
+          <th>FQDN</th>
+          <th>Type</th>
+          <th>Image</th>
+          <th>IP</th>
+          <th>CPUs</th>
+          <th>RAM</th>
+          <th>Storage</th>
+          <th>Last modified</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for server in servers %}
+          {% set image = images[server.image.id]|default('') %}
+          {% set flavor = flavors[server.flavor.id]|default('') %}
+        <tr>
+          <td>{{ server.name }}.{{ project }}.eqiad.wmflabs</td>
+          <td>{{ flavor.name }}</td>
+          <td>{{ image.name|default('UNKNOWN') }}</td>
+          <td>{{ server.addresses.public[0].addr }}</td>
+          <td>{{ flavor.vcpus }}</td>
+          <td>{{ flavor.ram }}M</td>
+          <td>{{ flavor.disk }}G</td>
+          <td>{{ server.updated }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
   {% endif %}
 </div>
