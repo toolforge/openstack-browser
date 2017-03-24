@@ -36,10 +36,11 @@ def index():
 
 @app.route('/project/<name>')
 def project(name):
+    ctx = {
+        'name': name,
+    }
     users = keystone.project_users_by_role(name)
-    for role in users:
-        if users[role]:
-            users[role] = ldap.get_users_by_uid(users[role])
-
-    return flask.render_template(
-            'project.html', project=name, **users)
+    ctx['admins'] = ldap.get_users_by_uid(
+        users['admin'] + users['projectadmin'])
+    ctx['users'] = ldap.get_users_by_uid(users['user'])
+    return flask.render_template('project.html', **ctx)

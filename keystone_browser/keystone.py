@@ -61,7 +61,8 @@ def all_projects():
 def project_users_by_role(name):
     """Get a dict of lists of user ids indexed by role name."""
     keystone = keystone_client()
-    seen = []
+    # Ignore novaadmin & novaobserver in all user lists
+    seen = ['novaadmin', 'novaobserver']
     ret = {}
     for role_name, role_id in ROLES.items():
         ret[role_name] = [
