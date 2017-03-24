@@ -37,7 +37,7 @@
         </a>
       </h3>
     </div>
-    <div id="users-body" class="panel-collapse collapse" role="tabpanel" aria-labelledby="users-heading">
+    <div id="users-body" class="panel-body panel-collapse collapse" role="tabpanel" aria-labelledby="users-heading">
       <ul class="list-unstyled user-list">
         {% for u in users|sort(attribute='cn') %}
         <li>{{ u.cn }}</li>
