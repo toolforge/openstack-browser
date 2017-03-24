@@ -44,3 +44,13 @@ def project(name):
         users['admin'] + users['projectadmin'])
     ctx['users'] = ldap.get_users_by_uid(users['user'])
     return flask.render_template('project.html', **ctx)
+
+
+@app.route('/user/<uid>')
+def user(uid):
+    ctx = {
+        'uid': uid,
+        'user': ldap.get_users_by_uid([uid]),
+        'projects': keystone.projects_for_user(uid),
+    }
+    return flask.render_template('user.html', **ctx)

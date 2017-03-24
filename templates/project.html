@@ -19,9 +19,9 @@
       </h3>
     </div>
     <div class="panel-body">
-      <ul class="list-unstyled user-list">
+      <ul class="list-unstyled column-list">
         {% for u in admins|sort(attribute='cn') %}
-        <li>{{ u.cn }}</li>
+        <li><a href="{{ url_for('user', uid=u.uid) }}">{{ u.cn }}</a></li>
         {% endfor %}
       </ul>
     </div>
@@ -38,9 +38,9 @@
       </h3>
     </div>
     <div id="users-body" class="panel-body panel-collapse collapse" role="tabpanel" aria-labelledby="users-heading">
-      <ul class="list-unstyled user-list">
+      <ul class="list-unstyled column-list">
         {% for u in users|sort(attribute='cn') %}
-        <li>{{ u.cn }}</li>
+        <li><a href="{{ url_for('user', uid=u.uid) }}">{{ u.cn }}</a></li>
         {% endfor %}
       </ul>
     </div>

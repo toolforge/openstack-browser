@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}User {{ uid }} - Keystone browser{% endblock %}
+
+{% block content %}
+{% if user %}
+<div class="panel-group" role="tablist">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-user"></span>
+      {{ user.cn }}
+    </div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>Wikitech</dt>
+        <dd><a href="https://wikitech.wikimedia.org/wiki/User:{{ user.cn }}">User:{{ user.cn }}</a></dd>
+        <dt>shell</dt>
+        <dd>{{ user.uid }}</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-cloud"></span>
+      Projects
+    </div>
+    <div class="panel-body">
+      <ul class="list-unstyled column-list">
+        {% for project in projects %}
+        <li><a href="{{ url_for('project', name=project) }}">{{ project }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% else %}
+<p>Unknown user '{{ uid }}'. Are you just guessing?</p>
+{% endif %}
+{% endblock %}

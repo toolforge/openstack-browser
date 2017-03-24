@@ -72,3 +72,9 @@ def project_users_by_role(name):
         ]
         seen += ret[role_name]
     return ret
+
+
+def projects_for_user(uid):
+    """Get a list of projects that a user belongs to."""
+    keystone = keystone_client()
+    return [p.name for p in keystone.projects.list(enabled=True, user=uid)]
