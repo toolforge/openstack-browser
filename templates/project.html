@@ -72,13 +72,13 @@
           {% set image = images[server.image.id]|default('') %}
           {% set flavor = flavors[server.flavor.id]|default('') %}
         <tr>
-          <td>{{ server.name }}.{{ project }}.eqiad.wmflabs</td>
+          <td class="text-nowrap">{{ server.name }}.{{ project }}.eqiad.wmflabs</td>
           <td>{{ flavor.name }}</td>
           <td>{{ image.name|default('UNKNOWN') }}</td>
           <td>{{ server.addresses.public[0].addr }}</td>
-          <td>{{ flavor.vcpus }}</td>
-          <td>{{ flavor.ram }}M</td>
-          <td>{{ flavor.disk }}G</td>
+          <td class="text-left">{{ flavor.vcpus }}</td>
+          <td class="text-left">{{ flavor.ram }}M</td>
+          <td class="text-left">{{ flavor.disk }}G</td>
           <td>{{ server.updated }}</td>
         </tr>
         {% endfor %}

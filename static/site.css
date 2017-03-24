@@ -6,3 +6,7 @@
   -moz-column-width: 30ch;
   column-width: 30ch;
 }
+
+.collapsed::after {
+  content: " ►"
+}
