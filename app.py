@@ -79,3 +79,8 @@ def server(fqdn):
         if user:
             ctx['owner'] = user[0]
     return flask.render_template('server.html', **ctx)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return redirect(url_for('projects'))
