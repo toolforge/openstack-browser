@@ -10,3 +10,8 @@
 .collapsed::after {
   content: " ►"
 }
+
+.collapsing {
+  -webkit-transition: none;
+  transition: none;
+}
