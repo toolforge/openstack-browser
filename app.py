@@ -62,3 +62,20 @@ def user(uid):
     if ctx['user']:
         ctx['user'] = ctx['user'][0]
     return flask.render_template('user.html', **ctx)
+
+
+@app.route('/server/<fqdn>')
+def server(fqdn):
+    name, project, tld = fqdn.split('.', 2)
+    ctx = {
+        'fqdn': fqdn,
+        'project': project,
+        'server': nova.server(fqdn),
+        'flavors': nova.flavors(project),
+        'images': glance.images(),
+    }
+    if 'user_id' in ctx['server']:
+        user = ldap.get_users_by_uid([ctx['server']['user_id']])
+        if user:
+            ctx['owner'] = user[0]
+    return flask.render_template('server.html', **ctx)

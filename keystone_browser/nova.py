@@ -51,9 +51,26 @@ def project_servers(project):
     ]
 
 
+@functools.lru_cache(maxsize=None)
 def flavors(project):
     """Get a dict of flavor details indexed by id."""
     nova = nova_client(project)
     return {
         f._info['id']: f._info for f in nova.flavors.list()
     }
+
+
+def server(fqdn):
+    """Get information about a server by fqdn."""
+    name, project, tld = fqdn.split('.', 2)
+    nova = nova_client(project)
+    servers = nova.servers.list(
+        detailed=True,
+        search_opts = {
+            'name': '^{}$'.format(name),
+        },
+    )
+    if servers:
+        return servers[0]._info
+    else:
+        return {}

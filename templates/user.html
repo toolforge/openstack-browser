@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}User {{ uid }} - Keystone browser{% endblock %}
+{% block title %}User {{ uid }} - {{ super() }}{% endblock %}
 
 {% block content %}
 {% if user %}

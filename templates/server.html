@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block title %}Server {{ fqdn }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('index') }}">Projects</a></li>
+  <li><a href="{{ url_for('project', name=project ) }}">{{ project }}</a></li>
+  <li class="active">{{ fqdn }}</li>
+</ol>
+
+{% if server %}
+{% set image = images[server.image.id]|default('') %}
+{% set flavor = flavors[server.flavor.id]|default('') %}
+<div class="panel-group" role="tablist">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-hdd"></span>
+        {{ fqdn }}
+      </h3>
+    </div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>Project</dt>
+        <dd><a href="{{ url_for('project', name=server.tenant_id) }}">{{ server.tenant_id }}</a></dd>
+        <dt>Instance name</dt>
+        <dd>{{ server.name }}</dd>
+        <dt>Instance Id</dt>
+        <dd>{{ server.id }}</dd>
+        <dt>IP</dt>
+        <dd>{{ server.addresses.public[0].addr }}</dd>
+        <dt>Status</dt>
+        <dd>{{ server.status }}</dd>
+        <dt>Type</dt>
+        <dd>{{ flavor.name|default('UNKNOWN') }}</dd>
+        <dt>Image</dt>
+        <dd>{{ image.name|default('UNKNOWN') }} ({{ server.image.id }})</dd>
+        <dt>CPUs</dt>
+        <dd>{{ flavor.vcpus|default('?') }}</dd>
+        <dt>RAM</dt>
+        <dd>{{ flavor.ram|default('?') }}M</dd>
+        <dt>Storage</dt>
+        <dd>{{ flavor.disk|default('?') }}G</dd>
+        <dt>Created</dt>
+        <dd>{{ server.created }}</dd>
+        {% if owner %}
+        <dt>Created by</dt>
+        <dd><a href="{{ url_for('user', uid=owner.uid) }}">{{ owner.cn }}</a></dd>
+        {% endif %}
+        <dt>Last modified</dt>
+        <dd>{{ server.updated }}</dd>
+      </dl>
+    </div>
+  </div>
+</div>
+{% else %}
+<p>Unknown server '{{ fqdn }}'. Are you just guessing?</p>
+{% endif %}
+{% endblock %}

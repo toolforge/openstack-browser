@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Project {{ project }} - Keystone browser{% endblock %}
+{% block title %}Project {{ project }} - {{ super() }}{% endblock %}
 
 {% block content %}
 <ol class="breadcrumb">
@@ -71,8 +71,9 @@
         {% for server in servers %}
           {% set image = images[server.image.id]|default('') %}
           {% set flavor = flavors[server.flavor.id]|default('') %}
+          {% set fqdn = server.name ~ '.' ~ project ~ '.eqiad.wmflabs' %}
         <tr>
-          <td class="text-nowrap">{{ server.name }}.{{ project }}.eqiad.wmflabs</td>
+          <td class="text-nowrap"><a href="{{ url_for('server', fqdn=fqdn) }}">{{ fqdn }}</a></td>
           <td>{{ flavor.name|default('UNKNOWN') }}</td>
           <td>{{ image.name|default('UNKNOWN') }}</td>
           <td>{{ server.addresses.public[0].addr }}</td>
