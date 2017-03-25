@@ -29,19 +29,32 @@
         <dt>Instance Id</dt>
         <dd>{{ server.id }}</dd>
         <dt>IP</dt>
-        <dd>{{ server.addresses.public[0].addr }}</dd>
+        {% for interface in server.addresses.public %}
+        <dd>{{ interface.addr }} [{{ interface['OS-EXT-IPS:type'] }}]</dd>
+        {% endfor %}
         <dt>Status</dt>
         <dd>{{ server.status }}</dd>
         <dt>Type</dt>
         <dd>{{ flavor.name|default('UNKNOWN') }}</dd>
         <dt>Image</dt>
-        <dd>{{ image.name|default('UNKNOWN') }} ({{ server.image.id }})</dd>
+        <dd>{{ image.name|default('UNKNOWN') }}</dd>
+        <dd>[{{ server.image.id }}]</dd>
         <dt>CPUs</dt>
         <dd>{{ flavor.vcpus|default('?') }}</dd>
         <dt>RAM</dt>
         <dd>{{ flavor.ram|default('?') }}M</dd>
         <dt>Storage</dt>
         <dd>{{ flavor.disk|default('?') }}G</dd>
+        {% if server.metadata %}
+        <dt>Metadata</dt>
+        <dd>
+            <ul class="list-unstyled">
+              {% for key, val in server.metadata.items() %}
+              <li><strong>{{ key }}</strong> : {{ val }}</li>
+              {% endfor %}
+            </ul>
+        </dd>
+        {% endif %}
         <dt>Created</dt>
         <dd>{{ server.created }}</dd>
         {% if owner %}
