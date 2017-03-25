@@ -9,7 +9,9 @@
   <div class="panel-body">
     <ul class="list-unstyled column-list">
       {% for project in projects %}
+      {% if project != 'admin' %}
       <li><a href="{{ url_for('project', name=project) }}">{{ project }}</a></li>
+      {% endif %}
       {% endfor %}
     </ul>
   </div>
