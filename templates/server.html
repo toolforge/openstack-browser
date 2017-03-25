@@ -9,6 +9,10 @@
   <li class="active">{{ fqdn }}</li>
 </ol>
 
+<div class="page-header">
+  <h1>{{ fqdn }} <small>Project {{ project }}</small></h1>
+</div>
+
 {% if server %}
 {% set image = images[server.image.id]|default('') %}
 {% set flavor = flavors[server.flavor.id]|default('') %}
