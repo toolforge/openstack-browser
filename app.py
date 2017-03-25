@@ -32,9 +32,9 @@ app.wsgi_app = werkzeug.contrib.fixers.ProxyFix(app.wsgi_app)
 
 
 @app.route('/')
-def index():
+def projects():
     projects = keystone.all_projects()
-    return flask.render_template('index.html', projects=projects)
+    return flask.render_template('projects.html', projects=projects)
 
 
 @app.route('/project/<name>')
