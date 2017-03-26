@@ -14,6 +14,20 @@
 
 {% if admins or users or servers %}
 <div class="panel-group" role="tablist">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-eye-open"></span>
+        Monitoring
+      </h3>
+    </div>
+    <div class="panel-body">
+      <ul class="list-unstyled column-list">
+        <li><a href="https://tools.wmflabs.org/nagf/?project={{ project }}">nagf</a></li>
+        <li><a href="https://grafana-labs.wikimedia.org/dashboard/db/labs-project-board?var-project={{ project }}&var-server=All">grafana</a></li>
+      </ul>
+    </div>
+  </div>
   {% if admins %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
