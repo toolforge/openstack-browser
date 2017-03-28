@@ -83,4 +83,4 @@ def server(fqdn):
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return redirect(url_for('projects'))
+    return flask.redirect(flask.url_for('projects'))
