@@ -29,7 +29,10 @@ class Cache(object):
     """Simple redis wrapper."""
     def __init__(self, enabled=True):
         self.enabled = enabled
-        self.conn = redis.Redis(host='tools-redis')
+        self.conn = redis.Redis(
+            host='tools-redis',
+            decode_responses=True,
+        )
         u = pwd.getpwuid(os.getuid())
         self.prefix = hashlib.sha1(
             '{}.{}'.format(u.pw_name, u.pw_dir).encode('utf-8')).hexdigest()
