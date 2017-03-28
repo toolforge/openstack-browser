@@ -18,7 +18,11 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import hashlib
+
 import ldap3
+
+from . import cache
 
 
 def ldap_conn():
@@ -50,23 +54,28 @@ def in_list(attr, items):
 
 def get_users_by_uid(uids):
     """Get a list of dicts of user information."""
-    ret = []
     if not uids:
-        return ret
-    with ldap_conn() as conn:
-        conn.search(
-            'ou=people,dc=wikimedia,dc=org',
-            in_list('uid', uids),
-            ldap3.SUBTREE,
-            attributes=['uid', 'cn'],
-            time_limit=5
-        )
-        for resp in conn.response:
-            attribs = resp.get('attributes')
-            # LDAP attributes come back as a dict of lists. We know that there
-            # is only one value for each list, so unwrap it
-            ret.append({
-                'uid': attribs['uid'][0],
-                'cn': attribs['cn'][0],
-            })
-    return ret
+        return []
+    key = 'ldap:get_users_by_uid:{}'.format(
+        hashlib.sha1('|'.join(uids)).hexdigest())
+    data = cache.CACHE.load(key)
+    if data is None:
+        data = []
+        with ldap_conn() as conn:
+            conn.search(
+                'ou=people,dc=wikimedia,dc=org',
+                in_list('uid', uids),
+                ldap3.SUBTREE,
+                attributes=['uid', 'cn'],
+                time_limit=5
+            )
+            for resp in conn.response:
+                attribs = resp.get('attributes')
+                # LDAP attributes come back as a dict of lists. We know that
+                # there is only one value for each list, so unwrap it
+                data.append({
+                    'uid': attribs['uid'][0],
+                    'cn': attribs['cn'][0],
+                })
+        cache.CACHE.save(key, data, 3600)
+    return data

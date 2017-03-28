@@ -22,6 +22,7 @@ import functools
 
 import glanceclient
 
+from . import cache
 from . import keystone
 
 
@@ -34,10 +35,14 @@ def glance_client():
     )
 
 
-@functools.lru_cache(maxsize=1)
 def images():
     """Get a dict of image details indexed by id."""
-    glance = glance_client()
-    return {
-        i['id']: i for i in glance.images.list()
-    }
+    key = 'glance:images'
+    data = cache.CACHE.load(key)
+    if data is None:
+        glance = glance_client()
+        data = {
+            i['id']: i for i in glance.images.list()
+        }
+        cache.CACHE.save(key, data, 3600)
+    return data

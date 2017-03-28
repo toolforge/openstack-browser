@@ -22,6 +22,7 @@ import functools
 
 from novaclient import client
 
+from . import cache
 from . import keystone
 
 
@@ -41,36 +42,50 @@ def project_servers(project):
     Data returned for each server is described at
     https://developer.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#listServers
     """
-    nova = nova_client(project)
-    return [
-        s._info for s in nova.servers.list(
-            detailed=True,
-            sort_keys=['display_name'],
-            sort_dirs=['asc'],
-        )
-    ]
+    key = 'nova:project_servers:{}'.format(project)
+    data = cache.CACHE.load(key)
+    if data is None:
+        nova = nova_client(project)
+        data = [
+            s._info for s in nova.servers.list(
+                detailed=True,
+                sort_keys=['display_name'],
+                sort_dirs=['asc'],
+            )
+        ]
+        cache.CACHE.save(key, data, 300)
+    return data
 
 
-@functools.lru_cache(maxsize=None)
 def flavors(project):
     """Get a dict of flavor details indexed by id."""
-    nova = nova_client(project)
-    return {
-        f._info['id']: f._info for f in nova.flavors.list()
-    }
+    key = 'nova:flavors:{}'.format(project)
+    data = cache.CACHE.load(key)
+    if data is None:
+        nova = nova_client(project)
+        data = {
+            f._info['id']: f._info for f in nova.flavors.list()
+        }
+        cache.CACHE.save(key, data, 3600)
+    return data
 
 
 def server(fqdn):
     """Get information about a server by fqdn."""
-    name, project, tld = fqdn.split('.', 2)
-    nova = nova_client(project)
-    servers = nova.servers.list(
-        detailed=True,
-        search_opts = {
-            'name': '^{}$'.format(name),
-        },
-    )
-    if servers:
-        return servers[0]._info
-    else:
-        return {}
+    key = 'nova:server:{}'.format(fqdn)
+    data = cache.CACHE.load(key)
+    if data is None:
+        name, project, tld = fqdn.split('.', 2)
+        nova = nova_client(project)
+        servers = nova.servers.list(
+            detailed=True,
+            search_opts={
+                'name': '^{}$'.format(name),
+            },
+        )
+        if servers:
+            data = servers[0]._info
+        else:
+            data = {}
+        cache.CACHE.save(key, data, 300)
+    return data

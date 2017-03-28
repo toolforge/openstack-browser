@@ -25,6 +25,8 @@ from keystoneauth1 import session as keystone_session
 from keystoneauth1.identity import v3
 from keystoneclient.v3 import client
 
+from . import cache
+
 
 ROLES = collections.OrderedDict([
     ('admin', '2cd63d467f754404bf3746fe63ee0698'),
@@ -61,27 +63,42 @@ def keystone_client():
 
 def all_projects():
     """Get a list of all project names."""
-    keystone = keystone_client()
-    return [p.name for p in keystone.projects.list(enabled=True)]
+    key = 'keystone:all_projects'
+    data = cache.CACHE.load(key)
+    if data is None:
+        keystone = keystone_client()
+        data = [p.name for p in keystone.projects.list(enabled=True)]
+        cache.CACHE.save(key, data, 300)
+    return data
 
 
 def project_users_by_role(name):
     """Get a dict of lists of user ids indexed by role name."""
-    keystone = keystone_client()
-    # Ignore novaadmin & novaobserver in all user lists
-    seen = ['novaadmin', 'novaobserver']
-    ret = {}
-    for role_name, role_id in ROLES.items():
-        ret[role_name] = [
-            r.user['id'] for r in keystone.role_assignments.list(
-                project=name, role=role_id)
-            if r.user['id'] not in seen
-        ]
-        seen += ret[role_name]
-    return ret
+    key = 'keystone:project_users_by_role:{}'.format(name)
+    data = cache.CACHE.load(key)
+    if data is None:
+        keystone = keystone_client()
+        # Ignore novaadmin & novaobserver in all user lists
+        seen = ['novaadmin', 'novaobserver']
+        data = {}
+        for role_name, role_id in ROLES.items():
+            data[role_name] = [
+                r.user['id'] for r in keystone.role_assignments.list(
+                    project=name, role=role_id)
+                if r.user['id'] not in seen
+            ]
+            seen += data[role_name]
+        cache.CACHE.save(key, data, 300)
+    return data
 
 
 def projects_for_user(uid):
     """Get a list of projects that a user belongs to."""
-    keystone = keystone_client()
-    return [p.name for p in keystone.projects.list(enabled=True, user=uid)]
+    key = 'keystone:projects_for_user:{}'.format(uid)
+    data = cache.CACHE.load(key)
+    if data is None:
+        keystone = keystone_client()
+        data = [
+            p.name for p in keystone.projects.list(enabled=True, user=uid)]
+        cache.CACHE.save(key, data, 300)
+    return data
