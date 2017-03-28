@@ -57,7 +57,7 @@ def get_users_by_uid(uids):
     if not uids:
         return []
     key = 'ldap:get_users_by_uid:{}'.format(
-        hashlib.sha1('|'.join(uids)).hexdigest())
+        hashlib.sha1('|'.join(uids).encode('utf-8')).hexdigest())
     data = cache.CACHE.load(key)
     if data is None:
         data = []
