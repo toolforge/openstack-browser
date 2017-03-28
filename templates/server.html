@@ -4,8 +4,8 @@
 
 {% block content %}
 <ol class="breadcrumb">
-  <li><a href="{{ url_for('projects') }}">Projects</a></li>
-  <li><a href="{{ url_for('project', name=project ) }}">{{ project }}</a></li>
+  <li><a href="{{ url_for('projects') }}" rel="nofollow">Projects</a></li>
+  <li><a href="{{ url_for('project', name=project ) }}" rel="nofollow">{{ project }}</a></li>
   <li class="active">{{ fqdn }}</li>
 </ol>
 
@@ -27,7 +27,7 @@
     <div class="panel-body">
       <dl class="dl-horizontal">
         <dt>Project</dt>
-        <dd><a href="{{ url_for('project', name=server.tenant_id) }}">{{ server.tenant_id }}</a></dd>
+        <dd><a href="{{ url_for('project', name=server.tenant_id) }}" rel="nofollow">{{ server.tenant_id }}</a></dd>
         <dt>Instance name</dt>
         <dd>{{ server.name }}</dd>
         <dt>Instance Id</dt>
@@ -63,7 +63,7 @@
         <dd>{{ server.created }}</dd>
         {% if owner %}
         <dt>Created by</dt>
-        <dd><a href="{{ url_for('user', uid=owner.uid) }}">{{ owner.cn }}</a></dd>
+        <dd><a href="{{ url_for('user', uid=owner.uid) }}" rel="nofollow">{{ owner.cn }}</a></dd>
         {% endif %}
         <dt>Last modified</dt>
         <dd>{{ server.updated }}</dd>

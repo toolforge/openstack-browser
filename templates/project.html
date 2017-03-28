@@ -4,12 +4,12 @@
 
 {% block content %}
 <ol class="breadcrumb">
-  <li><a href="{{ url_for('projects') }}">Projects</a></li>
+  <li><a href="{{ url_for('projects') }}" rel="nofollow">Projects</a></li>
   <li class="active">{{ project }}</li>
 </ol>
 
 <div class="page-header">
-  <h1>Project: <a href="https://wikitech.wikimedia.org/wiki/Nova_Resource:{{ project|capitalize }}">{{ project|capitalize }}</a></h1>
+  <h1>Project: <a href="https://wikitech.wikimedia.org/wiki/Nova_Resource:{{ project|capitalize }}" rel="nofollow">{{ project|capitalize }}</a></h1>
 </div>
 
 {% if admins or users or servers %}
@@ -23,9 +23,9 @@
     </div>
     <div class="panel-body">
       <ul class="list-unstyled column-list">
-        <li><a href="https://tools.wmflabs.org/nagf/?project={{ project }}">nagf</a></li>
-        <li><a href="https://grafana-labs.wikimedia.org/dashboard/db/labs-project-board?var-project={{ project }}&var-server=All">grafana</a></li>
-        <li><a href="https://tools.wmflabs.org/sal/{{ project }}">SAL</a></li>
+        <li><a href="https://tools.wmflabs.org/nagf/?project={{ project }}" rel="nofollow">nagf</a></li>
+        <li><a href="https://grafana-labs.wikimedia.org/dashboard/db/labs-project-board?var-project={{ project }}&var-server=All" rel="nofollow">grafana</a></li>
+        <li><a href="https://tools.wmflabs.org/sal/{{ project }}" rel="nofollow">SAL</a></li>
       </ul>
     </div>
   </div>
@@ -40,7 +40,7 @@
     <div class="panel-body">
       <ul class="list-unstyled column-list">
         {% for u in admins|sort(attribute='cn') %}
-        <li><a href="{{ url_for('user', uid=u.uid) }}">{{ u.cn }}</a></li>
+        <li><a href="{{ url_for('user', uid=u.uid) }}" rel="nofollow">{{ u.cn }}</a></li>
         {% endfor %}
       </ul>
     </div>
@@ -59,7 +59,7 @@
     <div id="users-body" class="panel-body panel-collapse collapse" role="tabpanel" aria-labelledby="users-heading">
       <ul class="list-unstyled column-list">
         {% for u in users|sort(attribute='cn') %}
-        <li><a href="{{ url_for('user', uid=u.uid) }}">{{ u.cn }}</a></li>
+        <li><a href="{{ url_for('user', uid=u.uid) }}" rel="nofollow">{{ u.cn }}</a></li>
         {% endfor %}
       </ul>
     </div>
@@ -92,7 +92,7 @@
           {% set flavor = flavors[server.flavor.id]|default('') %}
           {% set fqdn = server.name ~ '.' ~ project ~ '.eqiad.wmflabs' %}
         <tr>
-          <td class="text-nowrap"><a href="{{ url_for('server', fqdn=fqdn) }}">{{ fqdn }}</a></td>
+          <td class="text-nowrap"><a href="{{ url_for('server', fqdn=fqdn) }}" rel="nofollow">{{ fqdn }}</a></td>
           <td>{{ flavor.name|default('UNKNOWN') }}</td>
           <td>{{ image.name|default('UNKNOWN') }}</td>
           <td>{{ server.addresses.public[0].addr }}</td>

@@ -10,7 +10,7 @@
     <ul class="list-unstyled column-list">
       {% for project in projects %}
       {% if project != 'admin' %}
-      <li><a href="{{ url_for('project', name=project) }}">{{ project }}</a></li>
+      <li><a href="{{ url_for('project', name=project) }}" rel="nofollow">{{ project }}</a></li>
       {% endif %}
       {% endfor %}
     </ul>
