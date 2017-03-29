@@ -33,9 +33,13 @@
         <dt>Instance Id</dt>
         <dd>{{ server.id }}</dd>
         <dt>IP</dt>
+        {% if 'public' in server.addresses %}
         {% for interface in server.addresses.public %}
         <dd>{{ interface.addr }} [{{ interface['OS-EXT-IPS:type'] }}]</dd>
         {% endfor %}
+        {% else %}
+        <dd>N/A</dd>
+        {% endif %}
         <dt>Status</dt>
         <dd>{{ server.status }}</dd>
         <dt>Type</dt>

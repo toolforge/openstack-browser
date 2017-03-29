@@ -95,7 +95,11 @@
           <td class="text-nowrap"><a href="{{ url_for('server', fqdn=fqdn) }}" rel="nofollow">{{ fqdn }}</a></td>
           <td>{{ flavor.name|default('UNKNOWN') }}</td>
           <td>{{ image.name|default('UNKNOWN') }}</td>
+          {% if 'public' in server.addresses %}
           <td>{{ server.addresses.public[0].addr }}</td>
+          {% else %}
+          <td>N/A</td>
+          {% endif %}
           <td class="text-right">{{ flavor.vcpus|default('?') }}</td>
           <td class="text-right">{{ flavor.ram|default('?') }}M</td>
           <td class="text-right">{{ flavor.disk|default('?') }}G</td>
