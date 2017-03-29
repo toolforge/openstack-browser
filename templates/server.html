@@ -38,7 +38,7 @@
         <dd>{{ interface.addr }} [{{ interface['OS-EXT-IPS:type'] }}]</dd>
         {% endfor %}
         {% else %}
-        <dd>N/A</dd>
+        <dd>-</dd>
         {% endif %}
         <dt>Status</dt>
         <dd>{{ server.status }}</dd>
@@ -48,11 +48,11 @@
         <dd>{{ image.name|default('UNKNOWN') }}</dd>
         <dd>[{{ server.image.id }}]</dd>
         <dt>CPUs</dt>
-        <dd>{{ flavor.vcpus|default('?') }}</dd>
+        <dd>{{ flavor.vcpus|default('-') }}</dd>
         <dt>RAM</dt>
-        <dd>{{ flavor.ram|default('?') }}M</dd>
+        <dd>{{ flavor.ram|default('-') }}M</dd>
         <dt>Storage</dt>
-        <dd>{{ flavor.disk|default('?') }}G</dd>
+        <dd>{{ flavor.disk|default('-') }}G</dd>
         {% if server.metadata %}
         <dt>Metadata</dt>
         <dd>

@@ -98,11 +98,11 @@
           {% if 'public' in server.addresses %}
           <td>{{ server.addresses.public[0].addr }}</td>
           {% else %}
-          <td>N/A</td>
+          <td>-</td>
           {% endif %}
-          <td class="text-right">{{ flavor.vcpus|default('?') }}</td>
-          <td class="text-right">{{ flavor.ram|default('?') }}M</td>
-          <td class="text-right">{{ flavor.disk|default('?') }}G</td>
+          <td class="text-right">{{ flavor.vcpus|default('-') }}</td>
+          <td class="text-right">{{ flavor.ram|default('-') }}M</td>
+          <td class="text-right">{{ flavor.disk|default('-') }}G</td>
           <td>{{ server.updated }}</td>
         </tr>
         {% endfor %}
