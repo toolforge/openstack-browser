@@ -62,14 +62,16 @@ def get_users_by_uid(uids):
     if data is None:
         data = []
         with ldap_conn() as conn:
-            conn.search(
+            results = conn.extend.standard.paged_search(
                 'ou=people,dc=wikimedia,dc=org',
                 in_list('uid', uids),
                 ldap3.SUBTREE,
                 attributes=['uid', 'cn'],
-                time_limit=5
+                paged_size=1000,
+                time_limit=5,
+                generator=True,
             )
-            for resp in conn.response:
+            for resp in results:
                 attribs = resp.get('attributes')
                 # LDAP attributes come back as a dict of lists. We know that
                 # there is only one value for each list, so unwrap it
@@ -88,16 +90,16 @@ def user_count():
     if total_entries is None:
         total_entries = 0
         with ldap_conn() as conn:
-            res = conn.extend.standard.paged_search(
+            results = conn.extend.standard.paged_search(
                 'ou=people,dc=wikimedia,dc=org',
                 '(objectclass=posixaccount)',
                 ldap3.SUBTREE,
                 attributes=None,
-                paged_size=2000,
+                paged_size=1000,
                 time_limit=5,
                 generator=True,
             )
-            for resp in res:
+            for resp in results:
                 total_entries += 1
         cache.CACHE.save(key, total_entries, 3600)
     return total_entries
