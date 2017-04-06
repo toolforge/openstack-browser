@@ -25,6 +25,7 @@ from keystone_browser import glance
 from keystone_browser import keystone
 from keystone_browser import ldap
 from keystone_browser import nova
+from keystone_browser import stats
 
 
 app = flask.Flask(__name__)
@@ -33,8 +34,16 @@ app.wsgi_app = werkzeug.contrib.fixers.ProxyFix(app.wsgi_app)
 
 @app.route('/')
 def projects():
-    projects = keystone.all_projects()
-    return flask.render_template('projects.html', projects=projects)
+    ctx = {}
+    try:
+        cached = 'purge' not in flask.request.args
+        ctx.update({
+            'usage': stats.usage(cached),
+            'projects': keystone.all_projects(),
+        })
+    except Exception:
+        app.logger.exception('Error collecting information for projects')
+    return flask.render_template('projects.html', **ctx)
 
 
 @app.route('/project/<name>')

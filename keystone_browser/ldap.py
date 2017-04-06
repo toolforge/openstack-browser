@@ -79,3 +79,25 @@ def get_users_by_uid(uids):
                 })
         cache.CACHE.save(key, data, 3600)
     return data
+
+
+def user_count():
+    """Get the count of all users in LDAP."""
+    key = 'ldap:user_count'
+    total_entries = cache.CACHE.load(key)
+    if total_entries is None:
+        total_entries = 0
+        with ldap_conn() as conn:
+            res = conn.extend.standard.paged_search(
+                'ou=people,dc=wikimedia,dc=org',
+                '(objectclass=posixaccount)',
+                ldap3.SUBTREE,
+                attributes=None,
+                paged_size=2000,
+                time_limit=5,
+                generator=True,
+            )
+            for resp in res:
+                total_entries += 1
+        cache.CACHE.save(key, total_entries, 3600)
+    return total_entries

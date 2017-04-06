@@ -1,19 +1,47 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <span class="glyphicon glyphicon-cloud"></span>
-    Projects
+<div class="panel-group" role="tablist">
+  {% if usage %}
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-tasks"></span>
+      Usage
+    </div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>Number of projects</dt>
+        <dd>{{ '{:,}'.format(usage.projects) }}</dd>
+        <dt>Number of instances</dt>
+        <dd>{{ '{:,}'.format(usage.instances) }}</dd>
+        <dt>Amount of RAM in use (in MBs)</dt>
+        <dd>{{ '{:,}'.format(usage.ram) }}</dd>
+        <dt>Amount of allocated storage (in GBs)</dt>
+        <dd>{{ '{:,}'.format(usage.disk) }}</dd>
+        <dt>Number of virtual CPUs in use</dt>
+        <dd>{{ '{:,}'.format(usage.vcpus) }}</dd>
+        <dt>Number of users</dt>
+        <dd>{{ '{:,}'.format(usage.users) }}</dd>
+    </div>
+    <div class="panel-footer text-right">
+        <small>Last updated: {{ usage.generated }} UTC</small>
+    </div>
   </div>
-  <div class="panel-body">
-    <ul class="list-unstyled column-list">
-      {% for project in projects %}
-      {% if project != 'admin' %}
-      <li><a href="{{ url_for('project', name=project) }}" rel="nofollow">{{ project }}</a></li>
-      {% endif %}
-      {% endfor %}
-    </ul>
+  {% endif %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-cloud"></span>
+      Projects
+    </div>
+    <div class="panel-body">
+      <ul class="list-unstyled column-list">
+        {% for project in projects %}
+        {% if project != 'admin' %}
+        <li><a href="{{ url_for('project', name=project) }}" rel="nofollow">{{ project }}</a></li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 </div>
 {% endblock %}
