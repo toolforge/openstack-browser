@@ -39,16 +39,23 @@ def projects():
 
 @app.route('/project/<name>')
 def project(name):
-    users = keystone.project_users_by_role(name)
-    admins = users['admin'] + users['projectadmin']
     ctx = {
         'project': name,
-        'admins': ldap.get_users_by_uid(admins),
-        'users': ldap.get_users_by_uid(users['user']),
-        'servers': nova.project_servers(name),
-        'flavors': nova.flavors(name),
-        'images': glance.images(),
     }
+    try:
+        users = keystone.project_users_by_role(name)
+        admins = users['admin'] + users['projectadmin']
+        ctx.update({
+            'project': name,
+            'admins': ldap.get_users_by_uid(admins),
+            'users': ldap.get_users_by_uid(users['user']),
+            'servers': nova.project_servers(name),
+            'flavors': nova.flavors(name),
+            'images': glance.images(),
+        })
+    except Exception:
+        app.logger.exception(
+            'Error collecting information for project "%s"', name)
     return flask.render_template('project.html', **ctx)
 
 
@@ -56,11 +63,17 @@ def project(name):
 def user(uid):
     ctx = {
         'uid': uid,
-        'user': ldap.get_users_by_uid([uid]),
-        'projects': keystone.projects_for_user(uid),
     }
-    if ctx['user']:
-        ctx['user'] = ctx['user'][0]
+    try:
+        ctx.update({
+            'user': ldap.get_users_by_uid([uid]),
+            'projects': keystone.projects_for_user(uid),
+        })
+        if ctx['user']:
+            ctx['user'] = ctx['user'][0]
+    except Exception:
+        app.logger.exception(
+            'Error collecting information for user "%s"', uid)
     return flask.render_template('user.html', **ctx)
 
 
@@ -70,14 +83,21 @@ def server(fqdn):
     ctx = {
         'fqdn': fqdn,
         'project': project,
-        'server': nova.server(fqdn),
-        'flavors': nova.flavors(project),
-        'images': glance.images(),
     }
-    if 'user_id' in ctx['server']:
-        user = ldap.get_users_by_uid([ctx['server']['user_id']])
-        if user:
-            ctx['owner'] = user[0]
+    try:
+        ctx.update({
+            'server': nova.server(fqdn),
+            'flavors': nova.flavors(project),
+            'images': glance.images(),
+        })
+        if 'user_id' in ctx['server']:
+            user = ldap.get_users_by_uid([ctx['server']['user_id']])
+            if user:
+                ctx['owner'] = user[0]
+    except Exception:
+        app.logger.exception(
+            'Error collecting information for server "%s"', fqdn)
+
     return flask.render_template('server.html', **ctx)
 
 
