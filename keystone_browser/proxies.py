@@ -41,7 +41,7 @@ def url_template():
 def project_proxies(project):
     """Get a list of proxies for a project."""
     base_url = url_template().replace('$(tenant_id)s', project)
-    url = '%s/mapping'.format(base_url)
+    url = '{}/mapping'.format(base_url)
     req = requests.get(url, verify=False)
     if req.status_code != 200:
         return []
