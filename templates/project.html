@@ -12,7 +12,7 @@
   <h1>Project: <a href="https://wikitech.wikimedia.org/wiki/Nova_Resource:{{ project|capitalize }}" rel="nofollow">{{ project|capitalize }}</a></h1>
 </div>
 
-{% if admins or users or servers %}
+{% if admins or users or servers or proxies %}
 <div class="panel-group" role="tablist">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
@@ -63,6 +63,36 @@
         {% endfor %}
       </ul>
     </div>
+  </div>
+  {% endif %}
+  {% if proxies %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-random"></span>
+        Proxies
+      </h3>
+    </div>
+    <table class="table table-condensed table-hover">
+      <thead>
+        <tr>
+          <th>Domain</th>
+          <th>Backend</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for proxy in proxies %}
+        <tr>
+          <td><a href="https://{{ proxy.domain }}/" rel="nofollow">{{ proxy.doamin }}</a></td>
+          <td>
+            {% for backend in proxies.backends %}
+            {{ backend }}
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
   {% endif %}
   {% if servers %}

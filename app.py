@@ -25,6 +25,7 @@ from keystone_browser import glance
 from keystone_browser import keystone
 from keystone_browser import ldap
 from keystone_browser import nova
+from keystone_browser import proxies
 from keystone_browser import stats
 
 
@@ -61,6 +62,7 @@ def project(name):
             'servers': nova.project_servers(name),
             'flavors': nova.flavors(name),
             'images': glance.images(),
+            'proxies': proxies.project_proxies(name),
         })
     except Exception:
         app.logger.exception(
