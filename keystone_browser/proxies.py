@@ -38,9 +38,9 @@ def proxy_base_url():
     # Secret magic!  The endpoint provided by keystone is private
     #  and we can't access it.  There's an alternative public
     #  read-only endpoint on port 5669 though.  So,
-    #  swap in 5669 for the port we got from keystone. 
-    publicendpoint = re.sub(":[0-9]+/",":5669/",endpoint)
-    return(publicendpoint)
+    #  swap in 5669 for the port we got from keystone.
+    publicendpoint = re.sub(r':[0-9]+/', ':5669/', endpoint)
+    return publicendpoint
 
 
 def getproxiesforproject(project):
