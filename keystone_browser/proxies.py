@@ -25,28 +25,24 @@ import requests
 from . import keystone
 
 
-@functools.lru_cache(maxsize=None)
-def proxy_base_url():
-    keystoneclient = keystone.keystone_client()
-    services = keystoneclient.services.list()
-    for service in services:
-        if service.name == 'proxy':
-            proxyendpoint = keystoneclient.endpoints.list(service.id)
-            break
-
-    endpoint = proxyendpoint[0].url
-    # Secret magic!  The endpoint provided by keystone is private
-    #  and we can't access it.  There's an alternative public
-    #  read-only endpoint on port 5669 though.  So,
-    #  swap in 5669 for the port we got from keystone.
-    publicendpoint = re.sub(r':[0-9]+/', ':5669/', endpoint)
-    return publicendpoint
+@functools.lru_cache(maxsize=1)
+def url_template():
+    """Get the url template for accessing the proxy service."""
+    c = keystone.keystone_client()
+    proxy = c.services.list(type='proxy')[0]
+    endpoint = c.endpoints.list(
+        service=proxy.id, interface='public', enabled=True)[0]
+    # Secret magic! The endpoint provided by keystone is private and we can't
+    # access it. There's an alternative public read-only endpoint on port 5669
+    # though. So, swap in 5669 for the port we got from keystone.
+    return re.sub(r':[0-9]+/', ':5669/', endpoint.url)
 
 
-def getproxiesforproject(project):
-    url = proxy_base_url().replace('$(tenant_id)s', project)
-    requrl = "%s/mapping" % url
-    req = requests.get(requrl, verify=False)
+def project_proxies(project):
+    """Get a list of proxies for a project."""
+    base_url = url_template().replace('$(tenant_id)s', project)
+    url = '%s/mapping'.format(base_url)
+    req = requests.get(url, verify=False)
     if req.status_code != 200:
         return []
     mappings = req.json()
