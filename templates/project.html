@@ -83,9 +83,9 @@
       <tbody>
         {% for proxy in proxies %}
         <tr>
-          <td><a href="https://{{ proxy.domain }}/" rel="nofollow">{{ proxy.doamin }}</a></td>
+          <td><a href="https://{{ proxy.domain }}/" rel="nofollow">{{ proxy.domain }}</a></td>
           <td>
-            {% for backend in proxies.backends %}
+            {% for backend in proxy.backends %}
             {{ backend }}
             {% endfor %}
           </td>
