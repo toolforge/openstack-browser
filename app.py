@@ -34,12 +34,23 @@ app.wsgi_app = werkzeug.contrib.fixers.ProxyFix(app.wsgi_app)
 
 
 @app.route('/')
-def projects():
+def home():
     ctx = {}
     try:
         cached = 'purge' not in flask.request.args
         ctx.update({
             'usage': stats.usage(cached),
+        })
+    except Exception:
+        app.logger.exception('Error collecting information for projects')
+    return flask.render_template('home.html', **ctx)
+
+
+@app.route('/project/')
+def projects():
+    ctx = {}
+    try:
+        ctx.update({
             'projects': keystone.all_projects(),
         })
     except Exception:

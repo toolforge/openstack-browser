@@ -26,9 +26,15 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{{ url_for('projects') }}">OpenStack browser</a>
+          <a class="navbar-brand" href="{{ url_for('home') }}">OpenStack browser</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="{% if request.url_rule.endpoint == 'home' %}active{% endif %}"><a href="{{ url_for('home') }}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+            {% with projects = url_for('projects') %}
+            <li class="{% if projects in request.path %}active{% endif %}"><a href="{{ projects }}"><span class="glyphicon glyphicon-cloud"></span> Projects</a></li>
+            {% endwith %}
+          </ul>
           <ul class="nav navbar-nav navbar-right">
             {% block navright %}{% endblock %}
           </ul>
