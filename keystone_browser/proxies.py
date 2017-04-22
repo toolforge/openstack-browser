@@ -22,6 +22,7 @@ import functools
 import re
 import requests
 
+from . import cache
 from . import keystone
 
 
@@ -40,10 +41,33 @@ def url_template():
 
 def project_proxies(project):
     """Get a list of proxies for a project."""
-    base_url = url_template().replace('$(tenant_id)s', project)
-    url = '{}/mapping'.format(base_url)
-    req = requests.get(url, verify=False)
-    if req.status_code != 200:
-        return []
-    mappings = req.json()
-    return mappings['routes']
+    key = 'proxies:{}'.format(project)
+    data = cache.CACHE.load(key)
+    if data is None:
+        base_url = url_template().replace('$(tenant_id)s', project)
+        url = '{}/mapping'.format(base_url)
+        req = requests.get(url, verify=False)
+        if req.status_code != 200:
+            data = []
+        else:
+            data = req.json()['routes']
+        cache.CACHE.save(key, data, 3600)
+    return data
+
+
+def all_proxies():
+    """Get a list of all proxies.
+
+    Each proxy in the list will be a dict containing project, domain, and
+    backends keys.
+    """
+    key = 'proxies:all'
+    data = cache.CACHE.load(key)
+    if data is None:
+        data = [
+            dict(project=project, **proxy)
+            for project in keystone.all_projects()
+            for proxy in project_proxies(project)
+        ]
+        cache.CACHE.save(key, data, 3600)
+    return data

@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}Proxies - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="panel-group" role="tablist">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-random"></span>
+        Proxies
+      </h3>
+    </div>
+    <table class="table table-condensed table-hover">
+      <thead>
+        <tr>
+          <th>Project</th>
+          <th>Domain</th>
+          <th>Backend</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for proxy in proxies|sort(attribute='project') %}
+        <tr>
+          <td><a href="{{ url_for('project', name=proxy.project) }}" rel="nofollow">{{ proxy.project }}</a></td>
+          <td><a href="https://{{ proxy.domain }}/" rel="nofollow">{{ proxy.domain }}</a></td>
+          <td>
+            {% for backend in proxy.backends %}
+            {{ backend }}
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

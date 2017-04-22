@@ -34,6 +34,7 @@
             {% with projects = url_for('projects') %}
             <li class="{% if projects in request.path %}active{% endif %}"><a href="{{ projects }}"><span class="glyphicon glyphicon-cloud"></span> Projects</a></li>
             {% endwith %}
+            <li class="{% if request.url_rule.endpoint == 'all_proxies' %}active{% endif %}"><a href="{{ url_for('all_proxies') }}"><span class="glyphicon glyphicon-random"></span> Proxies</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% block navright %}{% endblock %}

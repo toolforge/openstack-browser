@@ -123,6 +123,14 @@ def server(fqdn):
     return flask.render_template('server.html', **ctx)
 
 
+@app.route('/proxy/')
+def all_proxies():
+    ctx = {
+        'proxies': proxies.all_proxies(),
+    }
+    return flask.render_template('proxies.html', **ctx)
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return flask.redirect(flask.url_for('projects'))
