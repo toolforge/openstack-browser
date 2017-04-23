@@ -134,3 +134,8 @@ def all_proxies():
 @app.errorhandler(404)
 def page_not_found(e):
     return flask.redirect(flask.url_for('projects'))
+
+
+@app.template_filter('contains')
+def contains(haystack, needle):
+    return needle in haystack
