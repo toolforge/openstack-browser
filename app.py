@@ -144,4 +144,4 @@ def contains(haystack, needle):
 @app.template_filter('extract_hostname')
 def extract_hostname(backend):
     """Extract a hostname from a backend description."""
-    return proxies.parse_backend(backend)['hostname']
+    return proxies.parse_backend(backend).get('hostname', '404')

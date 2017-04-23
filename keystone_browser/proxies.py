@@ -83,6 +83,8 @@ def all_proxies():
 def parse_backend(backend):
     """Parse a proxy backend specification."""
     m = RE_BACKEND.match(backend)
+    if not m:
+        return {'hostname': backend}
     data = m.groupdict()
     if RE_IPADDR.match(data['host']):
         data['hostname'] = socket.getfqdn(data['host'])
