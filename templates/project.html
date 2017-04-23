@@ -154,13 +154,7 @@
 <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery.tablesorter/2.28.5/js/jquery.tablesorter.min.js" crossorigin="anonymous"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-  $(".tablesorter").tablesorter({
-    sortList: [[0,0]],
-    widgets: ["zebra"],
-    widgetOptions : {
-      zebra : [ "normal-row", "alt-row" ]
-    }
-  });
+  $(".tablesorter").tablesorter();
 });
 </script>
 {% endblock %}
