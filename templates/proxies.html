@@ -11,7 +11,7 @@
         Proxies
       </h3>
     </div>
-    <table class="table table-condensed table-hover">
+    <table class="table table-condensed table-hover tablesorter">
       <thead>
         <tr>
           <th>Project</th>
@@ -35,4 +35,23 @@
     </table>
   </div>
 </div>
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery.tablesorter/2.28.5/css/theme.default.min.css" crossorigin="anonymous">
+{% endblock %}
+{% block js %}
+<script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.1.1/jquery.min.js" crossorigin="anonymous"></script>
+<script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery.tablesorter/2.28.5/js/jquery.tablesorter.min.js" crossorigin="anonymous"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  $(".tablesorter").tablesorter({
+    sortList: [[0,0]],
+    widgets: ["zebra"],
+    widgetOptions : {
+      zebra : [ "normal-row", "alt-row" ]
+    }
+  });
+});
+</script>
 {% endblock %}
