@@ -139,3 +139,9 @@ def page_not_found(e):
 @app.template_filter('contains')
 def contains(haystack, needle):
     return needle in haystack
+
+
+@app.template_filter('extract_hostname')
+def extract_hostname(backend):
+    """Extract a hostname from a backend description."""
+    return proxies.parse_backend(backend)['hostname']

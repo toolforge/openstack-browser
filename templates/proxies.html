@@ -17,6 +17,7 @@
           <th>Project</th>
           <th>Domain</th>
           <th>Backend</th>
+          <th>Instance</th>
         </tr>
       </thead>
       <tbody>
@@ -27,6 +28,13 @@
           <td>
             {% for backend in proxy.backends %}
             {{ backend }}
+            {% endfor %}
+          </td>
+          <td>
+            {% for backend in proxy.backends %}
+            {% with fqdn=backend|extract_hostname %}
+            <a href="{{ url_for('server', fqdn=fqdn) }}" rel="nofollow">{{ fqdn }}</a>
+            {% endwith %}
             {% endfor %}
           </td>
         </tr>

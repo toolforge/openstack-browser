@@ -20,10 +20,16 @@
 
 import functools
 import re
+import socket
+
 import requests
 
 from . import cache
 from . import keystone
+
+
+RE_BACKEND = re.compile(r'^https?://(?P<host>[^:]+):(?P<port>\d+)$')
+RE_IPADDR = re.compile(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$')
 
 
 @functools.lru_cache(maxsize=1)
@@ -70,4 +76,16 @@ def all_proxies():
             for proxy in project_proxies(project)
         ]
         cache.CACHE.save(key, data, 3600)
+    return data
+
+
+@functools.lru_cache(maxsize=1024)
+def parse_backend(backend):
+    """Parse a proxy backend specification."""
+    m = RE_BACKEND.match(backend)
+    data = m.groupdict()
+    if RE_IPADDR.match(data['host']):
+        data['hostname'] = socket.getfqdn(data['host'])
+    else:
+        data['hostname'] = data['host']
     return data
