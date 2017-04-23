@@ -27,6 +27,7 @@ from keystone_browser import ldap
 from keystone_browser import nova
 from keystone_browser import proxies
 from keystone_browser import stats
+from keystone_browser import utils
 
 
 app = flask.Flask(__name__)
@@ -145,3 +146,9 @@ def contains(haystack, needle):
 def extract_hostname(backend):
     """Extract a hostname from a backend description."""
     return proxies.parse_backend(backend).get('hostname', '404')
+
+
+@app.template_test()
+def ipv4addr(s):
+    """Is the given string an IPv4 address?"""
+    return utils.is_ipv4(s)

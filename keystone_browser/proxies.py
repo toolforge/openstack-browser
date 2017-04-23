@@ -26,10 +26,10 @@ import requests
 
 from . import cache
 from . import keystone
+from . import utils
 
 
 RE_BACKEND = re.compile(r'^https?://(?P<host>[^:]+):(?P<port>\d+)$')
-RE_IPADDR = re.compile(r'^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$')
 
 
 @functools.lru_cache(maxsize=1)
@@ -86,7 +86,7 @@ def parse_backend(backend):
     if not m:
         return {'hostname': backend}
     data = m.groupdict()
-    if RE_IPADDR.match(data['host']):
+    if utils.is_ipv4(data['host']):
         data['hostname'] = socket.getfqdn(data['host'])
     else:
         data['hostname'] = data['host']
