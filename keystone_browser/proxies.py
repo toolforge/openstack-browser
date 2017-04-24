@@ -45,10 +45,12 @@ def url_template():
     return re.sub(r':[0-9]+/', ':5669/', endpoint.url)
 
 
-def project_proxies(project):
+def project_proxies(project, cached=True):
     """Get a list of proxies for a project."""
     key = 'proxies:{}'.format(project)
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         base_url = url_template().replace('$(tenant_id)s', project)
         url = '{}/mapping'.format(base_url)
@@ -61,19 +63,21 @@ def project_proxies(project):
     return data
 
 
-def all_proxies():
+def all_proxies(cached=True):
     """Get a list of all proxies.
 
     Each proxy in the list will be a dict containing project, domain, and
     backends keys.
     """
     key = 'proxies:all'
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         data = [
             dict(project=project, **proxy)
             for project in keystone.all_projects()
-            for proxy in project_proxies(project)
+            for proxy in project_proxies(project, cached)
         ]
         cache.CACHE.save(key, data, 3600)
     return data

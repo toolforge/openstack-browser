@@ -61,6 +61,7 @@ def projects():
 
 @app.route('/project/<name>')
 def project(name):
+    cached = 'purge' not in flask.request.args
     ctx = {
         'project': name,
     }
@@ -74,7 +75,7 @@ def project(name):
             'servers': nova.project_servers(name),
             'flavors': nova.flavors(name),
             'images': glance.images(),
-            'proxies': proxies.project_proxies(name),
+            'proxies': proxies.project_proxies(name, cached),
         })
     except Exception:
         app.logger.exception(
@@ -126,8 +127,9 @@ def server(fqdn):
 
 @app.route('/proxy/')
 def all_proxies():
+    cached = 'purge' not in flask.request.args
     ctx = {
-        'proxies': proxies.all_proxies(),
+        'proxies': proxies.all_proxies(cached),
     }
     return flask.render_template('proxies.html', **ctx)
 
