@@ -23,6 +23,7 @@ import functools
 from designateclient.v2 import client as designate_client
 
 from . import keystone
+from . import nova
 
 
 @functools.lru_cache(maxsize=None)
@@ -58,6 +59,7 @@ def _raw_recordsets(project, domain):
     return []
 
 
+@functools.lru_cache(maxsize=None)
 def a_records(project, domain):
     """Return a list of dns A records for a given project and domain."""
     raw_recordsets = _raw_recordsets(project, domain)
@@ -66,3 +68,38 @@ def a_records(project, domain):
         if recordset['type'] == 'A':
             records[recordset['name']] = recordset['records']
     return records
+
+
+@functools.lru_cache(maxsize=None)
+def floating_ips_for_project(project):
+    novaclient = nova.nova_client(project)
+    ips = novaclient.floating_ips.list()
+    return [ip.ip for ip in ips]
+
+
+@functools.lru_cache(maxsize=None)
+def wmflabsdotorg_a_records_for_project(project):
+    """Records under wmflabs.org are a special case that need special
+        handling...  they're all owned by a special project, 'wmflabsdotorg'
+    """
+    wmflabs_project = "wmflabsdotorg"
+    wmflabs_domain = "wmflabs.org."
+
+    project_floating_ips = floating_ips_for_project(project)
+    all_possible_arecs = a_records(wmflabs_project, wmflabs_domain)
+
+    retrecs = {}
+    for name, ips in all_possible_arecs.items():
+        if ips[0] in project_floating_ips:
+            retrecs[name] = ips
+
+    return retrecs
+
+
+@functools.lru_cache(maxsize=None)
+def a_records_for_project(project):
+    everything = {}
+    for domain in domains(project):
+        everything.update(a_records(project, domain))
+    everything.update(wmflabsdotorg_a_records_for_project(project))
+    return everything
