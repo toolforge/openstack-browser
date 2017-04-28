@@ -77,7 +77,7 @@ def project(name):
             'flavors': nova.flavors(name),
             'images': glance.images(),
             'proxies': proxies.project_proxies(name, cached),
-            'zones': zones.all_a_records(project, cached),
+            'zones': zones.all_a_records(name, cached),
         })
     except Exception:
         app.logger.exception(
