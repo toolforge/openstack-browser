@@ -55,10 +55,9 @@ def _raw_recordsets(project, zone):
     """Return list of designate 'recordset' objects for a given
        project and zone name.
     """
-    raw_zones = _raw_zones(project)
-    for zone in raw_zones:
-        if zone['name'] == zone:
-            return client(project).recordsets.list(zone['id'])
+    for z in _raw_zones(project):
+        if z['name'] == zone:
+            return client(project).recordsets.list(z['id'])
     return []
 
 
