@@ -19,9 +19,11 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import functools
+import operator
 
 from designateclient.v2 import client as designate_client
 
+from . import cache
 from . import keystone
 from . import nova
 
@@ -51,7 +53,8 @@ def domains(project):
 @functools.lru_cache(maxsize=None)
 def _raw_recordsets(project, domain):
     """Return list of designate 'recordset' objects for a given
-       project and domain name."""
+       project and domain name.
+    """
     raw_zones = _raw_zones(project)
     for zone in raw_zones:
         if zone['name'] == domain:
@@ -61,45 +64,50 @@ def _raw_recordsets(project, domain):
 
 @functools.lru_cache(maxsize=None)
 def a_records(project, domain):
-    """Return a list of dns A records for a given project and domain."""
+    """Return a list of dns A records for a given project and domain.
+
+    Each record is in the format described at
+    https://developer.openstack.org/api-ref/dns/?expanded=list-all-recordsets-owned-by-project-detail
+    """
     raw_recordsets = _raw_recordsets(project, domain)
-    records = {}
-    for recordset in raw_recordsets:
-        if recordset['type'] == 'A':
-            records[recordset['name']] = recordset['records']
-    return records
+    return [r for r in raw_recordsets if r['type'] == 'A']
 
 
 @functools.lru_cache(maxsize=None)
-def floating_ips_for_project(project):
+def floating_ips(project):
+    """Get a list of floating ips allocated to a project."""
     novaclient = nova.nova_client(project)
     ips = novaclient.floating_ips.list()
     return [ip.ip for ip in ips]
 
 
 @functools.lru_cache(maxsize=None)
-def wmflabsdotorg_a_records_for_project(project):
-    """Records under wmflabs.org are a special case that need special
-        handling...  they're all owned by a special project, 'wmflabsdotorg'
+def wmflabsdotorg_a_records(project):
+    """Get a list of *.wmflabs.org records matching IPs allocated to
+    a project.
+
+    Records under wmflabs.org are a special cased because they are all owned
+    by a special 'wmflabsdotorg' project.
     """
-    wmflabs_project = "wmflabsdotorg"
-    wmflabs_domain = "wmflabs.org."
-
-    project_floating_ips = floating_ips_for_project(project)
-    all_possible_arecs = a_records(wmflabs_project, wmflabs_domain)
-
-    retrecs = {}
-    for name, ips in all_possible_arecs.items():
-        if ips[0] in project_floating_ips:
-            retrecs[name] = ips
-
-    return retrecs
+    return [
+        r for r in a_records('wmflabsdotorg', 'wmflabs.org.')
+        if r['records'][0] in floating_ips(project)
+    ]
 
 
-@functools.lru_cache(maxsize=None)
-def a_records_for_project(project):
-    everything = {}
-    for domain in domains(project):
-        everything.update(a_records(project, domain))
-    everything.update(wmflabsdotorg_a_records_for_project(project))
-    return everything
+def all_a_records(project, cached=True):
+    """Get all the A records associated with a project.
+
+    Returns a dict keyed by host with values being lists of ip addresses.
+    """
+    key = 'domains:A:{}'.format(project)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
+    if data is None:
+        data = functools.reduce(
+            operator.add,
+            [a_records(project, domain) for domain in domains(project)])
+        data += wmflabsdotorg_a_records(project)
+        cache.CACHE.save(key, data, 3600)
+    return data

@@ -12,7 +12,7 @@
   <h1>Project: <a href="https://wikitech.wikimedia.org/wiki/Nova_Resource:{{ project|capitalize }}" rel="nofollow">{{ project|capitalize }}</a></h1>
 </div>
 
-{% if admins or users or servers or proxies %}
+{% if admins or users or servers or proxies or domains %}
 <div class="panel-group" role="tablist">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
@@ -107,6 +107,36 @@
     </table>
   </div>
   {% endif %}
+  {% if domains %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-globe"></span>
+        Domains
+      </h3>
+    </div>
+    <table class="table table-condensed table-hover tablesorter">
+      <thead>
+        <tr>
+          <th>Domain</th>
+          <th>Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for domain in domains|sort(attribute='name') %}
+        <tr>
+          <td>{{ domain.name }}</td>
+          <td>
+            {% for ip in domain.records %}
+            {{ ip }}
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
   {% if servers %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
@@ -129,7 +159,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for server in servers %}
+        {% for server in servers|sort(attribute='name') %}
           {% set image = images[server.image.id]|default('') %}
           {% set flavor = flavors[server.flavor.id]|default('') %}
           {% set fqdn = server.name ~ '.' ~ project ~ '.eqiad.wmflabs' %}
