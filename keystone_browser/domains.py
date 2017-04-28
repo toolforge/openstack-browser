@@ -107,7 +107,9 @@ def all_a_records(project, cached=True):
     if data is None:
         data = functools.reduce(
             operator.add,
-            [a_records(project, domain) for domain in domains(project)])
+            [a_records(project, domain) for domain in domains(project)],
+            []
+        )
         data += wmflabsdotorg_a_records(project)
         cache.CACHE.save(key, data, 3600)
     return data
