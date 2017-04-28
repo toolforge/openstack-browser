@@ -21,7 +21,7 @@
 import flask
 import werkzeug.contrib.fixers
 
-from keystone_browser import domains
+from keystone_browser import zones
 from keystone_browser import glance
 from keystone_browser import keystone
 from keystone_browser import ldap
@@ -77,7 +77,7 @@ def project(name):
             'flavors': nova.flavors(name),
             'images': glance.images(),
             'proxies': proxies.project_proxies(name, cached),
-            'domains': domains.all_a_records(project, cached),
+            'zones': zones.all_a_records(project, cached),
         })
     except Exception:
         app.logger.exception(

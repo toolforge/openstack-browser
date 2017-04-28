@@ -12,7 +12,7 @@
   <h1>Project: <a href="https://wikitech.wikimedia.org/wiki/Nova_Resource:{{ project|capitalize }}" rel="nofollow">{{ project|capitalize }}</a></h1>
 </div>
 
-{% if admins or users or servers or proxies or domains %}
+{% if admins or users or servers or proxies or zones %}
 <div class="panel-group" role="tablist">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
@@ -107,27 +107,27 @@
     </table>
   </div>
   {% endif %}
-  {% if domains %}
+  {% if zones %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
       <h3 class="panel-title">
         <span class="glyphicon glyphicon-globe"></span>
-        Domains
+        DNS
       </h3>
     </div>
     <table class="table table-condensed table-hover tablesorter">
       <thead>
         <tr>
-          <th>Domain</th>
+          <th>Name</th>
           <th>Address</th>
         </tr>
       </thead>
       <tbody>
-        {% for domain in domains|sort(attribute='name') %}
+        {% for zone in zones|sort(attribute='name') %}
         <tr>
-          <td>{{ domain.name }}</td>
+          <td>{{ zone.name }}</td>
           <td>
-            {% for ip in domain.records %}
+            {% for ip in zone.records %}
             {{ ip }}
             {% endfor %}
           </td>

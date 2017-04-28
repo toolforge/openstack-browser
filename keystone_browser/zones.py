@@ -44,32 +44,32 @@ def _raw_zones(project):
     return client(project).zones.list()
 
 
-def domains(project):
-    """Return a simple list of domain names owned by a project."""
+def zones(project):
+    """Return a simple list of zones owned by a project."""
     raw_zones = _raw_zones(project)
     return [zone['name'] for zone in raw_zones]
 
 
 @functools.lru_cache(maxsize=None)
-def _raw_recordsets(project, domain):
+def _raw_recordsets(project, zone):
     """Return list of designate 'recordset' objects for a given
-       project and domain name.
+       project and zone name.
     """
     raw_zones = _raw_zones(project)
     for zone in raw_zones:
-        if zone['name'] == domain:
+        if zone['name'] == zone:
             return client(project).recordsets.list(zone['id'])
     return []
 
 
 @functools.lru_cache(maxsize=None)
-def a_records(project, domain):
-    """Return a list of dns A records for a given project and domain.
+def a_records(project, zone):
+    """Return a list of dns A records for a given project and zone.
 
     Each record is in the format described at
     https://developer.openstack.org/api-ref/dns/?expanded=list-all-recordsets-owned-by-project-detail
     """
-    raw_recordsets = _raw_recordsets(project, domain)
+    raw_recordsets = _raw_recordsets(project, zone)
     return [r for r in raw_recordsets if r['type'] == 'A']
 
 
@@ -100,14 +100,14 @@ def all_a_records(project, cached=True):
 
     Returns a dict keyed by host with values being lists of ip addresses.
     """
-    key = 'domains:A:{}'.format(project)
+    key = 'zones:A:{}'.format(project)
     data = None
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
         data = functools.reduce(
             operator.add,
-            [a_records(project, domain) for domain in domains(project)],
+            [a_records(project, zone) for zone in zones(project)],
             []
         )
         data += wmflabsdotorg_a_records(project)
