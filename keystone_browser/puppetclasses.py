@@ -28,7 +28,7 @@ from . import cache
 
 @functools.lru_cache(maxsize=1)
 def url_template():
-    """Get the url template for accessing the proxy service."""
+    """Get the url template for accessing the puppet config service."""
     return "http://labcontrol1001.wikimedia.org:8100/v1"
 
 
