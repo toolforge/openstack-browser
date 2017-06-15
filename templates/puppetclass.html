@@ -3,6 +3,11 @@
 {% block title %}Puppet class {{ puppetclass }} - {{ super() }}{% endblock %}
 
 {% block content %}
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('all_puppetclasses') }}" rel="nofollow">Puppet classes</a></li>
+  <li class="active">{{ puppetclass }}</li>
+</ol>
+
 <div class="page-header">
   <h1>Puppet Class: {{ puppetclass }}</h1>
 </div>

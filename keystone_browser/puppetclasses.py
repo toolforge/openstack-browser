@@ -28,7 +28,7 @@ from . import cache
 
 @functools.lru_cache(maxsize=1)
 def url_template():
-    """Get the url template for accessing the puppet config service."""
+    """Get the url template for accessing the proxy service."""
     return "http://labcontrol1001.wikimedia.org:8100/v1"
 
 
@@ -49,6 +49,25 @@ def prefixes(classname, cached=True):
             data = yaml.safe_load(req.text)
         cache.CACHE.save(key, data, 1200)
     return data
+
+
+def all_classes(cached=True):
+    """Return a list of all used puppet classes
+    """
+
+    key = 'all_puppetclasses'
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
+    if data is None:
+        url = url_template() + '/roles'
+        req = requests.get(url, verify=False)
+        if req.status_code != 200:
+            data = []
+        else:
+            data = yaml.safe_load(req.text)
+        cache.CACHE.save(key, data, 1200)
+    return data['roles']
 
 
 def classes(project, fqdn, cached=True):

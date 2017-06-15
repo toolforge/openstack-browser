@@ -129,14 +129,25 @@ def server(fqdn):
     return flask.render_template('server.html', **ctx)
 
 
+@app.route('/puppetclass/')
+def all_puppetclasses():
+    ctx = {}
+    try:
+        ctx.update({"puppetclasses": puppetclasses.all_classes()})
+    except Exception:
+        app.logger.exception(
+            'Error collecting the list of puppet classes')
+
+    return flask.render_template('puppetclasses.html', **ctx)
+
+
 @app.route('/puppetclass/<classname>')
 def puppetclass(classname):
     ctx = {
-        'class': classname,
+        'puppetclass': classname,
     }
     try:
-        ctx = {"puppetclass": classname,
-               "data": puppetclasses.prefixes(classname)}
+        ctx.update({"data": puppetclasses.prefixes(classname)})
     except Exception:
         app.logger.exception(
             'Error collecting information for puppet class "%s"', classname)
