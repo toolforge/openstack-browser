@@ -15,6 +15,7 @@ $ webservice --backend=kubernetes python shell
 $ python3 -m venv $HOME/www/python/venv
 $ source $HOME/www/python/venv/bin/activate
 $ pip install --upgrade pip
+$ pip install --upgrade setuptools
 $ pip install -r $HOME/www/python/src/requirements.txt
 $ exit
 $ webservice --backend=kubernetes python start
