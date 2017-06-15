@@ -28,7 +28,7 @@
             {% if '_' in prefixes.prefixes %}
               <li><b>All project instances</b></li>
             {% endif %}
-            {% for prefix in prefixes.prefixes.sort() %}
+            {% for prefix in prefixes.prefixes|sort() %}
               {% if prefix != '_' %}
                 {% if prefix.endswith('wmflabs') %}
                   <li><a href="{{ url_for('server', fqdn=prefix) }}" rel="nofollow">{{ prefix }}</a></li>
