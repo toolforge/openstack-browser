@@ -26,6 +26,7 @@ from keystone_browser import glance
 from keystone_browser import keystone
 from keystone_browser import ldap
 from keystone_browser import nova
+from keystone_browser import puppetclasses
 from keystone_browser import proxies
 from keystone_browser import stats
 from keystone_browser import utils
@@ -115,6 +116,7 @@ def server(fqdn):
             'server': nova.server(fqdn),
             'flavors': nova.flavors(project),
             'images': glance.images(),
+            'puppetclasses': puppetclasses.classes(project, fqdn),
         })
         if 'user_id' in ctx['server']:
             user = ldap.get_users_by_uid([ctx['server']['user_id']])
@@ -125,6 +127,21 @@ def server(fqdn):
             'Error collecting information for server "%s"', fqdn)
 
     return flask.render_template('server.html', **ctx)
+
+
+@app.route('/puppetclass/<classname>')
+def puppetclass(classname):
+    ctx = {
+        'class': classname,
+    }
+    try:
+        ctx = {"puppetclass": classname,
+               "data": puppetclasses.prefixes(classname)}
+    except Exception:
+        app.logger.exception(
+            'Error collecting information for puppet class "%s"', classname)
+
+    return flask.render_template('puppetclass.html', **ctx)
 
 
 @app.route('/proxy/')

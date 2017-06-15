@@ -71,6 +71,12 @@
         {% endif %}
         <dt>Last modified</dt>
         <dd>{{ server.updated }}</dd>
+        {% if puppetclasses %}
+          <dt>Puppet classes</dt>
+          {% for class in puppetclasses %}
+            <dd><a href="{{ url_for('puppetclass', classname=class) }}" rel="nofollow">{{ class }}</a></dd>
+          {% endfor %}
+        {% endif %}
       </dl>
     </div>
   </div>
