@@ -9,7 +9,7 @@
     </div>
     <div class="panel-body">
       <ul class="list-unstyled column-list">
-        {% for class in puppetclasses %}
+        {% for class in puppetclasses|sort() %}
         <li><a href="{{ url_for('puppetclass', classname=class) }}" rel="nofollow">{{ class }}</a></li>
         {% endfor %}
       </ul>
