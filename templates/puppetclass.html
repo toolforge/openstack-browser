@@ -25,10 +25,10 @@
         {% if project != 'admin' %}
           <h4>Project: <a href="{{ url_for('project', name=project) }}" rel="nofollow">{{ project }}</a></h4>
           <ul class="list-unstyled">
-            {% if '_' in prefixes.prefixes|sort() %}
+            {% if '_' in prefixes.prefixes %}
               <li><b>All project instances</b></li>
             {% endif %}
-            {% for prefix in prefixes.prefixes %}
+            {% for prefix in prefixes.prefixes.sort() %}
               {% if prefix != '_' %}
                 {% if prefix.endswith('wmflabs') %}
                   <li><a href="{{ url_for('server', fqdn=prefix) }}" rel="nofollow">{{ prefix }}</a></li>
