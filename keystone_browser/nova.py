@@ -70,6 +70,20 @@ def flavors(project):
     return data
 
 
+def all_servers():
+    """Get a list of all servers in all projects."""
+    key = 'keystone:all_servers'
+    data = cache.CACHE.load(key)
+    if data is None:
+        data = []
+        all_projects = keystone.all_projects()
+        for project in all_projects:
+            if project != 'admin':
+                data += project_servers(project)
+        cache.CACHE.save(key, data, 300)
+    return data
+
+
 def server(fqdn):
     """Get information about a server by fqdn."""
     key = 'nova:server:{}'.format(fqdn)

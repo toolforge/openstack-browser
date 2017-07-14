@@ -34,6 +34,9 @@
             {% with projects = url_for('projects') %}
             <li class="{% if request.base_url|contains(projects) %}active{% endif %}"><a href="{{ projects }}"><span class="glyphicon glyphicon-cloud"></span> Projects</a></li>
             {% endwith %}
+            {% with servers = url_for('servers') %}
+            <li class="{% if request.base_url|contains(servers) %}active{% endif %}"><a href="{{ servers }}"><span class="glyphicon glyphicon-hdd"></span> Servers</a></li>
+            {% endwith %}
             <li class="{% if request.url_rule.endpoint == 'all_proxies' %}active{% endif %}"><a href="{{ url_for('all_proxies') }}"><span class="glyphicon glyphicon-random"></span> Proxies</a></li>
             {% with classes = url_for('all_puppetclasses') %}
             <li class="{% if request.base_url|contains(classes) %}active{% endif %}"><a href="{{ classes }}"><span class="glyphicon glyphicon-wrench"></span> Puppet Classes</a></li>

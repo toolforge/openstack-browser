@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="panel-group" role="tablist">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-hdd"></span>
+      Servers
+    </div>
+    <div class="panel-body">
+      <ul class="list-unstyled">
+        {% for server in servers %}
+          {% set fqdn = server.name ~ '.' ~ server.tenant_id ~ '.eqiad.wmflabs' %}
+          <li><a href="{{ url_for('server', fqdn=fqdn) }}" rel="nofollow">{{ fqdn }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

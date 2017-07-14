@@ -61,6 +61,18 @@ def projects():
     return flask.render_template('projects.html', **ctx)
 
 
+@app.route('/server/')
+def servers():
+    ctx = {}
+    try:
+        ctx.update({
+            'servers': nova.all_servers(),
+        })
+    except Exception:
+        app.logger.exception('Error collecting information for projects')
+    return flask.render_template('servers.html', **ctx)
+
+
 @app.route('/project/<name>')
 def project(name):
     cached = 'purge' not in flask.request.args
