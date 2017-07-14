@@ -86,15 +86,6 @@ def project(name):
     return flask.render_template('project.html', **ctx)
 
 
-@app.route('/project/<name>/dsh')
-def dsh(name):
-    servers = nova.project_servers(name)
-    dsh = [
-        "{}.{}.eqiad.wmflabs".format(server['name'], name) for server in servers
-    ]
-    return flask.Response('\n'.join(dsh), mimetype='text/plain')
-
-
 @app.route('/user/<uid>')
 def user(uid):
     ctx = {
@@ -171,6 +162,28 @@ def all_proxies():
         'proxies': proxies.all_proxies(cached),
     }
     return flask.render_template('proxies.html', **ctx)
+
+
+@app.route('/api/projects.json')
+def api_projects_json():
+    return flask.jsonify(projects=keystone.all_projects())
+
+
+@app.route('/api/projects.txt')
+def api_projects_txt():
+    return flask.Response(
+        '\n'.join(keystone.all_projects()),
+        mimetype='text/plain')
+
+
+@app.route('/api/dsh/<name>')
+def api_dsh(name):
+    servers = nova.project_servers(name)
+    dsh = [
+        "{}.{}.eqiad.wmflabs".format(server['name'], name)
+        for server in servers
+    ]
+    return flask.Response('\n'.join(dsh), mimetype='text/plain')
 
 
 @app.errorhandler(404)
