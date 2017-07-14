@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}Puppet class {{ puppetclass }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('all_puppetclasses') }}" rel="nofollow">Puppet classes</a></li>
+  <li class="active">{{ puppetclass }}</li>
+</ol>
+
+<div class="page-header">
+  <h1>Hiera Key: {{ hierakey }}</h1>
+</div>
+
+<div class="panel-group" role="tablist">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-hdd"></span>
+        Instances that set this hiera key
+      </h3>
+    </div>
+    <div class="panel-body">
+      {% for project, prefixes in data.items()|sort() %}
+        {% if project != 'admin' %}
+          <h4>Project: <a href="{{ url_for('project', name=project) }}" rel="nofollow">{{ project }}</a></h4>
+          <ul class="list-unstyled">
+            {% if '_' in prefixes.keys() %}
+              <li><b>All project instances</b></li>
+            {% endif %}
+            {% for prefix in prefixes.keys()|sort() %}
+              {% if prefix != '_' %}
+                {% if prefix.endswith('wmflabs') %}
+                  <li><a href="{{ url_for('server', fqdn=prefix) }}" rel="nofollow">{{ prefix }}</a></li>
+                {% else %}
+                  <li><b>{{ prefix }}*</b></li>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
