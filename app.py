@@ -198,6 +198,16 @@ def api_dsh_project(name):
     return flask.Response('\n'.join(dsh), mimetype='text/plain')
 
 
+@app.route('/api/dsh/servers')
+def api_dsh_servers():
+    servers = nova.all_servers()
+    dsh = [
+        "{}.{}.eqiad.wmflabs".format(server['name'], server['tenant_id'])
+        for server in servers
+    ]
+    return flask.Response('\n'.join(dsh), mimetype='text/plain')
+
+
 @app.route('/api/dsh/puppet/<name>')
 def api_dsh_puppet(name):
     data = puppetclasses.prefixes(name)
