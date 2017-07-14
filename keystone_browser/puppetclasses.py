@@ -24,6 +24,7 @@ import requests
 import yaml
 
 from . import cache
+from . import keystone
 
 
 @functools.lru_cache(maxsize=1)
@@ -70,6 +71,25 @@ def all_classes(cached=True):
     return data['roles']
 
 
+def project_prefixes(project, cached=True):
+    """Return a dict of [prefixes] for a given project
+    """
+
+    key = 'puppetprojectprefixess:{}'.format(project)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
+    if data is None:
+        url = url_template() + "/" + project + "/prefix"
+        req = requests.get(url, verify=False)
+        if req.status_code != 200:
+            data = []
+        else:
+            data = yaml.safe_load(req.text)
+        cache.CACHE.save(key, data, 1200)
+    return data['prefixes']
+
+
 def config(project, fqdn, cached=True):
     """Get full puppet config for a prefix.
 
@@ -104,3 +124,40 @@ def hiera(project, fqdn, cached=True):
     """Return a list of puppet classes for the given project and fqdn
     """
     return config(project, fqdn, cached)['hiera']
+
+
+def giant_hiera_dict(cached=True):
+    """Gather up the hiera config for every possible instance.
+
+       This is incredibly slow and expensive, but it'll get all
+       the caches warmed up!
+
+       Make a dict of the form
+       {hiera_key:
+            {project_id:
+                {fqdn: hiera_value}}}
+    """
+    key = 'completehieradictt:'
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
+    if data is None:
+        data = {}
+        for project in keystone.all_projects():
+            for prefix in project_prefixes(project):
+                hieradata = hiera(project, prefix, cached)
+                for key in hieradata.keys():
+                    if key not in data:
+                        data[key] = {}
+                    if project not in data[key]:
+                        data[key][project] = {}
+                    if key in data:
+                        data[key][project][prefix] = hieradata[key]
+        cache.CACHE.save(key, data, 1200)
+    return data
+
+
+def hieraprefixes(hierakey, cached=True):
+    """dict of {<projectname>: {prefix: value}} for a given hiera key
+    """
+    return giant_hiera_dict(cached).get(hierakey, {})

@@ -168,6 +168,20 @@ def puppetclass(classname):
     return flask.render_template('puppetclass.html', **ctx)
 
 
+@app.route('/hierakey/<hierakey>')
+def hierakey(hierakey):
+    ctx = {
+        'hierakey': hierakey,
+    }
+    try:
+        ctx.update({"data": puppetclasses.hieraprefixes(hierakey)})
+    except Exception:
+        app.logger.exception(
+            'Error collecting information for hiera key "%s"', hierakey)
+
+    return flask.render_template('hierakey.html', **ctx)
+
+
 @app.route('/proxy/')
 def all_proxies():
     cached = 'purge' not in flask.request.args
