@@ -86,6 +86,15 @@ def project(name):
     return flask.render_template('project.html', **ctx)
 
 
+@app.route('/project/<name>/dsh')
+def dsh(name):
+    servers = nova.project_servers(name)
+    dsh = [
+        "{}.{}.eqiad.wmflabs".format(server['name'], name) for server in servers
+    ]
+    return flask.Response('\n'.join(dsh), mimetype='text/plain')
+
+
 @app.route('/user/<uid>')
 def user(uid):
     ctx = {
