@@ -70,11 +70,13 @@ def all_classes(cached=True):
     return data['roles']
 
 
-def classes(project, fqdn, cached=True):
-    """Return a list of puppet classes for the given project and fqdn
+def config(project, fqdn, cached=True):
+    """Get full puppet config for a prefix.
+
+       Returns a dict with 'roles' and 'hiera' keys.
     """
 
-    key = 'puppetclasses:{}'.format(fqdn)
+    key = 'puppetconfig:{}'.format(fqdn)
     data = None
     if cached:
         data = cache.CACHE.load(key)
@@ -86,23 +88,19 @@ def classes(project, fqdn, cached=True):
         else:
             data = yaml.safe_load(req.text)
         cache.CACHE.save(key, data, 1200)
-    return data['roles']
+    return data
+
+
+def classes(project, fqdn, cached=True):
+    """Return a list of puppet classes for the given project and fqdn
+    """
+    return config(project, fqdn, cached)['roles']
 
 
 def hiera(project, fqdn, cached=True):
     """Return a list of puppet classes for the given project and fqdn
     """
 
-    key = 'puppetclasses:{}'.format(fqdn)
-    data = None
-    if cached:
-        data = cache.CACHE.load(key)
-    if data is None:
-        url = url_template() + '/' + project + "/node/" + fqdn
-        req = requests.get(url, verify=False)
-        if req.status_code != 200:
-            data = []
-        else:
-            data = yaml.safe_load(req.text)
-        cache.CACHE.save(key, data, 1200)
-    return data['hiera']
+    """Return a list of puppet classes for the given project and fqdn
+    """
+    return config(project, fqdn, cached)['hiera']
