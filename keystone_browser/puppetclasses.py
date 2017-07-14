@@ -87,3 +87,22 @@ def classes(project, fqdn, cached=True):
             data = yaml.safe_load(req.text)
         cache.CACHE.save(key, data, 1200)
     return data['roles']
+
+
+def hiera(project, fqdn, cached=True):
+    """Return a list of puppet classes for the given project and fqdn
+    """
+
+    key = 'puppetclasses:{}'.format(fqdn)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
+    if data is None:
+        url = url_template() + '/' + project + "/node/" + fqdn
+        req = requests.get(url, verify=False)
+        if req.status_code != 200:
+            data = []
+        else:
+            data = yaml.safe_load(req.text)
+        cache.CACHE.save(key, data, 1200)
+    return data['hiera']

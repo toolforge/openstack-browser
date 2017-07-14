@@ -77,6 +77,12 @@
             <dd><a href="{{ url_for('puppetclass', classname=class) }}" rel="nofollow">{{ class }}</a></dd>
           {% endfor %}
         {% endif %}
+        {% if hiera %}
+          <dt>Hiera settings</dt>
+            {% for key, val in hiera.items() %}
+                <dd><strong>{{ key }}</strong> : {{ val }}</dd>
+            {% endfor %}
+        {% endif %}
       </dl>
     </div>
   </div>

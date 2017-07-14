@@ -129,6 +129,7 @@ def server(fqdn):
             'flavors': nova.flavors(project),
             'images': glance.images(),
             'puppetclasses': puppetclasses.classes(project, fqdn),
+            'hiera': puppetclasses.hiera(project, fqdn),
         })
         if 'user_id' in ctx['server']:
             user = ldap.get_users_by_uid([ctx['server']['user_id']])
