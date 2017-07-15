@@ -211,13 +211,22 @@ def api_dsh_servers():
 @app.route('/api/dsh/puppet/<name>')
 def api_dsh_puppet(name):
     data = puppetclasses.prefixes(name)
-    dsh = [
-        prefix for project, prefixes in data.items()
-        for prefix in prefixes
-        if project != 'admin'
-        if prefix.endswith('wmflabs')
-    ]
-    return flask.Response('\n'.join(dsh), mimetype='text/plain')
+    dsh = []
+    for project, d in data.items():
+        if project == 'admin':
+            continue
+        servers = nova.project_servers(project)
+        for prefix in d['prefixes']:
+            if prefix.endswith('wmflabs'):
+                dsh.append(prefix)
+            else:
+                dsh.extend([
+                    "{}.{}.eqiad.wmflabs".format(server, project)
+                    for server in servers
+                    if server.startswith(prefix)
+                ])
+
+    return flask.Response('\n'.join(set(dsh)), mimetype='text/plain')
 
 
 @app.errorhandler(404)
