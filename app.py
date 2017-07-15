@@ -176,12 +176,24 @@ def api_projects_txt():
         mimetype='text/plain')
 
 
-@app.route('/api/dsh/<name>')
-def api_dsh(name):
+@app.route('/api/dsh/project/<name>')
+def api_dsh_project(name):
     servers = nova.project_servers(name)
     dsh = [
         "{}.{}.eqiad.wmflabs".format(server['name'], name)
         for server in servers
+    ]
+    return flask.Response('\n'.join(dsh), mimetype='text/plain')
+
+
+@app.route('/api/dsh/puppet/<name>')
+def api_dsh_puppet(name):
+    data = puppetclasses.prefixes(name)
+    dsh = [
+        prefix for project, prefixes in data.items()
+        for prefix in prefixes
+        if project != 'admin'
+        if prefix.endswith('wmflabs')
     ]
     return flask.Response('\n'.join(dsh), mimetype='text/plain')
 
