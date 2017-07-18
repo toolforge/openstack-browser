@@ -184,7 +184,7 @@ def api_projects_json():
 @app.route('/api/projects.txt')
 def api_projects_txt():
     return flask.Response(
-        '\n'.join(keystone.all_projects()),
+        '\n'.join(sorted(keystone.all_projects())),
         mimetype='text/plain')
 
 
@@ -195,7 +195,7 @@ def api_dsh_project(name):
         "{}.{}.eqiad.wmflabs".format(server['name'], name)
         for server in servers
     ]
-    return flask.Response('\n'.join(dsh), mimetype='text/plain')
+    return flask.Response('\n'.join(sorted(dsh)), mimetype='text/plain')
 
 
 @app.route('/api/dsh/servers')
@@ -205,10 +205,10 @@ def api_dsh_servers():
         "{}.{}.eqiad.wmflabs".format(server['name'], server['tenant_id'])
         for server in servers
     ]
-    return flask.Response('\n'.join(dsh), mimetype='text/plain')
+    return flask.Response('\n'.join(sorted(dsh)), mimetype='text/plain')
 
 
-@app.route('/api/dsh/puppet/<name>')
+@app.route('/api/dsh/puppetclass/<name>')
 def api_dsh_puppet(name):
     data = puppetclasses.prefixes(name)
     dsh = []
@@ -233,7 +233,7 @@ def api_dsh_puppet(name):
                     if server['name'].startswith(prefix)
                 ])
 
-    return flask.Response('\n'.join(set(dsh)), mimetype='text/plain')
+    return flask.Response('\n'.join(sorted(set(dsh))), mimetype='text/plain')
 
 
 @app.errorhandler(404)
