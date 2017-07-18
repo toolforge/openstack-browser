@@ -215,15 +215,22 @@ def api_dsh_puppet(name):
     for project, d in data.items():
         if project == 'admin':
             continue
-        servers = nova.project_servers(project)
+
+        try:
+            servers = nova.project_servers(project)
+        except Exception:
+            app.logger.exception(
+                'Error collecting the list of servers for %s', project)
+            servers = []
+
         for prefix in d['prefixes']:
             if prefix.endswith('wmflabs'):
                 dsh.append(prefix)
             else:
                 dsh.extend([
-                    "{}.{}.eqiad.wmflabs".format(server, project)
+                    "{}.{}.eqiad.wmflabs".format(server['name'], project)
                     for server in servers
-                    if server.startswith(prefix)
+                    if server['name'].startswith(prefix)
                 ])
 
     return flask.Response('\n'.join(set(dsh)), mimetype='text/plain')
