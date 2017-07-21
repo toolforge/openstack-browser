@@ -67,7 +67,12 @@ def all_projects():
     data = cache.CACHE.load(key)
     if data is None:
         keystone = keystone_client()
-        data = [p.name for p in keystone.projects.list(enabled=True)]
+        # Ignore the magic 'admin' project
+        data = [
+            p.name
+            for p in keystone.projects.list(enabled=True)
+            if p.name != 'admin'
+        ]
         cache.CACHE.save(key, data, 300)
     return data
 
