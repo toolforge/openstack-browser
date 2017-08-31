@@ -1,7 +1,7 @@
 Keystone browser
 ================
 
-Browse the Tool Labs OpenStack deployment.
+Browse the Wikimedia Cloud Services OpenStack deployment.
 
 Deploy on Tool Labs
 -------------------
