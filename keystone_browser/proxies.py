@@ -59,6 +59,10 @@ def project_proxies(project, cached=True):
             data = []
         else:
             data = req.json()['routes']
+            # Some of the domain names have a . appended at the end,
+            # strip them out so the URLs look right
+            for route in data:
+                route['domain'] = route['domain'].rstrip('.')
         cache.CACHE.save(key, data, 3600)
     return data
 
