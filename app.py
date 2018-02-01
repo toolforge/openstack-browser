@@ -250,6 +250,9 @@ def api_dsh_puppet(name):
 
     return flask.Response('\n'.join(sorted(set(dsh))), mimetype='text/plain')
 
+@app.route('/api/hierakey/<hierakey>')
+def api_hierakey(hierakey):
+    return flask.jsonify(servers=puppetclasses.hieraprefixes(hierakey))
 
 @app.errorhandler(404)
 def page_not_found(e):
