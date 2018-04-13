@@ -27,7 +27,7 @@ import redis
 
 class Cache(object):
     """Simple redis wrapper."""
-    def __init__(self, enabled=True):
+    def __init__(self, enabled=True, seed=''):
         self.enabled = enabled
         self.conn = redis.Redis(
             host='tools-redis',
@@ -35,7 +35,8 @@ class Cache(object):
         )
         u = pwd.getpwuid(os.getuid())
         self.prefix = hashlib.sha1(
-            '{}.{}'.format(u.pw_name, u.pw_dir).encode('utf-8')).hexdigest()
+            '{}{}.{}'.format(seed, u.pw_name, u.pw_dir).encode('utf-8')
+        ).hexdigest()
 
     def key(self, val):
         return '{}:{}'.format(self.prefix, val)
@@ -55,4 +56,4 @@ class Cache(object):
             self.conn.setex(real_key, json.dumps(data), expiry)
 
 
-CACHE = Cache()
+CACHE = Cache(seed='201804132043')
