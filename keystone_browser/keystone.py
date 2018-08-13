@@ -43,7 +43,7 @@ def session(project='observer'):
     # TODO: read settings from /etc/novaobserver.yaml once we get it mounted
     # into the kubernetes pods (<https://gerrit.wikimedia.org/r/#/c/327235>)
     auth = v3.Password(
-        auth_url='http://labcontrol1001.wikimedia.org:5000/v3',
+        auth_url='http://cloudcontrol1003.wikimedia.org:5000/v3',
         password='Fs6Dq2RtG8KwmM2Z',
         username='novaobserver',
         project_id=project,
