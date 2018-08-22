@@ -39,8 +39,8 @@ def nova_client(project, region):
 
 @functools.lru_cache()
 def get_regions():
-    nova = client.Client('2.12', session=keystone.session, endpoint_type='public')
-    region_recs = nova.regions.list()
+    ks_client = keystone.keystone_client()
+    region_recs = ks_client.regions.list()
     return [region.id for region in region_recs]
 
 
