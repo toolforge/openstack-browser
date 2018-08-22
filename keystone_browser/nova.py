@@ -27,13 +27,21 @@ from . import keystone
 
 
 @functools.lru_cache(maxsize=None)
-def nova_client(project):
+def nova_client(project, region):
     return client.Client(
         '2.12',
         session=keystone.session(project),
         endpoint_type='public',
         timeout=2,
+        region_name=region
     )
+
+
+@functools.lru_cache()
+def get_regions():
+    nova = client.Client('2.12', session=keystone.session, endpoint_type='public')
+    region_recs = nova.regions.list()
+    return [region.id for region in region_recs]
 
 
 def project_servers(project):
@@ -45,14 +53,17 @@ def project_servers(project):
     key = 'nova:project_servers:{}'.format(project)
     data = cache.CACHE.load(key)
     if data is None:
-        nova = nova_client(project)
-        data = [
-            s._info for s in nova.servers.list(
-                detailed=True,
-                sort_keys=['display_name'],
-                sort_dirs=['asc'],
-            )
-        ]
+        data = []
+        for region in get_regions():
+            nova = nova_client(project, region)
+            data.extend([
+                s._info for s in nova.servers.list(
+                    detailed=True,
+                    sort_keys=['display_name'],
+                    sort_dirs=['asc'],
+                )
+            ])
+
         cache.CACHE.save(key, data, 300)
     return data
 
@@ -62,10 +73,12 @@ def flavors(project):
     key = 'nova:flavors:{}'.format(project)
     data = cache.CACHE.load(key)
     if data is None:
-        nova = nova_client(project)
-        data = {
-            f._info['id']: f._info for f in nova.flavors.list()
-        }
+        data = {}
+        for region in get_regions():
+            nova = nova_client(project, region)
+            for f in nova.flavors.list():
+                data[f._info['id']] = f._info
+
         cache.CACHE.save(key, data, 3600)
     return data
 
@@ -89,14 +102,19 @@ def server(fqdn):
     key = 'nova:server:{}'.format(fqdn)
     data = cache.CACHE.load(key)
     if data is None:
-        name, project, tld = fqdn.split('.', 2)
-        nova = nova_client(project)
-        servers = nova.servers.list(
-            detailed=True,
-            search_opts={
-                'name': '^{}$'.format(name),
-            },
-        )
+        name, project, _ = fqdn.split('.', 2)
+        servers = []
+        for region in get_regions():
+            nova = nova_client(project, region)
+            reg_servers = nova.servers.list(
+                detailed=True,
+                search_opts={
+                    'name': '^{}$'.format(name),
+                },
+            )
+            if reg_servers:
+                servers.extend(reg_servers)
+
         if servers:
             data = servers[0]._info
         else:
