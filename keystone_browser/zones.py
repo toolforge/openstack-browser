@@ -75,9 +75,11 @@ def a_records(project, zone):
 @functools.lru_cache(maxsize=None)
 def floating_ips(project):
     """Get a list of floating ips allocated to a project."""
-    novaclient = nova.nova_client(project)
-    ips = novaclient.floating_ips.list()
-    return [ip.ip for ip in ips]
+    ips = []
+    for region in nova.get_regions():
+        novaclient = nova.nova_client(project, region)
+        ips.extend([ip.ip for ip in novaclient.floating_ips.list()])
+    return ips
 
 
 @functools.lru_cache(maxsize=None)
