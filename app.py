@@ -91,6 +91,7 @@ def project(name):
             'images': glance.images(),
             'proxies': proxies.project_proxies(name, cached),
             'zones': zones.all_a_records(name, cached),
+            'limits': nova.limits(name),
         })
     except Exception:
         app.logger.exception(

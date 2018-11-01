@@ -83,6 +83,20 @@ def flavors(project):
     return data
 
 
+def limits(project):
+    """Get a dict of limit details."""
+    key = 'nova:limits:{}'.format(project)
+    data = cache.CACHE.load(key)
+    if data is None:
+        data = {}
+        for region in get_regions():
+            nova = nova_client(project, region)
+            data[region] = nova.limits.get().to_dict()
+
+        cache.CACHE.save(key, data, 3600)
+    return data
+
+
 def all_servers():
     """Get a list of all servers in all projects."""
     key = 'keystone:all_servers'
