@@ -176,6 +176,7 @@
           <th>CPUs</th>
           <th>RAM</th>
           <th>Storage</th>
+          <th>Hypervisor</th>
           <th>Last modified</th>
         </tr>
       </thead>
@@ -198,6 +199,7 @@
           <td class="text-right">{{ flavor.vcpus|default('-') }}</td>
           <td class="text-right">{{ flavor.ram|default('-') }}M</td>
           <td class="text-right">{{ flavor.disk|default('-') }}G</td>
+          <td class="text-right">{{ server['OS-EXT-SRV-ATTR:hypervisor_hostname'] }}</td>
           <td>{{ server.updated }}</td>
         </tr>
         {% endfor %}
