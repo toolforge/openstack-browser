@@ -29,7 +29,7 @@ class Cache(object):
     """Simple redis wrapper."""
     def __init__(self, enabled=True, seed=''):
         self.enabled = enabled
-        self.conn = redis.Redis(
+        self.conn = redis.StrictRedis(
             host='tools-redis',
             decode_responses=True,
         )
@@ -53,7 +53,7 @@ class Cache(object):
     def save(self, key, data, expiry=300):
         if self.enabled:
             real_key = self.key(key)
-            self.conn.setex(real_key, json.dumps(data), expiry)
+            self.conn.setex(real_key, expiry, json.dumps(data))
 
 
 CACHE = Cache(seed='201804132043')
