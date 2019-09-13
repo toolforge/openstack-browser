@@ -30,7 +30,7 @@ from . import keystone
 @functools.lru_cache(maxsize=1)
 def url_template():
     """Get the url template for accessing the proxy service."""
-    return "http://labs-puppetmaster.wikimedia.org:8100/v1"
+    return "http://puppetmaster.cloudinfra.wmflabs.org:8100/v1"
 
 
 def prefixes(classname, cached=True):
