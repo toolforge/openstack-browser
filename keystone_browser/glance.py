@@ -37,6 +37,13 @@ def glance_client():
 
 def images():
     """Get a dict of image details indexed by id."""
+    # Images not appearing in this dict? Make sure that the 'observer' project
+    # can see them:
+    # for img in $(openstack image list --private -f value|awk '{print $1}')
+    # do
+    #   glance member-create $img observer;
+    #   glance member-update $img observer accepted;
+    # done
     key = 'glance:images'
     data = cache.CACHE.load(key)
     if data is None:
