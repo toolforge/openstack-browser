@@ -29,11 +29,11 @@ from . import keystone
 @functools.lru_cache(maxsize=None)
 def nova_client(project, region):
     return client.Client(
-        '2.12',
+        "2.12",
         session=keystone.session(project),
-        endpoint_type='public',
+        endpoint_type="public",
         timeout=2,
-        region_name=region
+        region_name=region,
     )
 
 
@@ -50,19 +50,22 @@ def project_servers(project):
     Data returned for each server is described at
     https://developer.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#listServers
     """
-    key = 'nova:project_servers:{}'.format(project)
+    key = "nova:project_servers:{}".format(project)
     data = cache.CACHE.load(key)
     if data is None:
         data = []
         for region in get_regions():
             nova = nova_client(project, region)
-            data.extend([
-                s._info for s in nova.servers.list(
-                    detailed=True,
-                    sort_keys=['display_name'],
-                    sort_dirs=['asc'],
-                )
-            ])
+            data.extend(
+                [
+                    s._info
+                    for s in nova.servers.list(
+                        detailed=True,
+                        sort_keys=["display_name"],
+                        sort_dirs=["asc"],
+                    )
+                ]
+            )
 
         cache.CACHE.save(key, data, 300)
     return data
@@ -70,14 +73,14 @@ def project_servers(project):
 
 def flavors(project):
     """Get a dict of flavor details indexed by id."""
-    key = 'nova:flavors:{}'.format(project)
+    key = "nova:flavors:{}".format(project)
     data = cache.CACHE.load(key)
     if data is None:
         data = {}
         for region in get_regions():
             nova = nova_client(project, region)
             for f in nova.flavors.list():
-                data[f._info['id']] = f._info
+                data[f._info["id"]] = f._info
 
         cache.CACHE.save(key, data, 3600)
     return data
@@ -85,7 +88,7 @@ def flavors(project):
 
 def limits(project):
     """Get a dict of limit details."""
-    key = 'nova:limits:{}'.format(project)
+    key = "nova:limits:{}".format(project)
     data = cache.CACHE.load(key)
     if data is None:
         data = {}
@@ -99,13 +102,13 @@ def limits(project):
 
 def all_servers():
     """Get a list of all servers in all projects."""
-    key = 'keystone:all_servers'
+    key = "keystone:all_servers"
     data = cache.CACHE.load(key)
     if data is None:
         data = []
         all_projects = keystone.all_projects()
         for project in all_projects:
-            if project != 'admin':
+            if project != "admin":
                 data += project_servers(project)
         cache.CACHE.save(key, data, 300)
     return data
@@ -113,17 +116,17 @@ def all_servers():
 
 def server(fqdn):
     """Get information about a server by fqdn."""
-    key = 'nova:server:{}'.format(fqdn)
+    key = "nova:server:{}".format(fqdn)
     data = cache.CACHE.load(key)
     if data is None:
-        name, project, _ = fqdn.split('.', 2)
+        name, project, _ = fqdn.split(".", 2)
         servers = []
         for region in get_regions():
             nova = nova_client(project, region)
             reg_servers = nova.servers.list(
                 detailed=True,
                 search_opts={
-                    'name': '^{}$'.format(name),
+                    "name": "^{}$".format(name),
                 },
             )
             if reg_servers:

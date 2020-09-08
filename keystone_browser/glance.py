@@ -29,9 +29,9 @@ from . import keystone
 @functools.lru_cache(maxsize=1)
 def glance_client():
     return glanceclient.Client(
-        version='2',
+        version="2",
         session=keystone.session(),
-        interface='public',
+        interface="public",
     )
 
 
@@ -44,12 +44,10 @@ def images():
     #   glance member-create $img observer;
     #   glance member-update $img observer accepted;
     # done
-    key = 'glance:images'
+    key = "glance:images"
     data = cache.CACHE.load(key)
     if data is None:
         glance = glance_client()
-        data = {
-            i['id']: i for i in glance.images.list()
-        }
+        data = {i["id"]: i for i in glance.images.list()}
         cache.CACHE.save(key, data, 3600)
     return data

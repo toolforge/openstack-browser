@@ -34,10 +34,9 @@ def url_template():
 
 
 def prefixes(classname, cached=True):
-    """Return a dict of {<projectname>: [prefixes]} for a given puppet class
-    """
+    """Return a dict of {<projectname>: [prefixes]} for a given puppet class"""
 
-    key = 'puppetprefixes:{}'.format(classname)
+    key = "puppetprefixes:{}".format(classname)
     data = None
     if cached:
         data = cache.CACHE.load(key)
@@ -53,29 +52,27 @@ def prefixes(classname, cached=True):
 
 
 def all_classes(cached=True):
-    """Return a list of all used puppet classes
-    """
+    """Return a list of all used puppet classes"""
 
-    key = 'all_puppetclasses'
+    key = "all_puppetclasses"
     data = None
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        url = url_template() + '/roles'
+        url = url_template() + "/roles"
         req = requests.get(url, verify=False)
         if req.status_code != 200:
             data = []
         else:
             data = yaml.safe_load(req.text)
         cache.CACHE.save(key, data, 1200)
-    return data['roles']
+    return data["roles"]
 
 
 def project_prefixes(project, cached=True):
-    """Return a dict of [prefixes] for a given project
-    """
+    """Return a dict of [prefixes] for a given project"""
 
-    key = 'puppetprojectprefixess:{}'.format(project)
+    key = "puppetprojectprefixess:{}".format(project)
     data = None
     if cached:
         data = cache.CACHE.load(key)
@@ -87,21 +84,21 @@ def project_prefixes(project, cached=True):
         else:
             data = yaml.safe_load(req.text)
         cache.CACHE.save(key, data, 1200)
-    return data['prefixes']
+    return data["prefixes"]
 
 
 def config(project, fqdn, cached=True):
     """Get full puppet config for a prefix.
 
-       Returns a dict with 'roles' and 'hiera' keys.
+    Returns a dict with 'roles' and 'hiera' keys.
     """
 
-    key = 'puppetconfig:{}'.format(fqdn)
+    key = "puppetconfig:{}".format(fqdn)
     data = None
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        url = url_template() + '/' + project + "/node/" + fqdn
+        url = url_template() + "/" + project + "/node/" + fqdn
         req = requests.get(url, verify=False)
         if req.status_code != 200:
             data = []
@@ -112,32 +109,30 @@ def config(project, fqdn, cached=True):
 
 
 def classes(project, fqdn, cached=True):
-    """Return a list of puppet classes for the given project and fqdn
-    """
-    return config(project, fqdn, cached)['roles']
+    """Return a list of puppet classes for the given project and fqdn"""
+    return config(project, fqdn, cached)["roles"]
 
 
 def hiera(project, fqdn, cached=True):
-    """Return a list of puppet classes for the given project and fqdn
-    """
+    """Return a list of puppet classes for the given project and fqdn"""
 
     """Return a list of puppet classes for the given project and fqdn
     """
-    return config(project, fqdn, cached)['hiera']
+    return config(project, fqdn, cached)["hiera"]
 
 
 def giant_hiera_dict(cached=True):
     """Gather up the hiera config for every possible instance.
 
-       This is incredibly slow and expensive, but it'll get all
-       the caches warmed up!
+    This is incredibly slow and expensive, but it'll get all
+    the caches warmed up!
 
-       Make a dict of the form
-       {hiera_key:
-            {project_id:
-                {fqdn: hiera_value}}}
+    Make a dict of the form
+    {hiera_key:
+         {project_id:
+             {fqdn: hiera_value}}}
     """
-    key = 'completehieradictt:'
+    key = "completehieradictt:"
     data = None
     if cached:
         data = cache.CACHE.load(key)
@@ -158,6 +153,5 @@ def giant_hiera_dict(cached=True):
 
 
 def hieraprefixes(hierakey, cached=True):
-    """dict of {<projectname>: {prefix: value}} for a given hiera key
-    """
+    """dict of {<projectname>: {prefix: value}} for a given hiera key"""
     return giant_hiera_dict(cached).get(hierakey, {})

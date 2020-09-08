@@ -30,8 +30,7 @@ from . import nova
 
 @functools.lru_cache(maxsize=None)
 def client(project):
-    return designate_client.Client(
-        session=keystone.session(project))
+    return designate_client.Client(session=keystone.session(project))
 
 
 @functools.lru_cache(maxsize=None)
@@ -47,17 +46,17 @@ def _raw_zones(project):
 def zones(project):
     """Return a simple list of zones owned by a project."""
     raw_zones = _raw_zones(project)
-    return [zone['name'] for zone in raw_zones]
+    return [zone["name"] for zone in raw_zones]
 
 
 @functools.lru_cache(maxsize=None)
 def _raw_recordsets(project, zone):
     """Return list of designate 'recordset' objects for a given
-       project and zone name.
+    project and zone name.
     """
     for z in _raw_zones(project):
-        if z['name'] == zone:
-            return client(project).recordsets.list(z['id'])
+        if z["name"] == zone:
+            return client(project).recordsets.list(z["id"])
     return []
 
 
@@ -69,7 +68,7 @@ def a_records(project, zone):
     https://developer.openstack.org/api-ref/dns/?expanded=list-all-recordsets-owned-by-project-detail
     """
     raw_recordsets = _raw_recordsets(project, zone)
-    return [r for r in raw_recordsets if r['type'] == 'A']
+    return [r for r in raw_recordsets if r["type"] == "A"]
 
 
 @functools.lru_cache(maxsize=None)
@@ -91,8 +90,9 @@ def wmflabsdotorg_a_records(project):
     by a special 'wmflabsdotorg' project.
     """
     return [
-        r for r in a_records('wmflabsdotorg', 'wmflabs.org.')
-        if r['records'][0] in floating_ips(project)
+        r
+        for r in a_records("wmflabsdotorg", "wmflabs.org.")
+        if r["records"][0] in floating_ips(project)
     ]
 
 
@@ -101,7 +101,7 @@ def all_a_records(project, cached=True):
 
     Returns a dict keyed by host with values being lists of ip addresses.
     """
-    key = 'zones:A:{}'.format(project)
+    key = "zones:A:{}".format(project)
     data = None
     if cached:
         data = cache.CACHE.load(key)
@@ -109,7 +109,7 @@ def all_a_records(project, cached=True):
         data = functools.reduce(
             operator.add,
             [a_records(project, zone) for zone in zones(project)],
-            []
+            [],
         )
         data += wmflabsdotorg_a_records(project)
         cache.CACHE.save(key, data, 3600)

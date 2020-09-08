@@ -30,12 +30,16 @@ def ldap_conn():
 
     Return value can be used as a context manager
     """
-    servers = ldap3.ServerPool([
-        ldap3.Server('ldap-labs.eqiad.wikimedia.org'),
-        ldap3.Server('ldap-labs.codfw.wikimedia.org'),
-    ], ldap3.ROUND_ROBIN, active=True, exhaust=True)
-    return ldap3.Connection(
-        servers, read_only=True, auto_bind=True)
+    servers = ldap3.ServerPool(
+        [
+            ldap3.Server("ldap-labs.eqiad.wikimedia.org"),
+            ldap3.Server("ldap-labs.codfw.wikimedia.org"),
+        ],
+        ldap3.ROUND_ROBIN,
+        active=True,
+        exhaust=True,
+    )
+    return ldap3.Connection(servers, read_only=True, auto_bind=True)
 
 
 def in_list(attr, items):
@@ -47,52 +51,55 @@ def in_list(attr, items):
     >>> in_list('uid', ['a', 'b', 'c'])
     '(|(uid=a)(uid=b)(uid=c))'
     """
-    return '(|{})'.format(''.join(
-        ['({}={})'.format(attr, item) for item in items]
-    ))
+    return "(|{})".format(
+        "".join(["({}={})".format(attr, item) for item in items])
+    )
 
 
 def get_users_by_uid(uids):
     """Get a list of dicts of user information."""
     if not uids:
         return []
-    key = 'ldap:get_users_by_uid:{}'.format(
-        hashlib.sha1('|'.join(uids).encode('utf-8')).hexdigest())
+    key = "ldap:get_users_by_uid:{}".format(
+        hashlib.sha1("|".join(uids).encode("utf-8")).hexdigest()
+    )
     data = cache.CACHE.load(key)
     if data is None:
         data = []
         with ldap_conn() as conn:
             results = conn.extend.standard.paged_search(
-                'ou=people,dc=wikimedia,dc=org',
-                in_list('uid', uids),
+                "ou=people,dc=wikimedia,dc=org",
+                in_list("uid", uids),
                 ldap3.SUBTREE,
-                attributes=['uid', 'cn'],
+                attributes=["uid", "cn"],
                 paged_size=1000,
                 time_limit=5,
                 generator=True,
             )
             for resp in results:
-                attribs = resp.get('attributes')
+                attribs = resp.get("attributes")
                 # LDAP attributes come back as a dict of lists. We know that
                 # there is only one value for each list, so unwrap it
-                data.append({
-                    'uid': attribs['uid'][0],
-                    'cn': attribs['cn'][0],
-                })
+                data.append(
+                    {
+                        "uid": attribs["uid"][0],
+                        "cn": attribs["cn"][0],
+                    }
+                )
         cache.CACHE.save(key, data, 3600)
     return data
 
 
 def user_count():
     """Get the count of all users in LDAP."""
-    key = 'ldap:user_count'
+    key = "ldap:user_count"
     total_entries = cache.CACHE.load(key)
     if total_entries is None:
         total_entries = 0
         with ldap_conn() as conn:
             results = conn.extend.standard.paged_search(
-                'ou=people,dc=wikimedia,dc=org',
-                '(objectclass=posixaccount)',
+                "ou=people,dc=wikimedia,dc=org",
+                "(objectclass=posixaccount)",
                 ldap3.SUBTREE,
                 attributes=None,
                 paged_size=1000,

@@ -36,245 +36,262 @@ app = flask.Flask(__name__)
 app.wsgi_app = werkzeug.middleware.proxy_fix.ProxyFix(app.wsgi_app)
 
 
-@app.route('/')
+@app.route("/")
 def home():
     ctx = {}
     try:
-        cached = 'purge' not in flask.request.args
-        ctx.update({
-            'usage': stats.usage(cached),
-        })
+        cached = "purge" not in flask.request.args
+        ctx.update(
+            {
+                "usage": stats.usage(cached),
+            }
+        )
     except Exception:
-        app.logger.exception('Error collecting information for projects')
-    return flask.render_template('home.html', **ctx)
+        app.logger.exception("Error collecting information for projects")
+    return flask.render_template("home.html", **ctx)
 
 
-@app.route('/project/')
+@app.route("/project/")
 def projects():
     ctx = {}
     try:
-        ctx.update({
-            'projects': keystone.all_projects(),
-        })
+        ctx.update(
+            {
+                "projects": keystone.all_projects(),
+            }
+        )
     except Exception:
-        app.logger.exception('Error collecting information for projects')
-    return flask.render_template('projects.html', **ctx)
+        app.logger.exception("Error collecting information for projects")
+    return flask.render_template("projects.html", **ctx)
 
 
-@app.route('/server/')
+@app.route("/server/")
 def servers():
     ctx = {}
     try:
-        ctx.update({
-            'servers': nova.all_servers(),
-        })
+        ctx.update(
+            {
+                "servers": nova.all_servers(),
+            }
+        )
     except Exception:
-        app.logger.exception('Error collecting information for projects')
-    return flask.render_template('servers.html', **ctx)
+        app.logger.exception("Error collecting information for projects")
+    return flask.render_template("servers.html", **ctx)
 
 
-@app.route('/project/<name>')
+@app.route("/project/<name>")
 def project(name):
-    cached = 'purge' not in flask.request.args
+    cached = "purge" not in flask.request.args
     ctx = {
-        'project': name,
+        "project": name,
     }
     try:
         users = keystone.project_users_by_role(name)
-        admins = users['admin'] + users['projectadmin']
-        ctx.update({
-            'project': name,
-            'admins': ldap.get_users_by_uid(admins),
-            'users': ldap.get_users_by_uid(users['user']),
-            'servers': nova.project_servers(name),
-            'flavors': nova.flavors(name),
-            'images': glance.images(),
-            'proxies': proxies.project_proxies(name, cached),
-            'zones': zones.all_a_records(name, cached),
-            'limits': nova.limits(name),
-        })
+        admins = users["admin"] + users["projectadmin"]
+        ctx.update(
+            {
+                "project": name,
+                "admins": ldap.get_users_by_uid(admins),
+                "users": ldap.get_users_by_uid(users["user"]),
+                "servers": nova.project_servers(name),
+                "flavors": nova.flavors(name),
+                "images": glance.images(),
+                "proxies": proxies.project_proxies(name, cached),
+                "zones": zones.all_a_records(name, cached),
+                "limits": nova.limits(name),
+            }
+        )
     except Exception:
         app.logger.exception(
-            'Error collecting information for project "%s"', name)
-    return flask.render_template('project.html', **ctx)
+            'Error collecting information for project "%s"', name
+        )
+    return flask.render_template("project.html", **ctx)
 
 
-@app.route('/user/<uid>')
+@app.route("/user/<uid>")
 def user(uid):
     ctx = {
-        'uid': uid,
+        "uid": uid,
     }
     try:
-        ctx.update({
-            'user': ldap.get_users_by_uid([uid]),
-            'projects': keystone.projects_for_user(uid),
-        })
-        if ctx['user']:
-            ctx['user'] = ctx['user'][0]
+        ctx.update(
+            {
+                "user": ldap.get_users_by_uid([uid]),
+                "projects": keystone.projects_for_user(uid),
+            }
+        )
+        if ctx["user"]:
+            ctx["user"] = ctx["user"][0]
     except Exception:
-        app.logger.exception(
-            'Error collecting information for user "%s"', uid)
-    return flask.render_template('user.html', **ctx)
+        app.logger.exception('Error collecting information for user "%s"', uid)
+    return flask.render_template("user.html", **ctx)
 
 
-@app.route('/server/<fqdn>')
+@app.route("/server/<fqdn>")
 def server(fqdn):
-    name, project, tld = fqdn.split('.', 2)
+    name, project, tld = fqdn.split(".", 2)
     ctx = {
-        'fqdn': fqdn,
-        'project': project,
+        "fqdn": fqdn,
+        "project": project,
     }
     try:
-        ctx.update({
-            'server': nova.server(fqdn),
-            'flavors': nova.flavors(project),
-            'images': glance.images(),
-            'puppetclasses': puppetclasses.classes(project, fqdn),
-            'hiera': puppetclasses.hiera(project, fqdn),
-        })
-        if 'user_id' in ctx['server']:
-            user = ldap.get_users_by_uid([ctx['server']['user_id']])
+        ctx.update(
+            {
+                "server": nova.server(fqdn),
+                "flavors": nova.flavors(project),
+                "images": glance.images(),
+                "puppetclasses": puppetclasses.classes(project, fqdn),
+                "hiera": puppetclasses.hiera(project, fqdn),
+            }
+        )
+        if "user_id" in ctx["server"]:
+            user = ldap.get_users_by_uid([ctx["server"]["user_id"]])
             if user:
-                ctx['owner'] = user[0]
+                ctx["owner"] = user[0]
     except Exception:
         app.logger.exception(
-            'Error collecting information for server "%s"', fqdn)
+            'Error collecting information for server "%s"', fqdn
+        )
 
-    return flask.render_template('server.html', **ctx)
+    return flask.render_template("server.html", **ctx)
 
 
-@app.route('/puppetclass/')
+@app.route("/puppetclass/")
 def all_puppetclasses():
     ctx = {}
     try:
         ctx.update({"puppetclasses": puppetclasses.all_classes()})
     except Exception:
-        app.logger.exception(
-            'Error collecting the list of puppet classes')
+        app.logger.exception("Error collecting the list of puppet classes")
 
-    return flask.render_template('puppetclasses.html', **ctx)
+    return flask.render_template("puppetclasses.html", **ctx)
 
 
-@app.route('/puppetclass/<classname>')
+@app.route("/puppetclass/<classname>")
 def puppetclass(classname):
     ctx = {
-        'puppetclass': classname,
+        "puppetclass": classname,
     }
     try:
         ctx.update({"data": puppetclasses.prefixes(classname)})
     except Exception:
         app.logger.exception(
-            'Error collecting information for puppet class "%s"', classname)
+            'Error collecting information for puppet class "%s"', classname
+        )
 
-    return flask.render_template('puppetclass.html', **ctx)
+    return flask.render_template("puppetclass.html", **ctx)
 
 
-@app.route('/hierakey/<hierakey>')
+@app.route("/hierakey/<hierakey>")
 def hierakey(hierakey):
     ctx = {
-        'hierakey': hierakey,
+        "hierakey": hierakey,
     }
     try:
         ctx.update({"data": puppetclasses.hieraprefixes(hierakey)})
     except Exception:
         app.logger.exception(
-            'Error collecting information for hiera key "%s"', hierakey)
+            'Error collecting information for hiera key "%s"', hierakey
+        )
 
-    return flask.render_template('hierakey.html', **ctx)
+    return flask.render_template("hierakey.html", **ctx)
 
 
-@app.route('/proxy/')
+@app.route("/proxy/")
 def all_proxies():
-    cached = 'purge' not in flask.request.args
+    cached = "purge" not in flask.request.args
     ctx = {
-        'proxies': proxies.all_proxies(cached),
+        "proxies": proxies.all_proxies(cached),
     }
-    return flask.render_template('proxies.html', **ctx)
+    return flask.render_template("proxies.html", **ctx)
 
 
-@app.route('/api/projects.json')
+@app.route("/api/projects.json")
 def api_projects_json():
     return flask.jsonify(projects=keystone.all_projects())
 
 
-@app.route('/api/projects.txt')
+@app.route("/api/projects.txt")
 def api_projects_txt():
     return flask.Response(
-        '\n'.join(sorted(keystone.all_projects())),
-        mimetype='text/plain')
+        "\n".join(sorted(keystone.all_projects())), mimetype="text/plain"
+    )
 
 
-@app.route('/api/dsh/project/<name>')
+@app.route("/api/dsh/project/<name>")
 def api_dsh_project(name):
     servers = nova.project_servers(name)
     dsh = [
-        "{}.{}.eqiad1.wikimedia.cloud".format(server['name'], name)
+        "{}.{}.eqiad1.wikimedia.cloud".format(server["name"], name)
         for server in servers
     ]
-    return flask.Response('\n'.join(sorted(dsh)), mimetype='text/plain')
+    return flask.Response("\n".join(sorted(dsh)), mimetype="text/plain")
 
 
-@app.route('/api/dsh/servers')
+@app.route("/api/dsh/servers")
 def api_dsh_servers():
     servers = nova.all_servers()
     dsh = [
         "{}.{}.eqiad1.wikimedia.cloud".format(
-            server['name'], server['tenant_id']
+            server["name"], server["tenant_id"]
         )
         for server in servers
     ]
-    return flask.Response('\n'.join(sorted(dsh)), mimetype='text/plain')
+    return flask.Response("\n".join(sorted(dsh)), mimetype="text/plain")
 
 
-@app.route('/api/dsh/puppetclass/<name>')
+@app.route("/api/dsh/puppetclass/<name>")
 def api_dsh_puppet(name):
     data = puppetclasses.prefixes(name)
     dsh = []
     for project, d in data.items():
-        if project == 'admin':
+        if project == "admin":
             continue
 
         try:
             servers = nova.project_servers(project)
         except Exception:
             app.logger.exception(
-                'Error collecting the list of servers for %s', project)
+                "Error collecting the list of servers for %s", project
+            )
             servers = []
 
-        for prefix in d['prefixes']:
-            if prefix.endswith('wmflabs'):
+        for prefix in d["prefixes"]:
+            if prefix.endswith("wmflabs"):
                 dsh.append(prefix)
             else:
-                dsh.extend([
-                    "{}.{}.eqiad1.wikimedia.cloud".format(
-                        server['name'], project
-                    )
-                    for server in servers
-                    if server['name'].startswith(prefix)
-                ])
+                dsh.extend(
+                    [
+                        "{}.{}.eqiad1.wikimedia.cloud".format(
+                            server["name"], project
+                        )
+                        for server in servers
+                        if server["name"].startswith(prefix)
+                    ]
+                )
 
-    return flask.Response('\n'.join(sorted(set(dsh))), mimetype='text/plain')
+    return flask.Response("\n".join(sorted(set(dsh))), mimetype="text/plain")
 
 
-@app.route('/api/hierakey/<hierakey>')
+@app.route("/api/hierakey/<hierakey>")
 def api_hierakey(hierakey):
     return flask.jsonify(servers=puppetclasses.hieraprefixes(hierakey))
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return flask.redirect(flask.url_for('projects'))
+    return flask.redirect(flask.url_for("projects"))
 
 
-@app.template_filter('contains')
+@app.template_filter("contains")
 def contains(haystack, needle):
     return needle in haystack
 
 
-@app.template_filter('extract_hostname')
+@app.template_filter("extract_hostname")
 def extract_hostname(backend):
     """Extract a hostname from a backend description."""
-    return proxies.parse_backend(backend).get('hostname', '404')
+    return proxies.parse_backend(backend).get("hostname", "404")
 
 
 @app.template_test()

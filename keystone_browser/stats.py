@@ -27,28 +27,28 @@ from . import nova
 
 
 def usage(cached=True):
-    key = 'stats:usage'
+    key = "stats:usage"
     data = None
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        projects = [p for p in keystone.all_projects() if p != 'admin']
+        projects = [p for p in keystone.all_projects() if p != "admin"]
         data = collections.defaultdict(int)
-        data['projects'] = len(projects)
+        data["projects"] = len(projects)
 
         for p in projects:
             types = collections.defaultdict(int)
             for s in nova.project_servers(p):
-                data['instances'] += 1
-                types[s['flavor']['id']] += 1
+                data["instances"] += 1
+                types[s["flavor"]["id"]] += 1
 
             for label, flavor in nova.flavors(p).items():
-                data['ram'] += types[label] * flavor['ram']
-                data['vcpus'] += types[label] * flavor['vcpus']
-                data['disk'] += types[label] * flavor['disk']
+                data["ram"] += types[label] * flavor["ram"]
+                data["vcpus"] += types[label] * flavor["vcpus"]
+                data["disk"] += types[label] * flavor["disk"]
 
-        data['users'] = ldap.user_count()
-        data['generated'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+        data["users"] = ldap.user_count()
+        data["generated"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
         # Cache for 25 hours
         cache.CACHE.save(key, data, 90000)
     return data

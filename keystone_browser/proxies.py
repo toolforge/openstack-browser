@@ -29,40 +29,41 @@ from . import keystone
 from . import utils
 
 
-RE_BACKEND = re.compile(r'^https?://(?P<host>[^:]+):(?P<port>\d+)$')
+RE_BACKEND = re.compile(r"^https?://(?P<host>[^:]+):(?P<port>\d+)$")
 
 
 @functools.lru_cache(maxsize=1)
 def url_template():
     """Get the url template for accessing the proxy service."""
     c = keystone.keystone_client()
-    proxy = c.services.list(type='proxy')[0]
+    proxy = c.services.list(type="proxy")[0]
     endpoint = c.endpoints.list(
-        service=proxy.id, interface='public', enabled=True)[0]
+        service=proxy.id, interface="public", enabled=True
+    )[0]
     # Secret magic! The endpoint provided by keystone is private and we can't
     # access it. There's an alternative public read-only endpoint on port 5669
     # though. So, swap in 5669 for the port we got from keystone.
-    return re.sub(r':[0-9]+/', ':5669/', endpoint.url)
+    return re.sub(r":[0-9]+/", ":5669/", endpoint.url)
 
 
 def project_proxies(project, cached=True):
     """Get a list of proxies for a project."""
-    key = 'proxies:{}'.format(project)
+    key = "proxies:{}".format(project)
     data = None
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        base_url = url_template().replace('$(tenant_id)s', project)
-        url = '{}/mapping'.format(base_url)
+        base_url = url_template().replace("$(tenant_id)s", project)
+        url = "{}/mapping".format(base_url)
         req = requests.get(url, verify=False)
         if req.status_code != 200:
             data = []
         else:
-            data = req.json()['routes']
+            data = req.json()["routes"]
             # Some of the domain names have a . appended at the end,
             # strip them out so the URLs look right
             for route in data:
-                route['domain'] = route['domain'].rstrip('.')
+                route["domain"] = route["domain"].rstrip(".")
         cache.CACHE.save(key, data, 3600)
     return data
 
@@ -73,7 +74,7 @@ def all_proxies(cached=True):
     Each proxy in the list will be a dict containing project, domain, and
     backends keys.
     """
-    key = 'proxies:all'
+    key = "proxies:all"
     data = None
     if cached:
         data = cache.CACHE.load(key)
@@ -92,10 +93,10 @@ def parse_backend(backend):
     """Parse a proxy backend specification."""
     m = RE_BACKEND.match(backend)
     if not m:
-        return {'hostname': backend}
+        return {"hostname": backend}
     data = m.groupdict()
-    if utils.is_ipv4(data['host']):
-        data['hostname'] = socket.getfqdn(data['host'])
+    if utils.is_ipv4(data["host"]):
+        data["hostname"] = socket.getfqdn(data["host"])
     else:
-        data['hostname'] = data['host']
+        data["hostname"] = data["host"]
     return data

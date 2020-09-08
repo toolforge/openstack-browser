@@ -27,24 +27,25 @@ import redis
 
 class Cache(object):
     """Simple redis wrapper."""
-    def __init__(self, enabled=True, seed=''):
+
+    def __init__(self, enabled=True, seed=""):
         self.enabled = enabled
         self.conn = redis.StrictRedis(
-            host='tools-redis.svc.eqiad.wmflabs',
+            host="tools-redis.svc.eqiad.wmflabs",
             decode_responses=True,
         )
         u = pwd.getpwuid(os.getuid())
         self.prefix = hashlib.sha1(
-            '{}{}.{}'.format(seed, u.pw_name, u.pw_dir).encode('utf-8')
+            "{}{}.{}".format(seed, u.pw_name, u.pw_dir).encode("utf-8")
         ).hexdigest()
 
     def key(self, val):
-        return '{}:{}'.format(self.prefix, val)
+        return "{}:{}".format(self.prefix, val)
 
     def load(self, key):
         if self.enabled:
             try:
-                return json.loads(self.conn.get(self.key(key)) or '')
+                return json.loads(self.conn.get(self.key(key)) or "")
             except ValueError:
                 return None
         else:
@@ -56,4 +57,4 @@ class Cache(object):
             self.conn.setex(real_key, expiry, json.dumps(data))
 
 
-CACHE = Cache(seed='201804132043')
+CACHE = Cache(seed="201804132043")
