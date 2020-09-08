@@ -10,7 +10,7 @@
     <div class="panel-body">
       <ul class="list-unstyled">
         {% for server in servers %}
-          {% set fqdn = server.name ~ '.' ~ server.tenant_id ~ '.eqiad.wmflabs' %}
+          {% set fqdn = server.name ~ '.' ~ server.tenant_id ~ '.eqiad1.wikimedia.cloud' %}
           <li><a href="{{ url_for('server', fqdn=fqdn) }}" rel="nofollow">{{ fqdn }}</a></li>
         {% endfor %}
       </ul>

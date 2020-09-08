@@ -208,7 +208,7 @@ def api_projects_txt():
 def api_dsh_project(name):
     servers = nova.project_servers(name)
     dsh = [
-        "{}.{}.eqiad.wmflabs".format(server['name'], name)
+        "{}.{}.eqiad1.wikimedia.cloud".format(server['name'], name)
         for server in servers
     ]
     return flask.Response('\n'.join(sorted(dsh)), mimetype='text/plain')
@@ -218,7 +218,9 @@ def api_dsh_project(name):
 def api_dsh_servers():
     servers = nova.all_servers()
     dsh = [
-        "{}.{}.eqiad.wmflabs".format(server['name'], server['tenant_id'])
+        "{}.{}.eqiad1.wikimedia.cloud".format(
+            server['name'], server['tenant_id']
+        )
         for server in servers
     ]
     return flask.Response('\n'.join(sorted(dsh)), mimetype='text/plain')
@@ -244,7 +246,9 @@ def api_dsh_puppet(name):
                 dsh.append(prefix)
             else:
                 dsh.extend([
-                    "{}.{}.eqiad.wmflabs".format(server['name'], project)
+                    "{}.{}.eqiad1.wikimedia.cloud".format(
+                        server['name'], project
+                    )
                     for server in servers
                     if server['name'].startswith(prefix)
                 ])
