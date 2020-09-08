@@ -19,7 +19,7 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import flask
-import werkzeug.contrib.fixers
+import werkzeug.middleware.proxy_fix
 
 from keystone_browser import zones
 from keystone_browser import glance
@@ -33,7 +33,7 @@ from keystone_browser import utils
 
 
 app = flask.Flask(__name__)
-app.wsgi_app = werkzeug.contrib.fixers.ProxyFix(app.wsgi_app)
+app.wsgi_app = werkzeug.middleware.proxy_fix.ProxyFix(app.wsgi_app)
 
 
 @app.route('/')
