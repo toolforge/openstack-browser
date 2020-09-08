@@ -257,7 +257,7 @@ def api_dsh_puppet(name):
             servers = []
 
         for prefix in d["prefixes"]:
-            if prefix.endswith("wmflabs"):
+            if prefix.endswith(".wmflabs") or prefix.endswith(".cloud"):
                 dsh.append(prefix)
             else:
                 dsh.extend(
