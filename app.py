@@ -30,6 +30,7 @@ from keystone_browser import puppetclasses
 from keystone_browser import proxies
 from keystone_browser import stats
 from keystone_browser import utils
+from keystone_browser import cinder
 
 
 app = flask.Flask(__name__)
@@ -99,6 +100,7 @@ def project(name):
                 "proxies": proxies.project_proxies(name, cached),
                 "zones": zones.all_a_records(name, cached),
                 "limits": nova.limits(name),
+                "volumes": cinder.project_volumes(name, cached),
             }
         )
     except Exception:

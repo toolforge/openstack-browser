@@ -158,6 +158,50 @@
     </table>
   </div>
   {% endif %}
+  {% if volumes %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-hdd"></span>
+        Volumes
+      </h3>
+    </div>
+    <table class="table table-condensed table-hover tablesorter">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Size</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for volume in volumes|sort(attribute='name') %}
+        <tr>
+          <td class="text-nowrap">{{ volume.name }}</td>
+          <td class="text-right">{{ volume.size|default('-') }}G</td>
+          <td>
+            {% if volume.status == "in-use" %}
+              Attached to
+              {% for attachment in volume.attachments %}
+                {% for server in servers %}
+                  {% if server.id == attachment.server_id %}
+                    {% set fqdn = server.name ~ '.' ~ project ~ '.eqiad1.wikimedia.cloud' %}
+                    <a href="{{ url_for('server', fqdn=fqdn) }}" rel="nofollow">{{ fqdn }}</a>
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+            {% elif volume.status == "available" %}
+              Unattached
+            {% else %}
+              {{ volume.status }}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
   {% if servers %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
