@@ -101,6 +101,7 @@ def project(name):
                 "zones": zones.all_a_records(name, cached),
                 "limits": nova.limits(name),
                 "volumes": cinder.project_volumes(name, cached),
+                "cinder_limits": cinder.limits(name),
             }
         )
     except Exception:

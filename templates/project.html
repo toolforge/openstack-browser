@@ -39,6 +39,7 @@
     <div class="panel-body">
       <!-- {'maxTotalKeypairs': 100, 'maxPersonality': 5, 'maxPersonalitySize': 10240, 'maxServerMeta': 128, 'maxImageMeta': 128, 'maxServerGroups': 10, 'maxServerGroupMembers': 10, 'totalServerGroupsUsed': 0, 'maxSecurityGroupRules': 20} -->
       {% for region, region_limits in limits.items() %}
+      {% set cinder_region_limits = cinder_limits[region] %}
       <dt>{{ region }}</dt>
       <dd>
       {{ region_limits['absolute']['totalInstancesUsed'] }} / {{ region_limits['absolute']['maxTotalInstances'] }} instances.
@@ -46,6 +47,8 @@
       {{ region_limits['absolute']['totalRAMUsed'] / 1024 }} GB / {{ region_limits['absolute']['maxTotalRAMSize'] / 1024 }} GB RAM.
       {{ region_limits['absolute']['totalFloatingIpsUsed'] }} / {{ region_limits['absolute']['maxTotalFloatingIps'] }} floating IPs.
       {{ region_limits['absolute']['totalSecurityGroupsUsed'] }} / {{ region_limits['absolute']['maxSecurityGroups'] }} security groups.
+      {{ cinder_region_limits['absolute']['totalVolumesUsed'] }} / {{ cinder_region_limits['absolute']['maxTotalVolumes'] }} volumes.
+      {{ cinder_region_limits['absolute']['totalGigabytesUsed'] }} / {{ cinder_region_limits['absolute']['maxTotalVolumeGigabytes'] }} GB volume space.
       </dd>
       {% endfor %}
     </div>
@@ -206,7 +209,7 @@
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
       <h3 class="panel-title">
-        <span class="glyphicon glyphicon-hdd"></span>
+        <span class="glyphicon glyphicon-tasks"></span>
         Instances
       </h3>
     </div>
