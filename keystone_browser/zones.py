@@ -25,7 +25,7 @@ from designateclient.v2 import client as designate_client
 
 from . import cache
 from . import keystone
-from . import nova
+from . import neutron
 
 
 @functools.lru_cache(maxsize=None)
@@ -75,9 +75,12 @@ def a_records(project, zone):
 def floating_ips(project):
     """Get a list of floating ips allocated to a project."""
     ips = []
-    for region in nova.get_regions():
-        novaclient = nova.nova_client(project, region)
-        ips.extend([ip.ip for ip in novaclient.floating_ips.list()])
+    for region in neutron.get_regions():
+        neutronclient = neutron.neutron_client(project, region)
+        ips.extend([
+            ip["floating_ip_address"]
+            for ip in neutronclient.list_floatingips(project_id=project)["floatingips"]
+        ])
     return ips
 
 
