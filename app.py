@@ -31,6 +31,7 @@ from keystone_browser import proxies
 from keystone_browser import stats
 from keystone_browser import utils
 from keystone_browser import cinder
+from keystone_browser import neutron
 
 
 app = flask.Flask(__name__)
@@ -102,6 +103,7 @@ def project(name):
                 "limits": nova.limits(name),
                 "volumes": cinder.project_volumes(name, cached),
                 "cinder_limits": cinder.limits(name),
+                "neutron_limits": neutron.limits(name),
             }
         )
     except Exception:

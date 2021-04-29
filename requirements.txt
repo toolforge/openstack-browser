@@ -3,6 +3,7 @@ ldap3
 python-cinderclient
 python-glanceclient
 python-keystoneclient
-python-novaclient==7.1.0  # v8.0.0 dropped support for nova-network
+python-neutronclient
+python-novaclient
 python-designateclient
 redis

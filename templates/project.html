@@ -40,13 +40,14 @@
       <!-- {'maxTotalKeypairs': 100, 'maxPersonality': 5, 'maxPersonalitySize': 10240, 'maxServerMeta': 128, 'maxImageMeta': 128, 'maxServerGroups': 10, 'maxServerGroupMembers': 10, 'totalServerGroupsUsed': 0, 'maxSecurityGroupRules': 20} -->
       {% for region, region_limits in limits.items() %}
       {% set cinder_region_limits = cinder_limits[region] %}
+      {% set neutron_region_limits = neutron_limits[region]['quota'] %}
       <dt>{{ region }}</dt>
       <dd>
       {{ region_limits['absolute']['totalInstancesUsed'] }} / {{ region_limits['absolute']['maxTotalInstances'] }} instances.
       {{ region_limits['absolute']['totalCoresUsed'] }} / {{ region_limits['absolute']['maxTotalCores'] }} VCPUs.
       {{ region_limits['absolute']['totalRAMUsed'] / 1024 }} GB / {{ region_limits['absolute']['maxTotalRAMSize'] / 1024 }} GB RAM.
-      {{ region_limits['absolute']['totalFloatingIpsUsed'] }} / {{ region_limits['absolute']['maxTotalFloatingIps'] }} floating IPs.
-      {{ region_limits['absolute']['totalSecurityGroupsUsed'] }} / {{ region_limits['absolute']['maxSecurityGroups'] }} security groups.
+      {{ neutron_region_limits['floatingip']['used'] }} / {{ neutron_region_limits['floatingip']['limit'] }} floating IPs.
+      {{ neutron_region_limits['security_group']['used'] }} / {{ neutron_region_limits['security_group']['limit'] }} security groups.
       {{ cinder_region_limits['absolute']['totalVolumesUsed'] }} / {{ cinder_region_limits['absolute']['maxTotalVolumes'] }} volumes.
       {{ cinder_region_limits['absolute']['totalGigabytesUsed'] }} / {{ cinder_region_limits['absolute']['maxTotalVolumeGigabytes'] }} GB volume space.
       </dd>
