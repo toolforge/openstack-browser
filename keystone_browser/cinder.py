@@ -72,7 +72,7 @@ def limits(project):
         data = {}
         for region in get_regions():
             cinder = cinder_client(project, region)
-            data[region] = cinder.limits.get().to_dict()
+            data[region] = cinder.quotas.get(project, usage=True).to_dict()
 
         cache.CACHE.save(key, data, 3600)
     return data

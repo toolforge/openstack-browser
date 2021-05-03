@@ -48,8 +48,8 @@
       {{ region_limits['absolute']['totalRAMUsed'] / 1024 }} GB / {{ region_limits['absolute']['maxTotalRAMSize'] / 1024 }} GB RAM.
       {{ neutron_region_limits['floatingip']['used'] }} / {{ neutron_region_limits['floatingip']['limit'] }} floating IPs.
       {{ neutron_region_limits['security_group']['used'] }} / {{ neutron_region_limits['security_group']['limit'] }} security groups.
-      {{ cinder_region_limits['absolute']['totalVolumesUsed'] }} / {{ cinder_region_limits['absolute']['maxTotalVolumes'] }} volumes.
-      {{ cinder_region_limits['absolute']['totalGigabytesUsed'] }} / {{ cinder_region_limits['absolute']['maxTotalVolumeGigabytes'] }} GB volume space.
+      {{ cinder_region_limits['volumes']['in_use'] }} / {{ cinder_region_limits['volumes']['limit'] }} volumes.
+      {{ cinder_region_limits['gigabytes']['in_use'] }} / {{ cinder_region_limits['gigabytes']['limit'] }} GB volume space.
       </dd>
       {% endfor %}
     </div>
