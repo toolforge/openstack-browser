@@ -56,14 +56,16 @@ def in_list(attr, items):
     )
 
 
-def get_users_by_uid(uids):
+def get_users_by_uid(uids, cached=True):
     """Get a list of dicts of user information."""
     if not uids:
         return []
     key = "ldap:get_users_by_uid:{}".format(
         hashlib.sha1("|".join(uids).encode("utf-8")).hexdigest()
     )
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         data = []
         with ldap_conn() as conn:

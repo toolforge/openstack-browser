@@ -35,7 +35,7 @@ def glance_client():
     )
 
 
-def images():
+def images(cached=True):
     """Get a dict of image details indexed by id."""
     # Images not appearing in this dict? Make sure that the 'observer' project
     # can see them:
@@ -45,7 +45,9 @@ def images():
     #   glance member-update $img observer accepted;
     # done
     key = "glance:images"
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         glance = glance_client()
         data = {i["id"]: i for i in glance.images.list()}

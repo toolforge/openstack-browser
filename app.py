@@ -57,9 +57,10 @@ def home():
 def projects():
     ctx = {}
     try:
+        cached = "purge" not in flask.request.args
         ctx.update(
             {
-                "projects": keystone.all_projects(),
+                "projects": keystone.all_projects(cached),
             }
         )
     except Exception:
@@ -71,9 +72,10 @@ def projects():
 def servers():
     ctx = {}
     try:
+        cached = "purge" not in flask.request.args
         ctx.update(
             {
-                "servers": nova.all_servers(),
+                "servers": nova.all_servers(cached),
             }
         )
     except Exception:
@@ -93,17 +95,17 @@ def project(name):
         ctx.update(
             {
                 "project": name,
-                "admins": ldap.get_users_by_uid(admins),
-                "users": ldap.get_users_by_uid(users["user"]),
-                "servers": nova.project_servers(name),
-                "flavors": nova.flavors(name),
-                "images": glance.images(),
+                "admins": ldap.get_users_by_uid(admins, cached),
+                "users": ldap.get_users_by_uid(users["user"], cached),
+                "servers": nova.project_servers(name, cached),
+                "flavors": nova.flavors(name, cached),
+                "images": glance.images(cached),
                 "proxies": proxies.project_proxies(name, cached),
                 "zones": zones.all_a_records(name, cached),
-                "limits": nova.limits(name),
+                "limits": nova.limits(name, cached),
                 "volumes": cinder.project_volumes(name, cached),
-                "cinder_limits": cinder.limits(name),
-                "neutron_limits": neutron.limits(name),
+                "cinder_limits": cinder.limits(name, cached),
+                "neutron_limits": neutron.limits(name, cached),
             }
         )
     except Exception:
@@ -119,10 +121,11 @@ def user(uid):
         "uid": uid,
     }
     try:
+        cached = "purge" not in flask.request.args
         ctx.update(
             {
-                "user": ldap.get_users_by_uid([uid]),
-                "projects": keystone.projects_for_user(uid),
+                "user": ldap.get_users_by_uid([uid], cached),
+                "projects": keystone.projects_for_user(uid, cached),
             }
         )
         if ctx["user"]:
@@ -140,17 +143,18 @@ def server(fqdn):
         "project": project,
     }
     try:
+        cached = "purge" not in flask.request.args
         ctx.update(
             {
-                "server": nova.server(fqdn),
-                "flavors": nova.flavors(project),
-                "images": glance.images(),
-                "puppetclasses": puppetclasses.classes(project, fqdn),
-                "hiera": puppetclasses.hiera(project, fqdn),
+                "server": nova.server(fqdn, cached),
+                "flavors": nova.flavors(project, cached),
+                "images": glance.images(cached),
+                "puppetclasses": puppetclasses.classes(project, fqdn, cached),
+                "hiera": puppetclasses.hiera(project, fqdn, cached),
             }
         )
         if "user_id" in ctx["server"]:
-            user = ldap.get_users_by_uid([ctx["server"]["user_id"]])
+            user = ldap.get_users_by_uid([ctx["server"]["user_id"]], cached)
             if user:
                 ctx["owner"] = user[0]
     except Exception:
@@ -165,7 +169,8 @@ def server(fqdn):
 def all_puppetclasses():
     ctx = {}
     try:
-        ctx.update({"puppetclasses": puppetclasses.all_classes()})
+        cached = "purge" not in flask.request.args
+        ctx.update({"puppetclasses": puppetclasses.all_classes(cached)})
     except Exception:
         app.logger.exception("Error collecting the list of puppet classes")
 
@@ -178,7 +183,8 @@ def puppetclass(classname):
         "puppetclass": classname,
     }
     try:
-        ctx.update({"data": puppetclasses.prefixes(classname)})
+        cached = "purge" not in flask.request.args
+        ctx.update({"data": puppetclasses.prefixes(classname, cached)})
     except Exception:
         app.logger.exception(
             'Error collecting information for puppet class "%s"', classname
@@ -193,7 +199,8 @@ def hierakey(hierakey):
         "hierakey": hierakey,
     }
     try:
-        ctx.update({"data": puppetclasses.hieraprefixes(hierakey)})
+        cached = "purge" not in flask.request.args
+        ctx.update({"data": puppetclasses.hieraprefixes(hierakey, cached)})
     except Exception:
         app.logger.exception(
             'Error collecting information for hiera key "%s"', hierakey
@@ -213,19 +220,22 @@ def all_proxies():
 
 @app.route("/api/projects.json")
 def api_projects_json():
-    return flask.jsonify(projects=keystone.all_projects())
+    cached = "purge" not in flask.request.args
+    return flask.jsonify(projects=keystone.all_projects(cached))
 
 
 @app.route("/api/projects.txt")
 def api_projects_txt():
+    cached = "purge" not in flask.request.args
     return flask.Response(
-        "\n".join(sorted(keystone.all_projects())), mimetype="text/plain"
+        "\n".join(sorted(keystone.all_projects(cached))), mimetype="text/plain"
     )
 
 
 @app.route("/api/dsh/project/<name>")
 def api_dsh_project(name):
-    servers = nova.project_servers(name)
+    cached = "purge" not in flask.request.args
+    servers = nova.project_servers(name, cached)
     dsh = [
         "{}.{}.eqiad1.wikimedia.cloud".format(server["name"], name)
         for server in servers
@@ -235,7 +245,8 @@ def api_dsh_project(name):
 
 @app.route("/api/dsh/servers")
 def api_dsh_servers():
-    servers = nova.all_servers()
+    cached = "purge" not in flask.request.args
+    servers = nova.all_servers(cached)
     dsh = [
         "{}.{}.eqiad1.wikimedia.cloud".format(
             server["name"], server["tenant_id"]
@@ -247,14 +258,16 @@ def api_dsh_servers():
 
 @app.route("/api/dsh/puppetclass/<name>")
 def api_dsh_puppet(name):
-    data = puppetclasses.prefixes(name)
+    cached = "purge" not in flask.request.args
+    data = puppetclasses.prefixes(name, cached)
     dsh = []
     for project, d in data.items():
         if project == "admin":
             continue
 
         try:
-            servers = nova.project_servers(project)
+            cached = "purge" not in flask.request.args
+            servers = nova.project_servers(project, cached)
         except Exception:
             app.logger.exception(
                 "Error collecting the list of servers for %s", project
@@ -280,7 +293,8 @@ def api_dsh_puppet(name):
 
 @app.route("/api/hierakey/<hierakey>")
 def api_hierakey(hierakey):
-    return flask.jsonify(servers=puppetclasses.hieraprefixes(hierakey))
+    cached = "purge" not in flask.request.args
+    return flask.jsonify(servers=puppetclasses.hieraprefixes(hierakey, cached))
 
 
 @app.errorhandler(404)

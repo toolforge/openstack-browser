@@ -44,14 +44,16 @@ def get_regions():
     return [region.id for region in region_recs]
 
 
-def project_servers(project):
+def project_servers(project, cached=True):
     """Get a list of information about servers in the given project.
 
     Data returned for each server is described at
     https://developer.openstack.org/api-ref/compute/?expanded=list-servers-detailed-detail#listServers
     """
     key = "nova:project_servers:{}".format(project)
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         data = []
         for region in get_regions():
@@ -71,10 +73,12 @@ def project_servers(project):
     return data
 
 
-def flavors(project):
+def flavors(project, cached=True):
     """Get a dict of flavor details indexed by id."""
     key = "nova:flavors:{}".format(project)
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         data = {}
         for region in get_regions():
@@ -86,10 +90,12 @@ def flavors(project):
     return data
 
 
-def limits(project):
+def limits(project, cached=True):
     """Get a dict of limit details."""
     key = "nova:limits:{}".format(project)
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         data = {}
         for region in get_regions():
@@ -100,10 +106,12 @@ def limits(project):
     return data
 
 
-def all_servers():
+def all_servers(cached=True):
     """Get a list of all servers in all projects."""
     key = "keystone:all_servers"
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         data = []
         all_projects = keystone.all_projects()
@@ -114,10 +122,12 @@ def all_servers():
     return data
 
 
-def server(fqdn):
+def server(fqdn, cached=True):
     """Get information about a server by fqdn."""
     key = "nova:server:{}".format(fqdn)
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         name, project, _ = fqdn.split(".", 2)
         servers = []

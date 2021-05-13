@@ -63,10 +63,12 @@ def keystone_client():
     )
 
 
-def all_projects():
+def all_projects(cached=True):
     """Get a list of all project names."""
     key = "keystone:all_projects"
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         keystone = keystone_client()
         # Ignore the magic 'admin' project
@@ -101,10 +103,12 @@ def project_users_by_role(name):
     return data
 
 
-def projects_for_user(uid):
+def projects_for_user(uid, cached=True):
     """Get a list of projects that a user belongs to."""
     key = "keystone:projects_for_user:{}".format(uid)
-    data = cache.CACHE.load(key)
+    data = None
+    if data:
+        data = cache.CACHE.load(key)
     if data is None:
         keystone = keystone_client()
         data = [p.name for p in keystone.projects.list(enabled=True, user=uid)]

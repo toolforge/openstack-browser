@@ -42,10 +42,12 @@ def get_regions():
     return [region.id for region in region_recs]
 
 
-def limits(project):
+def limits(project, cached=True):
     """Get a dict of limit details."""
     key = "neutron:limits:{}".format(project)
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         data = {}
         for region in get_regions():

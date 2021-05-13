@@ -64,10 +64,12 @@ def project_volumes(project, cached=True):
     return data
 
 
-def limits(project):
+def limits(project, cached=True):
     """Get a dict of limit details."""
     key = "cinder:limits:{}".format(project)
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         data = {}
         for region in get_regions():
