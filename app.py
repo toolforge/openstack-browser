@@ -32,6 +32,7 @@ from keystone_browser import stats
 from keystone_browser import utils
 from keystone_browser import cinder
 from keystone_browser import neutron
+from keystone_browser import trove
 
 
 app = flask.Flask(__name__)
@@ -106,6 +107,7 @@ def project(name):
                 "volumes": cinder.project_volumes(name, cached),
                 "cinder_limits": cinder.limits(name, cached),
                 "neutron_limits": neutron.limits(name, cached),
+                "databases": trove.project_databases(name, cached),
             }
         )
     except Exception:

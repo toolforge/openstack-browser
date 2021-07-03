@@ -6,4 +6,5 @@ python-keystoneclient
 python-neutronclient
 python-novaclient
 python-designateclient
+python-troveclient
 redis

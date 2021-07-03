@@ -206,6 +206,48 @@
     </table>
   </div>
   {% endif %}
+  {% if databases %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-folder-open"></span>
+        Databases
+      </h3>
+    </div>
+    <table class="table table-condensed table-hover tablesorter">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Size</th>
+          <th>Resources</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for database in databases|sort(attribute='name') %}
+        {% set flavor = flavors[database.flavor.id]|default('') %}
+        <tr>
+          <td class="text-nowrap">{{ database.name }}</td>
+          <td>{{ database.datastore.type }} {{ database.datastore.version }}</td>
+          <td>{{ database.volume.size|default('-') }}G</td>
+          <td>
+            <span class="text-nowrap">{{ flavor.vcpus|default('-') }} CPUs,</span>
+            <span class="text-nowrap">{{ flavor.ram|default('-') }}M RAM</span>
+          </td>
+          <td>
+            {% if database.status == "HEALTHY" %}
+              Healthy
+            {% else %}
+              {{ database.status }}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
   {% if servers %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
