@@ -21,6 +21,7 @@ import collections
 import datetime
 
 from . import cache
+from . import cinder
 from . import keystone
 from . import ldap
 from . import nova
@@ -46,6 +47,9 @@ def usage(cached=True):
                 data["ram"] += types[label] * flavor["ram"]
                 data["vcpus"] += types[label] * flavor["vcpus"]
                 data["disk"] += types[label] * flavor["disk"]
+
+            for volume in cinder.project_volumes(p):
+                data["disk"] += volume["size"]
 
         data["users"] = ldap.user_count()
         data["generated"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
