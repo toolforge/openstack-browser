@@ -20,6 +20,7 @@
 
 import collections
 import functools
+import yaml
 
 from keystoneauth1 import session as keystone_session
 from keystoneauth1.identity import v3
@@ -42,15 +43,15 @@ ROLES = collections.OrderedDict(
 @functools.lru_cache(maxsize=None)
 def session(project="observer"):
     """Get a session for the novaobserver user scoped to the given project."""
-    # TODO: read settings from /etc/novaobserver.yaml once we get it mounted
-    # into the kubernetes pods (<https://gerrit.wikimedia.org/r/#/c/327235>)
+    with open('/etc/novaobserver.yaml', 'r') as f:
+        observer_data = yaml.safe_load(f.read())
     auth = v3.Password(
-        auth_url="http://cloudcontrol1003.wikimedia.org:5000/v3",
-        password="Fs6Dq2RtG8KwmM2Z",
-        username="novaobserver",
+        auth_url=observer_data['OS_AUTH_URL'],
+        password=observer_data['OS_PASSWORD'],
+        username=observer_data['OS_USERNAME'],
         project_id=project,
-        user_domain_name="Default",
-        project_domain_name="Default",
+        user_domain_name=observer_data['OS_USER_DOMAIN_ID'],
+        project_domain_name=observer_data['OS_PROJECT_DOMAIN_ID'],
     )
     return keystone_session.Session(auth=auth)
 
