@@ -47,6 +47,7 @@ def home():
         ctx.update(
             {
                 "usage": stats.usage(cached),
+                "flavors": nova.flavors("observer", cached).values(),
             }
         )
     except Exception:
