@@ -43,7 +43,7 @@ def url_template():
     # Secret magic! The endpoint provided by keystone is private and we can't
     # access it. There's an alternative public read-only endpoint on port 5669
     # though. So, swap in 5669 for the port we got from keystone.
-    return re.sub(r":[0-9]+/", ":5669/", endpoint.url)
+    return re.sub(r":[0-9]+/", ":5669/", endpoint.url).replace("https://", "http://")
 
 
 @functools.lru_cache(maxsize=None)
@@ -61,7 +61,7 @@ def project_proxies(project, cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         proxy_url, session = proxy_client(project)
-        req = requests.get(f"{proxy_url}/mapping", raise_exc=False)
+        req = requests.get(f"{proxy_url}/mapping")
         if req.status_code != 200:
             data = []
         else:
