@@ -46,6 +46,13 @@ def url_template():
     return re.sub(r":[0-9]+/", ":5669/", endpoint.url)
 
 
+@functools.lru_cache(maxsize=None)
+def proxy_client(project):
+    proxy_url = url_template().replace("$(tenant_id)s", project)
+    session = keystone.keystone_client()
+    return proxy_url, session
+
+
 def project_proxies(project, cached=True):
     """Get a list of proxies for a project."""
     key = "proxies:{}".format(project)
@@ -53,9 +60,8 @@ def project_proxies(project, cached=True):
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        base_url = url_template().replace("$(tenant_id)s", project)
-        url = "{}/mapping".format(base_url)
-        req = requests.get(url, verify=False)
+        proxy_url, session = proxy_client(project)
+        req = requests.get(f"{proxy_url}/mapping", raise_exc=False)
         if req.status_code != 200:
             data = []
         else:
