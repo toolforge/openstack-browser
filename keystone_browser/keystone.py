@@ -53,7 +53,10 @@ def session(project="observer"):
         user_domain_name=observer_data['OS_USER_DOMAIN_ID'],
         project_domain_name=observer_data['OS_PROJECT_DOMAIN_ID'],
     )
-    return keystone_session.Session(auth=auth)
+    return keystone_session.Session(
+        auth=auth,
+        user_agent="openstack-browser",
+    )
 
 
 def keystone_client():

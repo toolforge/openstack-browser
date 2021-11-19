@@ -22,8 +22,6 @@ import functools
 import re
 import socket
 
-import requests
-
 from . import cache
 from . import keystone
 from . import utils
@@ -49,7 +47,7 @@ def url_template():
 @functools.lru_cache(maxsize=None)
 def proxy_client(project):
     proxy_url = url_template().replace("$(tenant_id)s", project)
-    session = keystone.keystone_client()
+    session = keystone.session(project)
     return proxy_url, session
 
 
@@ -61,7 +59,7 @@ def project_proxies(project, cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         proxy_url, session = proxy_client(project)
-        req = requests.get(f"{proxy_url}/mapping")
+        req = session.get(f"{proxy_url}/mapping")
         if req.status_code != 200:
             data = []
         else:
