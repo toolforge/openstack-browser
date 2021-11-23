@@ -59,7 +59,7 @@ def project_proxies(project, cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         proxy_url, session = proxy_client(project)
-        req = session.get(f"{proxy_url}/mapping")
+        req = session.get(f"{proxy_url}/mapping", raise_exc=False)
         if req.status_code != 200:
             data = []
         else:
