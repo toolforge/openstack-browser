@@ -119,7 +119,7 @@ def roles_for_user(uid, cached=True):
 
         for assignment in keystone.role_assignments.list(user=uid):
             if "project" in assignment.scope:
-                projects.append(assignment.scope["project"])
+                projects.append(assignment.scope["project"]["id"])
 
         data = {"projects": projects}
         cache.CACHE.save(key, data, 300)
