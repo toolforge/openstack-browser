@@ -125,7 +125,7 @@ def user(uid):
     }
     try:
         cached = "purge" not in flask.request.args
-        roles = keystone.roles_for_user(uid, cached),
+        roles = keystone.roles_for_user(uid, cached)
         ctx.update(
             {
                 "user": ldap.get_users_by_uid([uid], cached),
