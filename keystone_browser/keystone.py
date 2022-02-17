@@ -122,7 +122,7 @@ def roles_for_user(uid, cached=True):
                 projects.add(assignment.scope["project"]["id"])
 
         data = {
-            "projects": list(projects)
+            "projects": sorted(list(projects))
         }
 
         cache.CACHE.save(key, data, 300)
