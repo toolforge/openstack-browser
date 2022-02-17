@@ -107,14 +107,20 @@ def project_users_by_role(name):
     return data
 
 
-def projects_for_user(uid, cached=True):
+def roles_for_user(uid, cached=True):
     """Get a list of projects that a user belongs to."""
-    key = "keystone:projects_for_user:{}".format(uid)
+    key = "keystone:roles_for_user:{}".format(uid)
     data = None
     if data:
         data = cache.CACHE.load(key)
     if data is None:
         keystone = keystone_client()
-        data = [p.name for p in keystone.projects.list(enabled=True, user=uid)]
+        projects = []
+
+        for assignment in keystone.role_assignments.list(user=uid):
+            if "project" in assignment.scope:
+                projects.append(assignment.scope["project"])
+
+        data = {"projects": projects}
         cache.CACHE.save(key, data, 300)
     return data
