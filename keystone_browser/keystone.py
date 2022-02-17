@@ -115,12 +115,15 @@ def roles_for_user(uid, cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         keystone = keystone_client()
-        projects = []
+        projects = set()
 
         for assignment in keystone.role_assignments.list(user=uid):
             if "project" in assignment.scope:
-                projects.append(assignment.scope["project"]["id"])
+                projects.add(assignment.scope["project"]["id"])
 
-        data = {"projects": projects}
+        data = {
+            "projects": list(projects)
+        }
+
         cache.CACHE.save(key, data, 300)
     return data
