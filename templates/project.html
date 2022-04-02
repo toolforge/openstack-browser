@@ -271,7 +271,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for server in servers|sort(attribute='name') %}
+        {% for server in servers %}
           {% set image = images[server.image.id]|default('') %}
           {% set flavor = flavors[server.flavor.id]|default('') %}
           {% set fqdn = server.name ~ '.' ~ project ~ '.eqiad1.wikimedia.cloud' %}
