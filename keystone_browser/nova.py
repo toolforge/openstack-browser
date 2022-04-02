@@ -24,6 +24,7 @@ from novaclient import client
 
 from . import cache
 from . import keystone
+from . import utils
 
 
 @functools.lru_cache(maxsize=None)
@@ -68,6 +69,11 @@ def project_servers(project, cached=True):
                     )
                 ]
             )
+
+        data = list(sorted(
+            data,
+            key=lambda server: utils.natural_sort_key(server["name"])
+        ))
 
         cache.CACHE.save(key, data, 300)
     return data

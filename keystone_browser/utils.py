@@ -19,13 +19,21 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+from typing import List, Union
+
 
 RE_IPV4ADDR = re.compile(
     r"^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}"
     r"(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
 )
+RE_DIGIT = re.compile("(\d+)")
 
 
 def is_ipv4(s):
     """Is the given string an IPv4 address?"""
     return RE_IPV4ADDR.match(s) is not None
+
+
+def natural_sort_key(element: str) -> List[Union[str, int]]:
+    """Changes "name-12.something.com" into ["name-", 12, ".something.com"]."""
+    return [int(mychunk) if mychunk.isdigit() else mychunk for mychunk in RE_DIGIT.split(element)]
