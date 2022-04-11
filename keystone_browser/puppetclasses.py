@@ -29,9 +29,9 @@ from . import keystone
 
 @functools.lru_cache(maxsize=1)
 def url_template():
-    """Get the url template for accessing the proxy service."""
+    """Get the url template for accessing the Puppet ENC service."""
     c = keystone.keystone_client()
-    proxy = c.services.list(type="proxy")[0]
+    proxy = c.services.list(type="puppet-enc")[0]
     endpoint = c.endpoints.list(
         service=proxy.id, interface="public", enabled=True
     )[0]

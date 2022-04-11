@@ -36,7 +36,9 @@ from keystone_browser import neutron
 from keystone_browser import trove
 
 
-ua = f'openstack-browser (tools.openstack-browser@toolforge.org) python-requests/{requests.__version__}'
+requests.utils.default_user_agent = lambda *args, **kwargs: (
+    f'openstack-browser (tools.openstack-browser@toolforge.org) python-requests/{requests.__version__}'
+)
 
 
 app = flask.Flask(__name__)
