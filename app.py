@@ -19,6 +19,7 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import flask
+import requests
 import werkzeug.middleware.proxy_fix
 
 from keystone_browser import zones
@@ -33,6 +34,9 @@ from keystone_browser import utils
 from keystone_browser import cinder
 from keystone_browser import neutron
 from keystone_browser import trove
+
+
+ua = f'openstack-browser (tools.openstack-browser@toolforge.org) python-requests/{requests.__version__}'
 
 
 app = flask.Flask(__name__)
