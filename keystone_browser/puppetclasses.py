@@ -30,8 +30,16 @@ from . import keystone
 @functools.lru_cache(maxsize=1)
 def url_template():
     """Get the url template for accessing the proxy service."""
-    return "http://puppetmaster.cloudinfra.wmflabs.org:8100/v1"
+    c = keystone.keystone_client()
+    proxy = c.services.list(type="proxy")[0]
+    endpoint = c.endpoints.list(
+        service=proxy.id, interface="public", enabled=True
+    )[0]
 
+    # Secret magic! The endpoint provided by keystone is private and we can't
+    # access it. There's an alternative public read-only endpoint on port 8100
+    # though. So, swap in 8100 for the port we got from keystone.
+    return endpoint.url.replace(":8101/", ":8100/").replace("/$(project_id)s", "")
 
 def prefixes(classname, cached=True):
     """Return a dict of {<projectname>: [prefixes]} for a given puppet class"""
