@@ -102,7 +102,7 @@ def project(name):
         users = keystone.project_users_by_role(name)
         admins = users["admin"] + users["projectadmin"]
         service_accounts = {
-            role: ldap.get_users_by_uid(users[members], cached)
+            role: ldap.get_users_by_uid(members, cached)
             for role, members in users.items()
             if role in keystone.SERVICE_ACCOUNT_ROLES and len(members) > 0
         }
