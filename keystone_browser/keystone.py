@@ -35,9 +35,14 @@ ROLES = collections.OrderedDict(
         ("glanceadmin", "1102f4ff63c3435793d0e4340bf4b04e"),
         ("observer", "47a8370618ea42d49f7047774e75d262"),
         ("projectadmin", "4d8cad783d6342efa8414d7d36fbc034"),
+        ("designateadmin", "906f1588626d4d0993629ea3928b6fb4"),
+        ("keystonevalidate", "f3bebf5f4b6f40fa91f3614431f2c283"),
         ("user", "f473273fac7146b3bdbf22e5d4504f95"),
     ]
 )
+
+
+SERVICE_ACCOUNT_ROLES = ["glanceadmin", "designateadmin", "keystonevalidate"]
 
 
 @functools.lru_cache(maxsize=None)

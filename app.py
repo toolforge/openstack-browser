@@ -101,11 +101,18 @@ def project(name):
     try:
         users = keystone.project_users_by_role(name)
         admins = users["admin"] + users["projectadmin"]
+        service_accounts = {
+            role: ldap.get_users_by_uid(users[members], cached)
+            for role, members in users.items()
+            if role in keystone.SERVICE_ACCOUNT_ROLES and len(members) > 0
+        }
+
         ctx.update(
             {
                 "project": name,
                 "admins": ldap.get_users_by_uid(admins, cached),
                 "users": ldap.get_users_by_uid(users["user"], cached),
+                "service_accounts": service_accounts,
                 "servers": nova.project_servers(name, cached),
                 "flavors": nova.flavors(name, cached),
                 "images": glance.images(cached),
