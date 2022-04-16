@@ -37,7 +37,8 @@ from keystone_browser import trove
 
 
 requests.utils.default_user_agent = lambda *args, **kwargs: (
-    f'openstack-browser (tools.openstack-browser@toolforge.org) python-requests/{requests.__version__}'
+    "openstack-browser (tools.openstack-browser@toolforge.org)"
+    + f" python-requests/{requests.__version__}"
 )
 
 

@@ -41,7 +41,8 @@ def url_template():
     # Secret magic! The endpoint provided by keystone is private and we can't
     # access it. There's an alternative public read-only endpoint on port 5669
     # though. So, swap in 5669 for the port we got from keystone.
-    return re.sub(r":[0-9]+/", ":5669/", endpoint.url).replace("https://", "http://")
+    url = re.sub(r":[0-9]+/", ":5669/", endpoint.url)
+    return url.replace("https://", "http://")
 
 
 @functools.lru_cache(maxsize=None)

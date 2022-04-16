@@ -55,4 +55,3 @@ def limits(project, cached=True):
             data[region] = neutron.show_quota_details(project)
         cache.CACHE.save(key, data, 3600)
     return data
-

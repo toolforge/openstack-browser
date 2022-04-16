@@ -70,10 +70,11 @@ def project_servers(project, cached=True):
                 ]
             )
 
-        data = list(sorted(
-            data,
-            key=lambda server: utils.natural_sort_key(server["name"])
-        ))
+        data = list(
+            sorted(
+                data, key=lambda server: utils.natural_sort_key(server["name"])
+            )
+        )
 
         cache.CACHE.save(key, data, 300)
     return data

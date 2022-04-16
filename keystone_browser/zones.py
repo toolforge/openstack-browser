@@ -77,10 +77,14 @@ def floating_ips(project):
     ips = []
     for region in neutron.get_regions():
         neutronclient = neutron.neutron_client(project, region)
-        ips.extend([
-            ip["floating_ip_address"]
-            for ip in neutronclient.list_floatingips(project_id=project)["floatingips"]
-        ])
+        ips.extend(
+            [
+                ip["floating_ip_address"]
+                for ip in neutronclient.list_floatingips(project_id=project)[
+                    "floatingips"
+                ]
+            ]
+        )
     return ips
 
 

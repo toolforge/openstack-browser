@@ -26,7 +26,7 @@ RE_IPV4ADDR = re.compile(
     r"^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}"
     r"(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
 )
-RE_DIGIT = re.compile("(\d+)")
+RE_DIGIT = re.compile("(\\d+)")
 
 
 def is_ipv4(s):
@@ -36,4 +36,7 @@ def is_ipv4(s):
 
 def natural_sort_key(element: str) -> List[Union[str, int]]:
     """Changes "name-12.something.com" into ["name-", 12, ".something.com"]."""
-    return [int(mychunk) if mychunk.isdigit() else mychunk for mychunk in RE_DIGIT.split(element)]
+    return [
+        int(mychunk) if mychunk.isdigit() else mychunk
+        for mychunk in RE_DIGIT.split(element)
+    ]

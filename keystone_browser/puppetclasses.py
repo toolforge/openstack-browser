@@ -39,7 +39,9 @@ def url_template():
     # Secret magic! The endpoint provided by keystone is private and we can't
     # access it. There's an alternative public read-only endpoint on port 8100
     # though. So, swap in 8100 for the port we got from keystone.
-    return endpoint.url.replace(":8101/", ":8100/").replace("/$(project_id)s", "")
+    url = endpoint.url.replace(":8101/", ":8100/")
+    return url.replace("/$(project_id)s", "")
+
 
 def prefixes(classname, cached=True):
     """Return a dict of {<projectname>: [prefixes]} for a given puppet class"""

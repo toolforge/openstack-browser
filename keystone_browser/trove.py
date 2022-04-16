@@ -42,7 +42,8 @@ def get_regions():
     return [region.id for region in region_recs]
 
 
-# TODO: failing with troveclient.apiclient.exceptions.Unauthorized: User does not have admin privileges. (HTTP 401)
+# TODO: failing with troveclient.apiclient.exceptions.Unauthorized:
+# User does not have admin privileges. (HTTP 401)
 # def limits(project, cached=True):
 #     """Get a dict of limit details."""
 #     key = "trove:limits:{}".format(project)
@@ -60,7 +61,7 @@ def get_regions():
 
 def project_databases(project, cached=True):
     """Get a list of all database instances in a given project."""
-    key = 'trove:project-databases:{}'.format(project)
+    key = "trove:project-databases:{}".format(project)
     data = None
     if cached:
         data = cache.CACHE.load(key)
@@ -69,11 +70,7 @@ def project_databases(project, cached=True):
         for region in get_regions():
             trove = trove_client(project, region)
             data.extend(
-                [
-                    instance._info
-                    for instance in trove.instances.list()
-                ]
+                [instance._info for instance in trove.instances.list()]
             )
         cache.CACHE.save(key, data, 300)
     return data
-

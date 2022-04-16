@@ -43,15 +43,15 @@ ROLES = collections.OrderedDict(
 @functools.lru_cache(maxsize=None)
 def session(project="observer"):
     """Get a session for the novaobserver user scoped to the given project."""
-    with open('/etc/novaobserver.yaml', 'r') as f:
+    with open("/etc/novaobserver.yaml", "r") as f:
         observer_data = yaml.safe_load(f.read())
     auth = v3.Password(
-        auth_url=observer_data['OS_AUTH_URL'],
-        password=observer_data['OS_PASSWORD'],
-        username=observer_data['OS_USERNAME'],
+        auth_url=observer_data["OS_AUTH_URL"],
+        password=observer_data["OS_PASSWORD"],
+        username=observer_data["OS_USERNAME"],
         project_id=project,
-        user_domain_name=observer_data['OS_USER_DOMAIN_ID'],
-        project_domain_name=observer_data['OS_PROJECT_DOMAIN_ID'],
+        user_domain_name=observer_data["OS_USER_DOMAIN_ID"],
+        project_domain_name=observer_data["OS_PROJECT_DOMAIN_ID"],
     )
     return keystone_session.Session(
         auth=auth,
@@ -121,9 +121,7 @@ def roles_for_user(uid, cached=True):
             if "project" in assignment.scope:
                 projects.add(assignment.scope["project"]["id"])
 
-        data = {
-            "projects": sorted(list(projects))
-        }
+        data = {"projects": sorted(list(projects))}
 
         cache.CACHE.save(key, data, 300)
     return data

@@ -44,7 +44,7 @@ def get_regions():
 
 
 def project_volumes(project, cached=True):
-    key = 'cinder:project-volumes:{}'.format(project)
+    key = "cinder:project-volumes:{}".format(project)
     data = None
     if cached:
         data = cache.CACHE.load(key)
