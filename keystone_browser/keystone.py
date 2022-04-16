@@ -114,12 +114,19 @@ def roles_for_user(uid, cached=True):
     if data is None:
         keystone = keystone_client()
         projects = set()
+        domain_roles = set()
 
         for assignment in keystone.role_assignments.list(user=uid):
             if "project" in assignment.scope:
                 projects.add(assignment.scope["project"]["id"])
+            elif "domain" in assignment.scope:
+                role_name = keystone.roles.get(assignment.role["id"]).name
+                domain_roles.add(role_name)
 
-        data = {"projects": sorted(list(projects))}
+        data = {
+            "projects": sorted(list(projects)),
+            "domain_roles": sorted(list(domain_roles)),
+        }
 
         cache.CACHE.save(key, data, 300)
     return data

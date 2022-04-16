@@ -137,6 +137,7 @@ def user(uid):
             {
                 "user": ldap.get_users_by_uid([uid], cached),
                 "projects": roles["projects"],
+                "domain_roles": roles["domain_roles"],
             }
         )
         if ctx["user"]:

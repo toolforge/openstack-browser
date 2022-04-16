@@ -23,6 +23,21 @@
       </dl>
     </div>
   </div>
+  {% if domain_roles %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-lock"></span>
+      System-wide roles
+    </div>
+    <div class="panel-body">
+      <ul class="list-unstyled column-list">
+        {% for role in domain_roles %}
+        <li>{{ role }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
   <div class="panel panel-default">
     <div class="panel-heading">
       <span class="glyphicon glyphicon-cloud"></span>
