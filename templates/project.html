@@ -99,18 +99,16 @@
       </h3>
     </div>
     <div class="panel-body">
-      <ul class="list-unstyled column-list">
-        {% for role, users in service_accounts.items() %}
-        <dt>{{ role }}</dt>
-        <dd>
-          <ul class="list-unstyled column-list">
-            {% for u in users|sort(attribute='cn') %}
-            <li><a href="{{ url_for('user', uid=u.uid) }}" rel="nofollow">{{ u.cn }}</a></li>
-            {% endfor %}
-          </ul>
-        </dd>
-        {% endfor %}
-      </ul>
+      {% for role, users in service_accounts.items() %}
+      <dt>{{ role }}</dt>
+      <dd>
+        <ul class="list-unstyled column-list">
+          {% for u in users|sort(attribute='cn') %}
+          <li><a href="{{ url_for('user', uid=u.uid) }}" rel="nofollow">{{ u.cn }}</a></li>
+          {% endfor %}
+        </ul>
+      </dd>
+      {% endfor %}
     </div>
   </div>
   {% endif %}
