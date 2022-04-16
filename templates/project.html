@@ -92,17 +92,15 @@
   {% endif %}
   {% if service_accounts %}
   <div class="panel panel-default">
-    <div id="users-heading" class="panel-heading" role="tab">
+    <div class="panel-heading" role="tab">
       <h3 class="panel-title">
-        <a href="#users-body" class="collapsed" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="users-body">
-          <span class="glyphicon glyphicon-user"></span>
-          Service accounts
-        </a>
+        <span class="glyphicon glyphicon-stats"></span>
+        Service accounts
       </h3>
     </div>
-    <div id="users-body" class="panel-body panel-collapse collapse" role="tabpanel" aria-labelledby="users-heading">
+    <div class="panel-body">
       <ul class="list-unstyled column-list">
-        {% for role, users in roles.items() %}
+        {% for role, users in service_accounts.items() %}
         <dt>{{ role }}</dt>
         <dd>
           <ul class="list-unstyled column-list">
