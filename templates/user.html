@@ -38,6 +38,7 @@
     </div>
   </div>
   {% endif %}
+  {% if projects %}
   <div class="panel panel-default">
     <div class="panel-heading">
       <span class="glyphicon glyphicon-cloud"></span>
@@ -51,6 +52,7 @@
       </ul>
     </div>
   </div>
+  {% endif %}
 </div>
 {% else %}
 <p>Unknown user '{{ uid }}'. Are you just guessing?</p>
