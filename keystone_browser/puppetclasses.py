@@ -37,9 +37,9 @@ def url_template():
     )[0]
 
     # Secret magic! The endpoint provided by keystone is private and we can't
-    # access it. There's an alternative public read-only endpoint on port 8100
-    # though. So, swap in 8100 for the port we got from keystone.
-    url = endpoint.url.replace(":8101/", ":8100/")
+    # access it. There's an alternative public read-only endpoint on port 8143
+    # though. So, add port 8143 to the URL.
+    url = endpoint.url.replace("org/", "org:8143/")
     return url.replace("/$(project_id)s", "")
 
 
