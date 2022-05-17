@@ -20,7 +20,6 @@
 
 import functools
 
-import requests
 import yaml
 
 from . import cache
@@ -43,6 +42,12 @@ def url_template():
     return url.replace("/$(project_id)s", "")
 
 
+@functools.lru_cache(maxsize=None)
+def puppet_enc_client(project="observer"):
+    session = keystone.session(project)
+    return url_template(), session
+
+
 def prefixes(classname, cached=True):
     """Return a dict of {<projectname>: [prefixes]} for a given puppet class"""
 
@@ -51,8 +56,8 @@ def prefixes(classname, cached=True):
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        url = url_template() + "/prefix/" + classname
-        req = requests.get(url, verify=False)
+        base_url, session = puppet_enc_client()
+        req = session.get(f"{base_url}/prefix/{classname}", raise_exc=False)
         if req.status_code != 200:
             data = []
         else:
@@ -69,8 +74,8 @@ def all_classes(cached=True):
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        url = url_template() + "/roles"
-        req = requests.get(url, verify=False)
+        base_url, session = puppet_enc_client()
+        req = session.get(f"{base_url}/roles", raise_exc=False)
         if req.status_code != 200:
             data = []
         else:
@@ -87,8 +92,8 @@ def project_prefixes(project, cached=True):
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        url = url_template() + "/" + project + "/prefix"
-        req = requests.get(url, verify=False)
+        base_url, session = puppet_enc_client(project)
+        req = session.get(f"{base_url}/{project}/prefix", raise_exc=False)
         if req.status_code != 200:
             data = []
         else:
@@ -108,8 +113,8 @@ def config(project, fqdn, cached=True):
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        url = url_template() + "/" + project + "/node/" + fqdn
-        req = requests.get(url, verify=False)
+        base_url, session = puppet_enc_client(project)
+        req = session.get(f"{base_url}/{project}/node/{fqdn}", raise_exc=False)
         if req.status_code != 200:
             data = []
         else:
