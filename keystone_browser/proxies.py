@@ -38,11 +38,7 @@ def url_template():
     endpoint = c.endpoints.list(
         service=proxy.id, interface="public", enabled=True
     )[0]
-    # Secret magic! The endpoint provided by keystone is private and we can't
-    # access it. There's an alternative public read-only endpoint on port 5669
-    # though. So, swap in 5669 for the port we got from keystone.
-    url = re.sub(r":[0-9]+/", ":5669/", endpoint.url)
-    return url.replace("https://", "http://")
+    return endpoint.url
 
 
 @functools.lru_cache(maxsize=None)
