@@ -57,7 +57,11 @@ def prefixes(classname, cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         base_url, session = puppet_enc_client()
-        req = session.get(f"{base_url}/prefix/{classname}", raise_exc=False)
+        req = session.get(
+            f"{base_url}/prefix/{classname}",
+            raise_exc=False,
+            headers={"Accept": "application/x-yaml"},
+        )
         if req.status_code != 200:
             data = []
         else:
@@ -75,7 +79,11 @@ def all_classes(cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         base_url, session = puppet_enc_client()
-        req = session.get(f"{base_url}/roles", raise_exc=False)
+        req = session.get(
+            f"{base_url}/roles",
+            raise_exc=False,
+            headers={"Accept": "application/x-yaml"},
+        )
         if req.status_code != 200:
             data = []
         else:
@@ -93,7 +101,11 @@ def project_prefixes(project, cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         base_url, session = puppet_enc_client(project)
-        req = session.get(f"{base_url}/{project}/prefix", raise_exc=False)
+        req = session.get(
+            f"{base_url}/{project}/prefix",
+            raise_exc=False,
+            headers={"Accept": "application/x-yaml"},
+        )
         if req.status_code != 200:
             data = []
         else:
@@ -114,7 +126,11 @@ def config(project, fqdn, cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         base_url, session = puppet_enc_client(project)
-        req = session.get(f"{base_url}/{project}/node/{fqdn}", raise_exc=False)
+        req = session.get(
+            f"{base_url}/{project}/node/{fqdn}",
+            raise_exc=False,
+            headers={"Accept": "application/x-yaml"},
+        )
         if req.status_code != 200:
             data = []
         else:
