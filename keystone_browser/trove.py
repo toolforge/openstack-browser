@@ -59,9 +59,9 @@ def get_regions():
 #     return data
 
 
-def project_databases(project, cached=True):
+def project_instances(project, cached=True):
     """Get a list of all database instances in a given project."""
-    key = "trove:project-databases:{}".format(project)
+    key = "trove:project-instances:{}".format(project)
     data = None
     if cached:
         data = cache.CACHE.load(key)
@@ -73,4 +73,35 @@ def project_databases(project, cached=True):
                 [instance._info for instance in trove.instances.list()]
             )
         cache.CACHE.save(key, data, 300)
+    return data
+
+def instance(project, name, cached=True):
+    key = "trove:instance:{}:{}".format(project, name)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
+
+    if data is None:
+        for region in get_regions():
+            trove = trove_client(project, region)
+            instances = [instance for instance in trove.instances.list(include_clustered=False) if instance.name == name]
+            if instances:
+                instance = instances[0]
+                data = {
+                    "name": instance.name,
+                    "id": instance.id,
+                    "hostname": instance.hostname,
+                    "datastore": instance.datastore,
+                    "flavor": instance.flavor["id"],
+                    "status": instance.status,
+                    "operating_status": instance.operating_status,
+                    "size": instance.volume["size"],
+                    "databases": [
+                        database.name
+                        for database in trove.databases.list(instance)
+                    ]
+                }
+
+        cache.CACHE.save(key, data, 300)
+
     return data

@@ -239,7 +239,7 @@
     <table class="table table-condensed table-hover tablesorter">
       <thead>
         <tr>
-          <th>Name</th>
+          <th>Instance name</th>
           <th>Type</th>
           <th>Storage</th>
           <th>Resources</th>
@@ -250,8 +250,8 @@
         {% for database in databases|sort(attribute='name') %}
         {% set flavor = flavors[database.flavor.id]|default('') %}
         <tr>
-          <td class="text-nowrap">{{ database.name }}</td>
-          <td>{{ database.datastore.type }} {{ database.datastore.version }}</td>
+          <td class="text-nowrap"><a href="{{ url_for('project_database', project=project, name=database.name) }}" rel="nofollow">{{ database.name }}</a></td>
+          <td>{{ database.datastore.type }} {{ database.datastore.version }}</td>
           <td>{{ database.volume.size|default('-') }}G</td>
           <td>
             <span class="text-nowrap">{{ flavor.vcpus|default('-') }} CPUs,</span>

@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block title %}Database instance {{ name }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('projects') }}" rel="nofollow">Projects</a></li>
+  <li><a href="{{ url_for('project', name=project ) }}" rel="nofollow">{{ project }}</a></li>
+  <li>Databases</li>
+  <li class="active">{{ name }}</li>
+</ol>
+
+<div class="page-header">
+  <h1>{{ name }} <small>Project: {{ project }}</small></h1>
+</div>
+
+{% if instance %}
+{% set flavor = flavors[instance.flavor]|default('') %}
+<div class="panel-group" role="tablist">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-folder-open"></span>
+        {{ name }}
+      </h3>
+    </div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>Project</dt>
+        <dd><a href="{{ url_for('project', name=project) }}" rel="nofollow">{{ project }}</a></dd>
+        <dt>Instance name</dt>
+        <dd>{{ instance.name }}</dd>
+        <dt>Instance ID</dt>
+        <dd>{{ instance.id }}</dd>
+        <dt>Host</dt>
+        <dd>{{ instance.hostname }}</dd>
+        <dt>Status</dt>
+        <dd>
+          {{ instance.status }} {{ instance.operating_status }}
+        </dd>
+        <dt>Type</dt>
+        <dd>{{ instance.datastore.type }} {{ instance.datastore.version }}</dd>
+        <dt>Storage size</dt>
+        <dd>{{ instance.size }}G</dd>
+        <dt>Resources</dt>
+        <dd>
+          <span class="text-nowrap">{{ flavor.vcpus|default('-') }} CPUs,</span>
+          <span class="text-nowrap">{{ flavor.ram|default('-') }}M RAM</span>
+          <span class="text-nowrap">({{ flavor.name }})</span>
+        </dd>
+        <dt>Databases</dt>
+        <dd>
+          <ul class="list-unstyled">
+            {% for database in instance.databases | sort %}
+            <li>{{ database }}</li>
+            {% endfor %}
+          </ul>
+        </dd>
+      </dl>
+    </div>
+  </div>
+</div>
+{% else %}
+<p>Unknown database instance '{{ name }}'. Are you just guessing?</p>
+{% endif %}
+{% endblock %}

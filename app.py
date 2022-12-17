@@ -122,7 +122,7 @@ def project(name):
                 "volumes": cinder.project_volumes(name, cached),
                 "cinder_limits": cinder.limits(name, cached),
                 "neutron_limits": neutron.limits(name, cached),
-                "databases": trove.project_databases(name, cached),
+                "databases": trove.project_instances(name, cached),
             }
         )
     except Exception:
@@ -130,6 +130,26 @@ def project(name):
             'Error collecting information for project "%s"', name
         )
     return flask.render_template("project.html", **ctx)
+
+
+@app.route("/project/<project>/database/<name>")
+def project_database(project, name):
+    cached = "purge" not in flask.request.args
+    ctx = {
+        "project": project,
+        "name": name,
+    }
+    try:
+        instance = trove.instance(project, name, cached)
+        ctx.update({
+            "instance": instance,
+            "flavors": nova.flavors(project, cached),
+        })
+    except Exception:
+        app.logger.exception(
+            'Error collecting information for project "%s" database "%s"', project, name
+        )
+    return flask.render_template("databaseinstance.html", **ctx)
 
 
 @app.route("/user/<uid>")
