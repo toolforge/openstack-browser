@@ -30,7 +30,7 @@
             {% endif %}
             {% for prefix in prefixes.prefixes|sort() %}
               {% if prefix != '_' %}
-                {% if prefix.endswith('.wmflabs') or prefix.endswith('.cloud') %}
+                {% if prefix.endswith('.cloud') %}
                   <li><a href="{{ url_for('server', fqdn=prefix) }}" rel="nofollow">{{ prefix }}</a></li>
                 {% else %}
                   <li><b>{{ prefix }}*</b></li>

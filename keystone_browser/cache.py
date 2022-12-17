@@ -31,7 +31,7 @@ class Cache(object):
     def __init__(self, enabled=True, seed=""):
         self.enabled = enabled
         self.conn = redis.StrictRedis(
-            host="tools-redis.svc.eqiad.wmflabs",
+            host="redis.svc.tools.eqiad1.wikimedia.cloud",
             decode_responses=True,
         )
         u = pwd.getpwuid(os.getuid())
