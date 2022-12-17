@@ -21,6 +21,7 @@
 import functools
 
 from troveclient.v1 import client
+from troveclient.apiclient.exceptions import UnprocessableEntity
 
 from . import cache
 from . import keystone
@@ -75,6 +76,7 @@ def project_instances(project, cached=True):
         cache.CACHE.save(key, data, 300)
     return data
 
+
 def instance(project, name, cached=True):
     key = "trove:instance:{}:{}".format(project, name)
     data = None
@@ -84,7 +86,11 @@ def instance(project, name, cached=True):
     if data is None:
         for region in get_regions():
             trove = trove_client(project, region)
-            instances = [instance for instance in trove.instances.list(include_clustered=False) if instance.name == name]
+            instances = [
+                instance
+                for instance in trove.instances.list(include_clustered=False)
+                if instance.name == name
+            ]
             if instances:
                 instance = instances[0]
                 data = {
@@ -96,11 +102,15 @@ def instance(project, name, cached=True):
                     "status": instance.status,
                     "operating_status": instance.operating_status,
                     "size": instance.volume["size"],
-                    "databases": [
+                }
+
+                try:
+                    data["databases"] = [
                         database.name
                         for database in trove.databases.list(instance)
                     ]
-                }
+                except UnprocessableEntity:
+                    data["databases"] = []
 
         cache.CACHE.save(key, data, 300)
 

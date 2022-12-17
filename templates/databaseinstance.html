@@ -48,6 +48,7 @@
           <span class="text-nowrap">{{ flavor.ram|default('-') }}M RAM</span>
           <span class="text-nowrap">({{ flavor.name }})</span>
         </dd>
+        {% if instance.databases %}
         <dt>Databases</dt>
         <dd>
           <ul class="list-unstyled">
@@ -56,6 +57,7 @@
             {% endfor %}
           </ul>
         </dd>
+        {% endif %}
       </dl>
     </div>
   </div>

@@ -141,13 +141,17 @@ def project_database(project, name):
     }
     try:
         instance = trove.instance(project, name, cached)
-        ctx.update({
-            "instance": instance,
-            "flavors": nova.flavors(project, cached),
-        })
+        ctx.update(
+            {
+                "instance": instance,
+                "flavors": nova.flavors(project, cached),
+            }
+        )
     except Exception:
         app.logger.exception(
-            'Error collecting information for project "%s" database "%s"', project, name
+            'Error collecting information for project "%s" database "%s"',
+            project,
+            name,
         )
     return flask.render_template("databaseinstance.html", **ctx)
 
@@ -358,5 +362,5 @@ def ipv4addr(s):
     return utils.is_ipv4(s)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(port=3000, debug=True)
