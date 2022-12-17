@@ -336,3 +336,7 @@ def extract_hostname(backend):
 def ipv4addr(s):
     """Is the given string an IPv4 address?"""
     return utils.is_ipv4(s)
+
+
+if __name__ == '__main__':
+    app.run(port=3000, debug=True)
