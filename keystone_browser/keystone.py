@@ -80,7 +80,7 @@ def all_projects(cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         keystone = keystone_client()
-        data = [p.name for p in keystone.projects.list(enabled=True)]
+        data = [p.name for p in keystone.projects.list(enabled=True, domain="default")]
         cache.CACHE.save(key, data, 300)
     return data
 
