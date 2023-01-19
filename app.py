@@ -99,7 +99,7 @@ def project(name):
         "project": name,
     }
     try:
-        users = keystone.project_users_by_role(name)
+        users = keystone.project_users_by_role(name, cached)
         admins = users["admin"] + users["projectadmin"]
         service_accounts = {
             role: ldap.get_users_by_uid(members, cached)

@@ -85,10 +85,12 @@ def all_projects(cached=True):
     return data
 
 
-def project_users_by_role(name):
+def project_users_by_role(name, cached=True):
     """Get a dict of lists of user ids indexed by role name."""
     key = "keystone:project_users_by_role:{}".format(name)
-    data = cache.CACHE.load(key)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
     if data is None:
         keystone = keystone_client()
         # Ignore novaadmin & novaobserver in all user lists
@@ -111,7 +113,7 @@ def roles_for_user(uid, cached=True):
     """Get a list of projects that a user belongs to."""
     key = "keystone:roles_for_user:{}".format(uid)
     data = None
-    if data:
+    if cached:
         data = cache.CACHE.load(key)
     if data is None:
         keystone = keystone_client()
