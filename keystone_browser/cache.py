@@ -57,4 +57,4 @@ class Cache(object):
             self.conn.setex(real_key, expiry, json.dumps(data))
 
 
-CACHE = Cache(seed="201804132043")
+CACHE = Cache(seed="201804132043", enabled=False)
