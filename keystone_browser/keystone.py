@@ -32,11 +32,12 @@ from . import cache
 ROLES = collections.OrderedDict(
     [
         ("admin", "2cd63d467f754404bf3746fe63ee0698"),
-        ("glanceadmin", "1102f4ff63c3435793d0e4340bf4b04e"),
-        ("observer", "47a8370618ea42d49f7047774e75d262"),
-        ("projectadmin", "4d8cad783d6342efa8414d7d36fbc034"),
         ("designateadmin", "906f1588626d4d0993629ea3928b6fb4"),
+        ("glanceadmin", "1102f4ff63c3435793d0e4340bf4b04e"),
         ("keystonevalidate", "f3bebf5f4b6f40fa91f3614431f2c283"),
+        ("member", "1f281cc06d084394848c9f6f318aef25"),
+        ("projectadmin", "4d8cad783d6342efa8414d7d36fbc034"),
+        ("reader", "f75a3c410bca4e96a1cf6ac103b0ccaf"),
         ("user", "f473273fac7146b3bdbf22e5d4504f95"),
     ]
 )

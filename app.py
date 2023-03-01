@@ -111,7 +111,7 @@ def project(name):
             {
                 "project": name,
                 "admins": ldap.get_users_by_uid(admins, cached),
-                "users": ldap.get_users_by_uid(users["user"], cached),
+                "users": ldap.get_users_by_uid(users["member"], cached),
                 "service_accounts": service_accounts,
                 "servers": nova.project_servers(name, cached),
                 "flavors": nova.flavors(name, cached),
