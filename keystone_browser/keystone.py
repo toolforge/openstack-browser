@@ -34,6 +34,7 @@ ROLES = collections.OrderedDict(
         # Admins
         ("admin", "2cd63d467f754404bf3746fe63ee0698"),
         ("projectadmin", "4d8cad783d6342efa8414d7d36fbc034"),
+        ("member", "1f281cc06d084394848c9f6f318aef25"),
 
         # Limited admin
         ("designateadmin", "906f1588626d4d0993629ea3928b6fb4"),
@@ -41,11 +42,8 @@ ROLES = collections.OrderedDict(
         ("keystonevalidate", "f3bebf5f4b6f40fa91f3614431f2c283"),
 
         # Members
-        ("member", "1f281cc06d084394848c9f6f318aef25"),
-        ("user", "f473273fac7146b3bdbf22e5d4504f95"),
-
-        # Observers
         ("reader", "f75a3c410bca4e96a1cf6ac103b0ccaf"),
+        ("user", "f473273fac7146b3bdbf22e5d4504f95"),
     ]
 )
 
