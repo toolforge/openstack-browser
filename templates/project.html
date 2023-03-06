@@ -70,20 +70,20 @@
     </div>
   </div>
   {% endif %}
-  {% if users %}
+  {% if members %}
   <div class="panel panel-default">
-    <div id="users-heading" class="panel-heading" role="tab">
+    <div id="members-heading" class="panel-heading" role="tab">
       <h3 class="panel-title">
-        <a href="#users-body" class="collapsed" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="users-body">
+        <a href="#members-body" class="collapsed" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="members-body">
           <span class="glyphicon glyphicon-user"></span>
-          Users
+          Members
         </a>
       </h3>
     </div>
-    <div id="users-body" class="panel-body panel-collapse collapse" role="tabpanel" aria-labelledby="users-heading">
+    <div id="members-body" class="panel-body panel-collapse collapse" role="tabpanel" aria-labelledby="members-heading">
       <ul class="list-unstyled column-list">
-        {% for u in users|sort(attribute='cn') %}
-        <li><a href="{{ url_for('user', uid=u.uid) }}" rel="nofollow">{{ u.cn }}</a></li>
+        {% for m in members|sort(attribute='cn') %}
+        <li><a href="{{ url_for('user', uid=m.uid) }}" rel="nofollow">{{ m.cn }}</a></li>
         {% endfor %}
       </ul>
     </div>
