@@ -33,7 +33,7 @@ ROLES = collections.OrderedDict(
     [
         # Admins
         ("admin", "2cd63d467f754404bf3746fe63ee0698"),
-        ("member", "1f281cc06d084394848c9f6f318aef25"),
+        ("member", "38676f30eaeb44518bf7e144a73c8da6"),
 
         # Limited admin
         ("designateadmin", "906f1588626d4d0993629ea3928b6fb4"),
