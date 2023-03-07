@@ -33,7 +33,6 @@ ROLES = collections.OrderedDict(
     [
         # Admins
         ("admin", "2cd63d467f754404bf3746fe63ee0698"),
-        ("projectadmin", "4d8cad783d6342efa8414d7d36fbc034"),
         ("member", "1f281cc06d084394848c9f6f318aef25"),
 
         # Limited admin
@@ -43,7 +42,6 @@ ROLES = collections.OrderedDict(
 
         # Members
         ("reader", "f75a3c410bca4e96a1cf6ac103b0ccaf"),
-        ("user", "f473273fac7146b3bdbf22e5d4504f95"),
     ]
 )
 
