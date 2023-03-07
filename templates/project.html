@@ -53,37 +53,37 @@
       {% endfor %}
     </div>
   </div>
-  {% if admins %}
+  {% if members %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
       <h3 class="panel-title">
         <span class="glyphicon glyphicon-user"></span>
-        Administrators
+        Members
       </h3>
     </div>
     <div class="panel-body">
       <ul class="list-unstyled column-list">
-        {% for u in admins|sort(attribute='cn') %}
+        {% for u in members|sort(attribute='cn') %}
         <li><a href="{{ url_for('user', uid=u.uid) }}" rel="nofollow">{{ u.cn }}</a></li>
         {% endfor %}
       </ul>
     </div>
   </div>
   {% endif %}
-  {% if members %}
+  {% if viewers %}
   <div class="panel panel-default">
-    <div id="members-heading" class="panel-heading" role="tab">
+    <div id="viewers-heading" class="panel-heading" role="tab">
       <h3 class="panel-title">
-        <a href="#members-body" class="collapsed" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="members-body">
+        <a href="#viewers-body" class="collapsed" role="button" data-toggle="collapse" aria-expanded="false" aria-controls="viewers-body">
           <span class="glyphicon glyphicon-user"></span>
-          Members
+          Viewers
         </a>
       </h3>
     </div>
-    <div id="members-body" class="panel-body panel-collapse collapse" role="tabpanel" aria-labelledby="members-heading">
+    <div id="viewers-body" class="panel-body panel-collapse collapse" role="tabpanel" aria-labelledby="viewers-heading">
       <ul class="list-unstyled column-list">
-        {% for m in members|sort(attribute='cn') %}
-        <li><a href="{{ url_for('user', uid=m.uid) }}" rel="nofollow">{{ m.cn }}</a></li>
+        {% for u in viewers|sort(attribute='cn') %}
+        <li><a href="{{ url_for('user', uid=u.uid) }}" rel="nofollow">{{ u.cn }}</a></li>
         {% endfor %}
       </ul>
     </div>
