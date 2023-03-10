@@ -99,7 +99,7 @@ def project_users_by_role(name, cached=True):
     if data is None:
         keystone = keystone_client()
         # Ignore novaadmin & novaobserver in all user lists
-        seen = ["novaadmin", "novaobserver"]
+        ignored_users = ["novaadmin", "novaobserver"]
         data = {}
         for role_name, role_id in ROLES.items():
             data[role_name] = [
@@ -107,9 +107,8 @@ def project_users_by_role(name, cached=True):
                 for r in keystone.role_assignments.list(
                     project=name, role=role_id
                 )
-                if r.user["id"] not in seen
+                if r.user["id"] not in ignored_users
             ]
-            seen += data[role_name]
         cache.CACHE.save(key, data, 300)
     return data
 
