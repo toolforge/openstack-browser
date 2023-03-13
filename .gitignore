@@ -1,3 +1,4 @@
 *.py[cod]
+/.python-version
 /.tox
 __pycache__/
