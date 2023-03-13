@@ -34,12 +34,10 @@ ROLES = collections.OrderedDict(
         # Admins
         ("admin", "2cd63d467f754404bf3746fe63ee0698"),
         ("member", "38676f30eaeb44518bf7e144a73c8da6"),
-
         # Limited admin
         ("designateadmin", "906f1588626d4d0993629ea3928b6fb4"),
         ("glanceadmin", "1102f4ff63c3435793d0e4340bf4b04e"),
         ("keystonevalidate", "f3bebf5f4b6f40fa91f3614431f2c283"),
-
         # Members
         ("reader", "f75a3c410bca4e96a1cf6ac103b0ccaf"),
     ]
@@ -84,7 +82,10 @@ def all_projects(cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         keystone = keystone_client()
-        data = [p.name for p in keystone.projects.list(enabled=True, domain="default")]
+        data = [
+            p.name
+            for p in keystone.projects.list(enabled=True, domain="default")
+        ]
         cache.CACHE.save(key, data, 300)
     return data
 
