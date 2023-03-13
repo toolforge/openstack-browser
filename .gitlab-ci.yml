@@ -1,0 +1,2 @@
+include:
+  - https://gitlab.wikimedia.org/repos/cloud/cicd/gitlab-ci/-/raw/main/py3.9-bullseye-tox/gitlab-ci.yaml
