@@ -100,20 +100,27 @@ def project(name):
     }
     try:
         users = keystone.project_users_by_role(name, cached)
-        members = users["admin"] + users["member"]
+        # Create exclusive sets of users based on descending order of "power".
+        # member > service accounts > viewers
+        members = set(users["admin"]) | set(users["member"])
         service_accounts = {
-            role: ldap.get_users_by_uid(members, cached)
-            for role, members in users.items()
-            if role in keystone.SERVICE_ACCOUNT_ROLES and len(members) > 0
+            role: set(uids) - members
+            for role, uids in users.items()
+            if role in keystone.SERVICE_ACCOUNT_ROLES and len(uids) > 0
         }
-        viewers = users["reader"]
+        viewers = set(users["reader"]) - members
+        for uids in service_accounts.values():
+            viewers = viewers - uids
 
         ctx.update(
             {
                 "project": name,
                 "members": ldap.get_users_by_uid(members, cached),
                 "viewers": ldap.get_users_by_uid(viewers, cached),
-                "service_accounts": service_accounts,
+                "service_accounts": {
+                    role: ldap.get_users_by_uid(uids, cached)
+                    for role, uids in service_accounts.items()
+                },
                 "servers": nova.project_servers(name, cached),
                 "flavors": nova.flavors(name, cached),
                 "images": glance.images(cached),
