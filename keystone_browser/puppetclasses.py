@@ -35,7 +35,7 @@ def url_template():
         service=proxy.id, interface="public", enabled=True
     )[0]
 
-    return url.replace("/$(project_id)s", "")
+    return endpoint.url.replace("/$(project_id)s", "")
 
 
 @functools.lru_cache(maxsize=None)
