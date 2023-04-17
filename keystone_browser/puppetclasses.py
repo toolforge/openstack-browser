@@ -35,10 +35,6 @@ def url_template():
         service=proxy.id, interface="public", enabled=True
     )[0]
 
-    # Secret magic! The endpoint provided by keystone is private and we can't
-    # access it. There's an alternative public read-only endpoint on port 8143
-    # though. So, add port 8143 to the URL.
-    url = endpoint.url.replace("org/", "org:8143/")
     return url.replace("/$(project_id)s", "")
 
 
