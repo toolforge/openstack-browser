@@ -9,3 +9,4 @@ python-designateclient
 python-troveclient
 pyyaml
 redis
+gunicorn
