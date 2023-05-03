@@ -1,24 +1,15 @@
-Keystone browser
-================
+OpenStack browser
+=================
 
-Browse the Wikimedia Cloud Services OpenStack deployment.
+Browse the Wikimedia Cloud VPS OpenStack deployment.
 
-Deploy on Tool Labs
+Deploy on Toolforge
 -------------------
 ```
-$ ssh tools-dev.wmflabs.org
-$ become $TOOL_NAME
-$ mkdir -p $HOME/www/python
-$ git clone https://phabricator.wikimedia.org/source/tool-keystone-browser.git \
-  $HOME/www/python/src
-$ webservice --backend=kubernetes python shell
-$ python3 -m venv $HOME/www/python/venv
-$ source $HOME/www/python/venv/bin/activate
-$ pip install --upgrade pip
-$ pip install --upgrade setuptools
-$ pip install -r $HOME/www/python/src/requirements.txt
-$ exit
-$ webservice --backend=kubernetes python start
+$ ssh dev.toolforge.org
+$ become openstack-browser
+$ toolforge build start https://gitlab.wikimedia.org/toolforge-repos/openstack-browser.git
+$ toolforge webservice --backend=kubernetes buildservice start
 ```
 
 License
