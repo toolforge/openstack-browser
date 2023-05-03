@@ -20,7 +20,6 @@
 import hashlib
 import json
 import os
-import pwd
 
 import redis
 
@@ -34,9 +33,8 @@ class Cache(object):
             host="redis.svc.tools.eqiad1.wikimedia.cloud",
             decode_responses=True,
         )
-        u = pwd.getpwuid(os.getuid())
         self.prefix = hashlib.sha1(
-            "{}{}.{}".format(seed, u.pw_name, u.pw_dir).encode("utf-8")
+            "{}.{}".format(seed, os.getuid()).encode("utf-8")
         ).hexdigest()
 
     def key(self, val):
