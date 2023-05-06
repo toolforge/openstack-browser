@@ -64,7 +64,9 @@ def home():
 
 @app.route("/robots.txt")
 def robots_txt():
-    return flask.Response("User-Agent: *\nDisallow: /\n", mimetype="text/plain")
+    return flask.Response(
+        "User-Agent: *\nDisallow: /\n", mimetype="text/plain"
+    )
 
 
 @app.route("/project/")
