@@ -51,12 +51,7 @@ SERVICE_ACCOUNT_ROLES = ["glanceadmin", "designateadmin", "keystonevalidate"]
 def session(project="observer"):
     """Get a session for the novaobserver user scoped to the given project."""
     with open("/etc/novaobserver.yaml", "r") as f:
-        # FIXME: horrible hack until /etc/novaobserver.yaml is fixed
-        # See https://gerrit.wikimedia.org/r/c/operations/puppet/+/932516
-        data = "\n".join(
-            line for line in f.read().splitlines() if "=" not in line
-        )
-        observer_data = yaml.safe_load(data)
+        observer_data = yaml.safe_load(f.read())
     auth = v3.Password(
         auth_url=observer_data["OS_AUTH_URL"],
         password=observer_data["OS_PASSWORD"],
