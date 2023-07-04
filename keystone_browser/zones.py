@@ -65,7 +65,7 @@ def records(project, zone_id, cached):
                 "status": r["status"],
             }
             for r in raw_recordsets
-            if r["type"] in ["A", "AAAA"]
+            if r["type"] in ["A", "AAAA", "CNAME", "PTR", "TXT"]
         ]
         cache.CACHE.save(key, data, 3600)
     return data

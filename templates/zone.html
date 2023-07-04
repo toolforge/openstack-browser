@@ -68,7 +68,13 @@
       <td>
         <ul class="list-unstyled">
         {% for target in record.records|sort %}
-        <li>{{ target }}</li>
+        <li>
+          {% if record.type == "TXT" %}
+          <code>"{{ target }}"</code>
+          {% else %}
+          {{ target }}
+          {% end %}
+        </li>
         {% endfor %}
         </ul>
       </td>
