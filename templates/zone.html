@@ -57,7 +57,7 @@
       <tbody>
       {% for record in records|sort(attribute='sortkey') %}
       <tr>
-        <td>{{ record.name }}</td>
+        <td><code>{{ record.name }}</code></td>
         <td>
           {% if record.status != "ACTIVE" %}
           <span class="label label-warning">{{ record.status }}</span>
