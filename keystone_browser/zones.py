@@ -75,7 +75,10 @@ def records(project, zone_name, zone_id, cached):
                 ),
             }
             for r in raw_recordsets
-            if r["type"] in ["A", "AAAA", "CNAME", "PTR", "TXT"]
+            if (
+                r["type"] in ["A", "AAAA", "CNAME", "PTR", "TXT"]
+                or (r["type"] == "NS" and r["name"] != zone_name)
+            )
         ]
         cache.CACHE.save(key, data, 3600)
     return data
