@@ -184,7 +184,7 @@ def zone(project, name):
         ctx.update(
             {
                 "zone": zone,
-                "records": zones.records(project, zone["id"], cached),
+                "records": zones.records(project, name, zone["id"], cached),
             }
         )
     except Exception:

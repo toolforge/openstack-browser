@@ -24,6 +24,7 @@ from designateclient.v2 import client as designate_client
 
 from . import cache
 from . import keystone
+from . import utils
 
 
 @functools.lru_cache(maxsize=None)
@@ -45,7 +46,13 @@ def zone(project, zone, cached):
     return data
 
 
-def records(project, zone_id, cached):
+def _format_record_name(name: str, zone: str) -> str:
+    if name == zone:
+        return "@"
+    return name.removesuffix(zone)
+
+
+def records(project, zone_name, zone_id, cached):
     """Return a list of dns records for a given zone ID.
 
     Each record is in the format described at
@@ -59,10 +66,11 @@ def records(project, zone_id, cached):
         raw_recordsets = client(project).recordsets.list(zone_id)
         data = [
             {
-                "name": r["name"],
+                "name": _format_record_name(r["name"], zone_name),
                 "type": r["type"],
                 "records": r["records"],
                 "status": r["status"],
+                "sortkey": utils.natural_sort_key(r["name"]),
             }
             for r in raw_recordsets
             if r["type"] in ["A", "AAAA", "CNAME", "PTR", "TXT"]
