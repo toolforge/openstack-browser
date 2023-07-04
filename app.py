@@ -172,7 +172,7 @@ def project_database(project, name):
 
 
 @app.route("/project/<project>/zone/<name>")
-def project_zone(project, name):
+def zone(project, name):
     cached = "purge" not in flask.request.args
     ctx = {
         "project": project,
