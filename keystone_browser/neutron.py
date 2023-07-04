@@ -73,9 +73,9 @@ def _map_ip_data(ip: dict):
         "dns": [],
     }
 
-    if ip["fixed_ip_address"]:
+    if ip["floating_ip_address"]:
         try:
-            data["dns"] = resolver().resolve_ptr(ip["fixed_ip_address"])
+            data["dns"] = resolver().resolve_ptr(ip["floating_ip_address"])
         except dns.DnsNotFound:
             pass
 
