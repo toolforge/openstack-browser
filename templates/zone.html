@@ -30,9 +30,23 @@
         <dt>Zone ID</dt>
         <dd>{{ zone.id }}</dd>
         <dt>Type</dt>
-        <dd>{{ zone.type }}</dd>
+        <dd>
+          {% if zone.type == "PRIMARY" %}
+          Primary
+          {% elif zone.type == "SECONDARY" %}
+          Secondary
+          {% else %}
+          {{ zone.type }}
+          {% endif %}
+        </dd>
         <dt>Status</dt>
-        <dd>{{ zone.status }}</dd>
+        <dd>
+          {% if zone.status == "ACTIVE" %}
+          Active
+          {% else %}
+          <span class="label label-warning">{{ record.status }}</span>
+          {% endif %}
+        </dd>
       </dl>
     </div>
   </div>
@@ -57,9 +71,17 @@
       <tbody>
       {% for record in records|sort(attribute='sortkey') %}
       <tr>
-        <td><code>{{ record.name }}</code></td>
         <td>
-          {% if record.status != "ACTIVE" %}
+          {% if record.name == "@" %}
+          <code>{{ record.name }}</code>
+          {% else %}
+          {{ record.name }}
+          {% endif %}
+        </td>
+        <td>
+          {% if record.status == "ACTIVE" %}
+          Active
+          {% else %}
           <span class="label label-warning">{{ record.status }}</span>
           {% endif %}
         </td>
