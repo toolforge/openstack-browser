@@ -178,6 +178,9 @@
           <td>
               {% if floating_ip.target %}
               {{ floating_ip.target }}
+              {% if floating_ip.target_dns %}
+              ({{ floating_ip.target_dns|join(', ') }})
+              {% endif %}
               {% else %}
               (unused)
               {% endif %}

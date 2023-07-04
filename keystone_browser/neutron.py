@@ -71,11 +71,18 @@ def _map_ip_data(ip: dict):
         "description": ip["description"],
         "target": ip.get("fixed_ip_address"),
         "dns": [],
+        "target_dns": [],
     }
 
-    if ip["floating_ip_address"]:
+    if data["address"]:
         try:
-            data["dns"] = resolver().resolve_ptr(ip["floating_ip_address"])
+            data["dns"] = resolver().resolve_ptr(data["address"])
+        except dns.DnsNotFound:
+            pass
+
+    if data["target"]:
+        try:
+            data["target_dns"] = resolver().resolve_ptr(data["target"])
         except dns.DnsNotFound:
             pass
 
