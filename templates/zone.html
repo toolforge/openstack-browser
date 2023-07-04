@@ -65,7 +65,7 @@
         </td>
         <td>{{ record.type }}</td>
         <td>
-          <ul class="list-unstyled">
+          <ul class="list-unstyled" style="margin-bottom: 0;">
           {% for target in record.records|sort %}
           <li>
             {% if record.type == "TXT" %}
