@@ -36,54 +36,54 @@
       </dl>
     </div>
   </div>
-</div>
 
-{% if records %}
-<div class="panel panel-default">
-  <div class="panel-heading" role="tab">
-    <h3 class="panel-title">
-    <span class="glyphicon glyphicon-globe"></span>
-    Records
-    </h3>
-  </div>
-  <table class="table table-condensed table-hover tablesorter">
-    <thead>
-    <tr>
-      <th>Name</th>
-      <th>Status</th>
-      <th>Type</th>
-      <th>Target</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for record in records|sort(attribute='name') %}
-    <tr>
-      <td>{{ record.name }}</td>
-      <td>
-        {% if record.status != "ACTIVE" %}
-        <span class="label label-warning">{{ record.status }}</span>
-        {% endif %}
-      </td>
-      <td>{{ record.type }}</td>
-      <td>
-        <ul class="list-unstyled">
-        {% for target in record.records|sort %}
-        <li>
-          {% if record.type == "TXT" %}
-          <code>"{{ target }}"</code>
-          {% else %}
-          {{ target }}
+  {% if records %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+      <span class="glyphicon glyphicon-globe"></span>
+      Records
+      </h3>
+    </div>
+    <table class="table table-condensed table-hover tablesorter">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Type</th>
+        <th>Target</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for record in records|sort(attribute='name') %}
+      <tr>
+        <td>{{ record.name }}</td>
+        <td>
+          {% if record.status != "ACTIVE" %}
+          <span class="label label-warning">{{ record.status }}</span>
           {% endif %}
-        </li>
-        {% endfor %}
-        </ul>
-      </td>
-    </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+        </td>
+        <td>{{ record.type }}</td>
+        <td>
+          <ul class="list-unstyled">
+          {% for target in record.records|sort %}
+          <li>
+            {% if record.type == "TXT" %}
+            <code>{{ target }}</code>
+            {% else %}
+            {{ target }}
+            {% endif %}
+          </li>
+          {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
 </div>
-{% endif %}
 {% else %}
 <p>Unknown DNS zone '{{ name }}'. Are you just guessing?</p>
 {% endif %}
