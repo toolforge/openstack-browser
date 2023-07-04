@@ -138,6 +138,7 @@ def project(name):
                 "cinder_limits": cinder.limits(name, cached),
                 "neutron_limits": neutron.limits(name, cached),
                 "databases": trove.project_instances(name, cached),
+                "floating_ips": neutron.floating_ips(name, cached),
             }
         )
     except Exception:

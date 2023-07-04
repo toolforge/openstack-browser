@@ -21,9 +21,11 @@
 import functools
 
 from neutronclient.v2_0 import client
+from wmflib import dns
 
 from . import cache
 from . import keystone
+from . import utils
 
 
 @functools.lru_cache(maxsize=None)
@@ -33,6 +35,11 @@ def neutron_client(project, region):
         timeout=2,
         region_name=region,
     )
+
+
+@functools.lru_cache(maxsize=None)
+def resolver() -> dns.Dns:
+    return dns.Dns()
 
 
 @functools.lru_cache()
@@ -54,4 +61,46 @@ def limits(project, cached=True):
             neutron = neutron_client(project, region)
             data[region] = neutron.show_quota_details(project)
         cache.CACHE.save(key, data, 3600)
+    return data
+
+
+def _map_ip_data(ip: dict):
+    data = {
+        "address": ip["floating_ip_address"],
+        "sortkey": utils.natural_sort_key(ip["floating_ip_address"]),
+        "description": ip["description"],
+        "target": ip.get("fixed_ip_address"),
+        "dns": [],
+    }
+
+    if ip["fixed_ip_address"]:
+        try:
+            data["dns"] = resolver().resolve_ptr(ip["fixed_ip_address"])
+        except dns.DnsNotFound:
+            pass
+
+    return data
+
+
+def floating_ips(project: str, cached=True):
+    """Get a list of floating ips allocated to a project."""
+    key = "neutron:floating_ips:{}".format(project)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
+    if data is None:
+        for region in get_regions():
+            neutronclient = neutron_client(project, region)
+            data = []
+            data.extend(
+                [
+                    _map_ip_data(ip)
+                    for ip in neutronclient.list_floatingips(
+                        project_id=project
+                    )["floatingips"]
+                ]
+            )
+
+        cache.CACHE.save(key, data, 3600)
+
     return data

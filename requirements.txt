@@ -1,4 +1,6 @@
+dnspython
 flask
+gunicorn
 ldap3
 python-cinderclient
 python-glanceclient
@@ -9,4 +11,4 @@ python-designateclient
 python-troveclient
 pyyaml
 redis
-gunicorn
+wmflib

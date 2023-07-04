@@ -153,6 +153,48 @@
     </table>
   </div>
   {% endif %}
+  {% if floating_ips %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-signal"></span>
+        Floating IPs
+      </h3>
+    </div>
+    <table class="table table-condensed table-hover tablesorter">
+      <thead>
+        <tr>
+          <th>Address</th>
+          <th>Description</th>
+          <th>Mapped to</th>
+          <th>DNS names</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for floating_ip in floating_ips|sort(attribute='sortkey') %}
+        <tr>
+          <td>{{ floating_ip.address }}</td>
+          <td>{{ floating_ip.description }}</td>
+          <td>
+              {% if floating_ip.target %}
+              {{ floating_ip.target }}
+              {% else %}
+              (unused)
+              {% endif %}
+          </td>
+          <td>
+            <ul class="list-unstyled">
+              {% for name in floating_ip.dns|sort %}
+              <li>{{ name }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
   {% if zones %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">
