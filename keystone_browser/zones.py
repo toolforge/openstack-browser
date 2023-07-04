@@ -49,7 +49,7 @@ def zone(project, zone, cached):
 def _format_record_name(name: str, zone: str) -> str:
     if name == zone:
         return "@"
-    return name.removesuffix(f"{zone}.")
+    return name.removesuffix(f".{zone}")
 
 
 def records(project, zone_name, zone_id, cached):
