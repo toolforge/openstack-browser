@@ -158,25 +158,19 @@
     <div class="panel-heading" role="tab">
       <h3 class="panel-title">
         <span class="glyphicon glyphicon-globe"></span>
-        DNS
+        DNS zones
       </h3>
     </div>
     <table class="table table-condensed table-hover tablesorter">
       <thead>
         <tr>
           <th>Name</th>
-          <th>Address</th>
         </tr>
       </thead>
       <tbody>
-        {% for zone in zones|sort(attribute='name') %}
+        {% for zone in zones %}
         <tr>
-          <td>{{ zone.name }}</td>
-          <td>
-            {% for ip in zone.records %}
-            {{ ip }}
-            {% endfor %}
-          </td>
+          <td><a href="{{ url_for('zone', project=project, name=zone) }}" rel="nofollow">{{ zone }}</a></td>
         </tr>
         {% endfor %}
       </tbody>

@@ -132,7 +132,7 @@ def project(name):
                 "flavors": nova.flavors(name, cached),
                 "images": glance.images(cached),
                 "proxies": proxies.project_proxies(name, cached),
-                "zones": zones.all_a_records(name, cached),
+                "zones": zones.all_dns_zones(name, cached),
                 "limits": nova.limits(name, cached),
                 "volumes": cinder.project_volumes(name, cached),
                 "cinder_limits": cinder.limits(name, cached),
@@ -169,6 +169,31 @@ def project_database(project, name):
             name,
         )
     return flask.render_template("databaseinstance.html", **ctx)
+
+
+@app.route("/project/<project>/zone/<name>")
+def project_zone(project, name):
+    cached = "purge" not in flask.request.args
+    ctx = {
+        "project": project,
+        "name": name,
+    }
+    try:
+        zone = zones.zone(project, name, cached)
+
+        ctx.update(
+            {
+                "zone": zone,
+                "records": zones.records(project, zone["id"], cached),
+            }
+        )
+    except Exception:
+        app.logger.exception(
+            'Error collecting information for project "%s" zone "%s"',
+            project,
+            zone,
+        )
+    return flask.render_template("zone.html", **ctx)
 
 
 @app.route("/user/<uid>")

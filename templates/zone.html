@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+
+{% block title %}Zone {{ name }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('projects') }}" rel="nofollow">Projects</a></li>
+  <li><a href="{{ url_for('project', name=project ) }}" rel="nofollow">{{ project }}</a></li>
+  <li>DNS zones</li>
+  <li class="active">{{ name }}</li>
+</ol>
+
+<div class="page-header">
+  <h1>{{ name }}</h1>
+</div>
+
+{% if zone %}
+<div class="panel-group" role="tablist">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-globe"></span>
+        {{ name }}
+      </h3>
+    </div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>Project</dt>
+        <dd><a href="{{ url_for('project', name=project) }}" rel="nofollow">{{ project }}</a></dd>
+        <dt>Zone ID</dt>
+        <dd>{{ zone.id }}</dd>
+        <dt>Type</dt>
+        <dd>{{ zone.type }}</dd>
+        <dt>Status</dt>
+        <dd>{{ zone.status }}</dd>
+      </dl>
+    </div>
+  </div>
+</div>
+
+{% if records %}
+<div class="panel panel-default">
+  <div class="panel-heading" role="tab">
+    <h3 class="panel-title">
+    <span class="glyphicon glyphicon-globe"></span>
+    Records
+    </h3>
+  </div>
+  <table class="table table-condensed table-hover tablesorter">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Type</th>
+      <th>Target</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for record in records|sort(attribute='name') %}
+    <tr>
+      <td>{{ record.name }}</td>
+      <td>
+        {% if record.status != "ACTIVE" %}
+        <span class="label label-warning">{{ record.status }}</span>
+        {% endif %}
+      </td>
+      <td>{{ record.type }}</td>
+      <td>
+        <ul class="list-unstyled">
+        {% for target in record.records|sort %}
+        <li>{{ target }}</li>
+        {% endfor %}
+        </ul>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% else %}
+<p>Unknown DNS zone '{{ name }}'. Are you just guessing?</p>
+{% endif %}
+{% endblock %}

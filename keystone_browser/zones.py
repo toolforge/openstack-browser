@@ -19,13 +19,11 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import functools
-import operator
 
 from designateclient.v2 import client as designate_client
 
 from . import cache
 from . import keystone
-from . import neutron
 
 
 @functools.lru_cache(maxsize=None)
@@ -33,75 +31,53 @@ def client(project):
     return designate_client.Client(session=keystone.session(project))
 
 
-@functools.lru_cache(maxsize=None)
-def _raw_zones(project):
-    """Return list of designate 'zone' objects owned by a project.
-
-    Note that in designate, dns domains are called 'Zones' because the word
-    'Domain' was used by Keystone for some totally other thing.
-    """
-    return client(project).zones.list()
-
-
-def zones(project):
-    """Return a simple list of zones owned by a project."""
-    raw_zones = _raw_zones(project)
-    return [zone["name"] for zone in raw_zones]
-
-
-@functools.lru_cache(maxsize=None)
-def _raw_recordsets(project, zone):
-    """Return list of designate 'recordset' objects for a given
-    project and zone name.
-    """
-    for z in _raw_zones(project):
-        if z["name"] == zone:
-            return client(project).recordsets.list(z["id"])
-    return []
-
-
-@functools.lru_cache(maxsize=None)
-def a_records(project, zone):
-    """Return a list of dns A records for a given project and zone.
-
-    Each record is in the format described at
-    https://developer.openstack.org/api-ref/dns/?expanded=list-all-recordsets-owned-by-project-detail
-    """
-    raw_recordsets = _raw_recordsets(project, zone)
-    return [r for r in raw_recordsets if r["type"] == "A"]
-
-
-@functools.lru_cache(maxsize=None)
-def floating_ips(project):
-    """Get a list of floating ips allocated to a project."""
-    ips = []
-    for region in neutron.get_regions():
-        neutronclient = neutron.neutron_client(project, region)
-        ips.extend(
-            [
-                ip["floating_ip_address"]
-                for ip in neutronclient.list_floatingips(project_id=project)[
-                    "floatingips"
-                ]
-            ]
-        )
-    return ips
-
-
-def all_a_records(project, cached=True):
-    """Get all the A records associated with a project.
-
-    Returns a dict keyed by host with values being lists of ip addresses.
-    """
-    key = "zones:A:{}".format(project)
+def zone(project, zone, cached):
+    key = "zones:by-name:{}:{}".format(project, zone)
     data = None
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        data = functools.reduce(
-            operator.add,
-            [a_records(project, zone) for zone in zones(project)],
-            [],
-        )
+        for z in client(project).zones.list():
+            if z["name"] == zone:
+                data = z
+                cache.CACHE.save(key, data, 3600)
+                break
+    return data
+
+
+def records(project, zone_id, cached):
+    """Return a list of dns records for a given zone ID.
+
+    Each record is in the format described at
+    https://developer.openstack.org/api-ref/dns/?expanded=list-all-recordsets-owned-by-project-detail
+    """
+    key = "zones:records:{}:{}".format(project, zone_id)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
+    if data is None:
+        raw_recordsets = client(project).recordsets.list(zone_id)
+        data = [
+            {
+                "name": r["name"],
+                "type": r["type"],
+                "records": r["records"],
+                "status": r["status"],
+            }
+            for r in raw_recordsets
+            if r["type"] in ["A", "AAAA"]
+        ]
+        cache.CACHE.save(key, data, 3600)
+    return data
+
+
+def all_dns_zones(project, cached=True):
+    """Get all the DNS zones for a specific project."""
+    key = "zones:per-project:{}".format(project)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
+    if data is None:
+        data = [zone["name"] for zone in client(project).zones.list()]
         cache.CACHE.save(key, data, 3600)
     return data
