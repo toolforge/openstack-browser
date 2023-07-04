@@ -70,7 +70,9 @@ def records(project, zone_name, zone_id, cached):
                 "type": r["type"],
                 "records": r["records"],
                 "status": r["status"],
-                "sortkey": utils.natural_sort_key(r["name"]),
+                "sortkey": utils.natural_sort_key(
+                    r["name"].removesuffix(zone_id)
+                ),
             }
             for r in raw_recordsets
             if r["type"] in ["A", "AAAA", "CNAME", "PTR", "TXT"]
