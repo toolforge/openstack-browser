@@ -88,21 +88,6 @@ def floating_ips(project):
     return ips
 
 
-@functools.lru_cache(maxsize=None)
-def wmflabsdotorg_a_records(project):
-    """Get a list of *.wmflabs.org records matching IPs allocated to
-    a project.
-
-    Records under wmflabs.org are a special cased because they are all owned
-    by a special 'wmflabsdotorg' project.
-    """
-    return [
-        r
-        for r in a_records("wmflabsdotorg", "wmflabs.org.")
-        if r["records"][0] in floating_ips(project)
-    ]
-
-
 def all_a_records(project, cached=True):
     """Get all the A records associated with a project.
 
@@ -118,6 +103,5 @@ def all_a_records(project, cached=True):
             [a_records(project, zone) for zone in zones(project)],
             [],
         )
-        data += wmflabsdotorg_a_records(project)
         cache.CACHE.save(key, data, 3600)
     return data
