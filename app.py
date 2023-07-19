@@ -397,7 +397,7 @@ def extract_hostname(backend):
     hostname = proxies.parse_backend(backend).get("hostname")
     if not hostname:
         return None
-    if not hostname.enswith(".wikimedia.cloud"):
+    if not hostname.endswith(".wikimedia.cloud"):
         return None
     if ".svc." in hostname:
         return None
