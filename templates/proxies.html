@@ -33,10 +33,10 @@
           <td>
             {% for backend in proxy.backends %}
             {% with fqdn=backend|extract_hostname %}
-            {% if fqdn is ipv4addr %}
-            UNKNOWN
-            {% else %}
+            {% if fqdn %}
             <a href="{{ url_for('server', fqdn=fqdn) }}" rel="nofollow">{{ fqdn }}</a>
+            {% else %}
+            Unknown
             {% endif %}
             {% endwith %}
             {% endfor %}
