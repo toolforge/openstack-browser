@@ -297,10 +297,16 @@
             <span class="text-nowrap">{{ flavor.ram|default('-') }}M RAM</span>
           </td>
           <td>
-            {% if database.status == "HEALTHY" %}
+            {% if database.status == "ACTIVE" %}
+              Active,
+            {% else %}
+              {{ database.status }},
+            {% endif %}
+
+            {% if database.operating_status == "HEALTHY" %}
               Healthy
             {% else %}
-              {{ database.status }}
+              <span class="label label-warning">{{ database.operating_status }}</span>
             {% endif %}
           </td>
         </tr>

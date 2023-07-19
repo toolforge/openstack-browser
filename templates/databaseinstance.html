@@ -36,7 +36,17 @@
         <dd>{{ instance.hostname }}</dd>
         <dt>Status</dt>
         <dd>
-          {{ instance.status }} {{ instance.operating_status }}
+          {% if instance.status == "ACTIVE" %}
+            Active,
+          {% else %}
+            {{ instance.status }},
+          {% endif %}
+
+          {% if instance.operating_status == "HEALTHY" %}
+            Healthy
+          {% else %}
+            <span class="label label-warning">{{ instance.operating_status }}</span>
+          {% endif %}
         </dd>
         <dt>Type</dt>
         <dd>{{ instance.datastore.type }} {{ instance.datastore.version }}</dd>
