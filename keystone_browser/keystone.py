@@ -90,6 +90,24 @@ def all_projects(cached=True):
     return data
 
 
+def project_data(project_id, cached=True):
+    key = "keystone:project:{}".format(project_id)
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
+    if data is None:
+        keystone = keystone_client()
+        project = keystone.projects.get(project_id)
+        if project:
+            data = {
+                "id": project.id,
+                "name": project.name,
+                "description": project.description,
+            }
+        cache.CACHE.save(key, data, 300)
+    return data
+
+
 def project_users_by_role(name, cached=True):
     """Get a dict of lists of user ids indexed by role name."""
     key = "keystone:project_users_by_role:{}".format(name)

@@ -122,6 +122,7 @@ def project(name):
         ctx.update(
             {
                 "project": name,
+                "data": keystone.project_data(name, cached),
                 "members": ldap.get_users_by_uid(members, cached),
                 "viewers": ldap.get_users_by_uid(viewers, cached),
                 "service_accounts": {
