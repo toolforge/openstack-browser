@@ -27,8 +27,10 @@
         <dd>{{ data.id }}</dd>
         <dt>Name</dt>
         <dd>{{ data.name }}</dd>
+        {% if data.description %}
         <dt>Description</dt>
         <dd>{{ data.description }}</dd>
+        {% endif %}
       </dl>
     </div>
   </div>
