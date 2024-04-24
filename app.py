@@ -175,6 +175,11 @@ def project_database(project, name):
 
 @app.route("/project/<project>/zone/<name>")
 def zone(project, name):
+    if not name.endswith("."):
+        return flask.redirect(
+            flask.url_for("zone", project=project, name=f"{name}.")
+        )
+
     cached = "purge" not in flask.request.args
     ctx = {
         "project": project,
