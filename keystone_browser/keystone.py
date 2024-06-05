@@ -147,7 +147,10 @@ def roles_for_user(uid, cached=True):
                 projects.add(
                     (
                         assignment.scope["project"]["id"],
-                        assignment.scope["project"]["name"],
+                        # TODO: replace with project name,
+                        #  just assignment.scope["project"]["name"],
+                        #  does not work sadly
+                        assignment.scope["project"]["id"],
                     )
                 )
             elif "domain" in assignment.scope:
