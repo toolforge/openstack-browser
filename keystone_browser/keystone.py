@@ -76,16 +76,16 @@ def keystone_client():
 
 def all_projects(cached=True):
     """Get a list of all project names."""
-    key = "keystone:all_projects"
+    key = "keystone:projects_by_id"
     data = None
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
         keystone = keystone_client()
-        data = [
-            p.name
+        data = {
+            p.id: p.name
             for p in keystone.projects.list(enabled=True, domain="default")
-        ]
+        }
         cache.CACHE.save(key, data, 300)
     return data
 

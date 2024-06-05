@@ -99,14 +99,14 @@ def servers():
     return flask.render_template("servers.html", **ctx)
 
 
-@app.route("/project/<name>")
-def project(name):
+@app.route("/project/<project_id>")
+def project(project_id):
     cached = "purge" not in flask.request.args
     ctx = {
-        "project": name,
+        "project_id": project_id,
     }
     try:
-        users = keystone.project_users_by_role(name, cached)
+        users = keystone.project_users_by_role(project_id, cached)
         # Create exclusive sets of users based on descending order of "power".
         # member > service accounts > viewers
         members = set(users["admin"]) | set(users["member"])
@@ -121,25 +121,24 @@ def project(name):
 
         ctx.update(
             {
-                "project": name,
-                "data": keystone.project_data(name, cached),
+                "data": keystone.project_data(project_id, cached),
                 "members": ldap.get_users_by_uid(members, cached),
                 "viewers": ldap.get_users_by_uid(viewers, cached),
                 "service_accounts": {
                     role: ldap.get_users_by_uid(uids, cached)
                     for role, uids in service_accounts.items()
                 },
-                "servers": nova.project_servers(name, cached),
-                "flavors": nova.flavors(name, cached),
+                "servers": nova.project_servers(project_id, cached),
+                "flavors": nova.flavors(project_id, cached),
                 "images": glance.images(cached),
-                "proxies": proxies.project_proxies(name, cached),
-                "zones": zones.all_dns_zones(name, cached),
-                "limits": nova.limits(name, cached),
-                "volumes": cinder.project_volumes(name, cached),
-                "cinder_limits": cinder.limits(name, cached),
-                "neutron_limits": neutron.limits(name, cached),
-                "databases": trove.project_instances(name, cached),
-                "floating_ips": neutron.floating_ips(name, cached),
+                "proxies": proxies.project_proxies(project_id, cached),
+                "zones": zones.all_dns_zones(project_id, cached),
+                "limits": nova.limits(project_id, cached),
+                "volumes": cinder.project_volumes(project_id, cached),
+                "cinder_limits": cinder.limits(project_id, cached),
+                "neutron_limits": neutron.limits(project_id, cached),
+                "databases": trove.project_instances(project_id, cached),
+                "floating_ips": neutron.floating_ips(project_id, cached),
             }
         )
     except Exception:
@@ -311,14 +310,14 @@ def all_proxies():
 @app.route("/api/projects.json")
 def api_projects_json():
     cached = "purge" not in flask.request.args
-    return flask.jsonify(projects=keystone.all_projects(cached))
+    return flask.jsonify(projects=keystone.all_projects(cached).keys())
 
 
 @app.route("/api/projects.txt")
 def api_projects_txt():
     cached = "purge" not in flask.request.args
     return flask.Response(
-        "\n".join(sorted(keystone.all_projects(cached))), mimetype="text/plain"
+        "\n".join(sorted(keystone.all_projects(cached).keys())), mimetype="text/plain"
     )
 
 

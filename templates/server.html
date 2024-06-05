@@ -5,7 +5,7 @@
 {% block content %}
 <ol class="breadcrumb">
   <li><a href="{{ url_for('projects') }}" rel="nofollow">Projects</a></li>
-  <li><a href="{{ url_for('project', name=project ) }}" rel="nofollow">{{ project }}</a></li>
+  <li><a href="{{ url_for('project', project_id=project ) }}" rel="nofollow">{{ project }}</a></li>
   <li class="active">{{ fqdn }}</li>
 </ol>
 
@@ -27,7 +27,7 @@
     <div class="panel-body">
       <dl class="dl-horizontal">
         <dt>Project</dt>
-        <dd><a href="{{ url_for('project', name=server.tenant_id) }}" rel="nofollow">{{ server.tenant_id }}</a></dd>
+        <dd><a href="{{ url_for('project', project_id=server.tenant_id) }}" rel="nofollow">{{ server.tenant_id }}</a></dd>
         <dt>Instance name</dt>
         <dd>{{ server.name }}</dd>
         <dt>Instance Id</dt>

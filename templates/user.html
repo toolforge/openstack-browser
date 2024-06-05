@@ -47,7 +47,7 @@
     <div class="panel-body">
       <ul class="list-unstyled column-list">
         {% for project in projects %}
-        <li><a href="{{ url_for('project', name=project) }}" rel="nofollow">{{ project }}</a></li>
+        <li><a href="{{ url_for('project', project_id=project) }}" rel="nofollow">{{ project }}</a></li>
         {% endfor %}
       </ul>
     </div>

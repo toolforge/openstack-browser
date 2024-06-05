@@ -33,7 +33,7 @@ def usage(cached=True):
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        projects = [p for p in keystone.all_projects() if p != "admin"]
+        projects = [p for p in keystone.all_projects().keys() if p != "admin"]
         data = collections.defaultdict(int)
         data["projects"] = len(projects)
 

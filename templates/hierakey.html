@@ -23,7 +23,7 @@
     <div class="panel-body">
       {% for project, prefixes in data.items()|sort() %}
         {% if project != 'admin' %}
-          <h4>Project: <a href="{{ url_for('project', name=project) }}" rel="nofollow">{{ project }}</a></h4>
+          <h4>Project: <a href="{{ url_for('project', project_id=project) }}" rel="nofollow">{{ project }}</a></h4>
           <ul class="list-unstyled">
             {% if '_' in prefixes.keys() %}
               <li><b>All project instances</b></li>

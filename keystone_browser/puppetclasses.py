@@ -165,7 +165,7 @@ def giant_hiera_dict(cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         data = {}
-        for project in keystone.all_projects():
+        for project in keystone.all_projects().keys():
             for prefix in project_prefixes(project):
                 hieradata = hiera(project, prefix, cached)
                 for key in hieradata.keys():

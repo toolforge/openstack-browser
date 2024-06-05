@@ -82,7 +82,7 @@ def all_proxies(cached=True):
     if data is None:
         data = [
             dict(project=project, **proxy)
-            for project in keystone.all_projects()
+            for project in keystone.all_projects().keys()
             for proxy in project_proxies(project, cached)
         ]
         cache.CACHE.save(key, data, 3600)
