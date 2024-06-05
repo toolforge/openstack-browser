@@ -133,7 +133,7 @@ def project_users_by_role(name, cached=True):
 
 def roles_for_user(uid, cached=True):
     """Get a list of projects that a user belongs to."""
-    key = "keystone:roles_for_user:{}".format(uid)
+    key = "keystone:roles_for_user:{}:v2".format(uid)
     data = None
     if cached:
         data = cache.CACHE.load(key)
@@ -144,13 +144,18 @@ def roles_for_user(uid, cached=True):
 
         for assignment in keystone.role_assignments.list(user=uid):
             if "project" in assignment.scope:
-                projects.add(assignment.scope["project"]["id"])
+                projects.add(
+                    (
+                        assignment.scope["project"]["id"],
+                        assignment.scope["project"]["name"],
+                    )
+                )
             elif "domain" in assignment.scope:
                 role_name = keystone.roles.get(assignment.role["id"]).name
                 domain_roles.add(role_name)
 
         data = {
-            "projects": sorted(list(projects)),
+            "projects": sorted(list(projects), key=lambda project: project[1]),
             "domain_roles": sorted(list(domain_roles)),
         }
 
