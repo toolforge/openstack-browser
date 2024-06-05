@@ -143,7 +143,7 @@ def project(project_id):
         )
     except Exception:
         app.logger.exception(
-            'Error collecting information for project "%s"', name
+            'Error collecting information for project "%s"', project_id
         )
     return flask.render_template("project.html", **ctx)
 
@@ -317,7 +317,8 @@ def api_projects_json():
 def api_projects_txt():
     cached = "purge" not in flask.request.args
     return flask.Response(
-        "\n".join(sorted(keystone.all_projects(cached).keys())), mimetype="text/plain"
+        "\n".join(sorted(keystone.all_projects(cached).keys())),
+        mimetype="text/plain",
     )
 
 
