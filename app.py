@@ -310,7 +310,9 @@ def all_proxies():
 @app.route("/api/projects.json")
 def api_projects_json():
     cached = "purge" not in flask.request.args
-    return flask.jsonify(projects=list(sorted(keystone.all_projects(cached).keys())))
+    return flask.jsonify(
+        projects=list(sorted(keystone.all_projects(cached).keys()))
+    )
 
 
 @app.route("/api/projects.txt")
