@@ -324,6 +324,14 @@ def api_projects_txt():
     )
 
 
+@app.route("/api/project-names.json")
+def api_project_names_json():
+    cached = "purge" not in flask.request.args
+    return flask.jsonify(
+        projects=dict(sorted(keystone.all_projects(cached)))
+    )
+
+
 @app.route("/api/dsh/project/<name>")
 def api_dsh_project(name):
     cached = "purge" not in flask.request.args
