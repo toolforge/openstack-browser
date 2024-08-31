@@ -328,7 +328,7 @@ def api_projects_txt():
 def api_project_names_json():
     cached = "purge" not in flask.request.args
     return flask.jsonify(
-        projects=dict(sorted(keystone.all_projects(cached)))
+        projects=sorted(keystone.all_projects(cached))
     )
 
 
