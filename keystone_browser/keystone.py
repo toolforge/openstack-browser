@@ -97,13 +97,16 @@ def project_data(project_id, cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         keystone = keystone_client()
-        project = keystone.projects.get(project_id)
-        if project:
+        data = False
+        try:
+            project = keystone.projects.get(project_id)
             data = {
                 "id": project.id,
                 "name": project.name,
                 "description": project.description,
             }
+        except keystoneauth1.exceptions.http.NotFound:
+            pass
         cache.CACHE.save(key, data, 300)
     return data
 

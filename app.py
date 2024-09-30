@@ -104,43 +104,47 @@ def project(project_id):
     cached = "purge" not in flask.request.args
     ctx = {
         "project_id": project_id,
+        "project_name": project_id,
     }
     try:
-        users = keystone.project_users_by_role(project_id, cached)
-        # Create exclusive sets of users based on descending order of "power".
-        # member > service accounts > viewers
-        members = set(users["admin"]) | set(users["member"])
-        service_accounts = {
-            role: set(uids) - members
-            for role, uids in users.items()
-            if role in keystone.SERVICE_ACCOUNT_ROLES and len(uids) > 0
-        }
-        viewers = set(users["reader"]) - members
-        for uids in service_accounts.values():
-            viewers = viewers - uids
-
-        ctx.update(
-            {
-                "data": keystone.project_data(project_id, cached),
-                "members": ldap.get_users_by_uid(members, cached),
-                "viewers": ldap.get_users_by_uid(viewers, cached),
-                "service_accounts": {
-                    role: ldap.get_users_by_uid(uids, cached)
-                    for role, uids in service_accounts.items()
-                },
-                "servers": nova.project_servers(project_id, cached),
-                "flavors": nova.flavors(project_id, cached),
-                "images": glance.images(cached),
-                "proxies": proxies.project_proxies(project_id, cached),
-                "zones": zones.all_dns_zones(project_id, cached),
-                "limits": nova.limits(project_id, cached),
-                "volumes": cinder.project_volumes(project_id, cached),
-                "cinder_limits": cinder.limits(project_id, cached),
-                "neutron_limits": neutron.limits(project_id, cached),
-                "databases": trove.project_instances(project_id, cached),
-                "floating_ips": neutron.floating_ips(project_id, cached),
+        project_data = keystone.project_data(project_id, cached)
+        if project_data:
+            users = keystone.project_users_by_role(project_id, cached)
+            # Create exclusive sets of users based on descending order of "power".
+            # member > service accounts > viewers
+            members = set(users["admin"]) | set(users["member"])
+            service_accounts = {
+                role: set(uids) - members
+                for role, uids in users.items()
+                if role in keystone.SERVICE_ACCOUNT_ROLES and len(uids) > 0
             }
-        )
+            viewers = set(users["reader"]) - members
+            for uids in service_accounts.values():
+                viewers = viewers - uids
+
+            ctx.update(
+                {
+                    "data": project_data,
+                    "project_name": project_data["name"],
+                    "members": ldap.get_users_by_uid(members, cached),
+                    "viewers": ldap.get_users_by_uid(viewers, cached),
+                    "service_accounts": {
+                        role: ldap.get_users_by_uid(uids, cached)
+                        for role, uids in service_accounts.items()
+                    },
+                    "servers": nova.project_servers(project_id, cached),
+                    "flavors": nova.flavors(project_id, cached),
+                    "images": glance.images(cached),
+                    "proxies": proxies.project_proxies(project_id, cached),
+                    "zones": zones.all_dns_zones(project_id, cached),
+                    "limits": nova.limits(project_id, cached),
+                    "volumes": cinder.project_volumes(project_id, cached),
+                    "cinder_limits": cinder.limits(project_id, cached),
+                    "neutron_limits": neutron.limits(project_id, cached),
+                    "databases": trove.project_instances(project_id, cached),
+                    "floating_ips": neutron.floating_ips(project_id, cached),
+                }
+            )
     except Exception:
         app.logger.exception(
             'Error collecting information for project "%s"', project_id
