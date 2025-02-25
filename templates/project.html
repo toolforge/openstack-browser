@@ -361,7 +361,7 @@
         {% for server in servers %}
           {% set image = images[server.image.id]|default('') %}
           {% set flavor = flavors[server.flavor.id]|default('') %}
-          {% set fqdn = server.name ~ '.' ~ data.id ~ '.eqiad1.wikimedia.cloud' %}
+          {% set fqdn = server.name ~ '.' ~ server.project_name ~ '.eqiad1.wikimedia.cloud' %}
         <tr>
           <td class="text-nowrap"><a href="{{ url_for('server', fqdn=fqdn) }}" rel="nofollow">{{ fqdn }}</a></td>
           <td>{{ flavor.name|default('UNKNOWN') }}</td>
