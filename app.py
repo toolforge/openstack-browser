@@ -110,7 +110,8 @@ def project(project_id):
         project_data = keystone.project_data(project_id, cached)
         if project_data:
             users = keystone.project_users_by_role(project_id, cached)
-            # Create exclusive sets of users based on descending order of "power".
+            # Create exclusive sets of users based on descending order of
+            # "power".
             # member > service accounts > viewers
             members = set(users["admin"]) | set(users["member"])
             service_accounts = {
