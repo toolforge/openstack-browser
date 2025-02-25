@@ -112,6 +112,10 @@ def project_data(project_id, cached=True):
     return data
 
 
+def project_name_for_id(id, cached=True):
+    return project_data(id, cached=cached)["name"]
+
+
 def project_users_by_role(name, cached=True):
     """Get a dict of lists of user ids indexed by role name."""
     key = "keystone:project_users_by_role:{}".format(name)
@@ -151,10 +155,9 @@ def roles_for_user(uid, cached=True):
                 projects.add(
                     (
                         assignment.scope["project"]["id"],
-                        # TODO: replace with project name,
-                        #  just assignment.scope["project"]["name"],
-                        #  does not work sadly
-                        assignment.scope["project"]["id"],
+                        project_name_for_id(
+                            assignment.scope["project"]["id"], cached=cached
+                        ),
                     )
                 )
             elif "domain" in assignment.scope:
