@@ -116,9 +116,11 @@ def project_name_for_id(id, cached=True):
     return project_data(id, cached=cached)["name"]
 
 
-def project_id_for_name(id, cached=True):
-    id_for_name = {p["id"]: p["name"] for p in all_projects(cached=cached)}
-    return id_for_name(id)
+def project_id_for_name(name, cached=True):
+    for key, value in all_projects(cached=cached).items():
+        if value == name:
+            return key
+    return None
 
 
 def project_users_by_role(name, cached=True):
