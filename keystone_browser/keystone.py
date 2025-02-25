@@ -24,6 +24,7 @@ import yaml
 
 from keystoneauth1 import session as keystone_session
 from keystoneauth1.identity import v3
+from keystoneauth1 import exceptions
 from keystoneclient.v3 import client
 
 from . import cache
@@ -105,7 +106,7 @@ def project_data(project_id, cached=True):
                 "name": project.name,
                 "description": project.description,
             }
-        except keystoneauth1.exceptions.http.NotFound:
+        except exceptions.http.NotFound:
             pass
         cache.CACHE.save(key, data, 300)
     return data
