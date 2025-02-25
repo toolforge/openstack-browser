@@ -157,6 +157,7 @@ def project_database(project, name):
     cached = "purge" not in flask.request.args
     ctx = {
         "project": project,
+        "project_name": keystone.project_name_for_id(project),
         "name": name,
     }
     try:
@@ -186,6 +187,7 @@ def zone(project, name):
     cached = "purge" not in flask.request.args
     ctx = {
         "project": project,
+        "project_name": keystone.project_name_for_id("project"),
         "name": name,
     }
     try:
