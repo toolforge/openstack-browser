@@ -117,7 +117,7 @@ def project_name_for_id(id, cached=True):
 
 
 def project_id_for_name(id, cached=True):
-    id_for_name = {p["id"]: p["name"] for p in project_data(id, cached=cached)}
+    id_for_name = {p["id"]: p["name"] for p in all_projects(cached=cached)}
     return id_for_name(id)
 
 
