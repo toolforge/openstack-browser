@@ -116,6 +116,11 @@ def project_name_for_id(id, cached=True):
     return project_data(id, cached=cached)["name"]
 
 
+def project_id_for_name(id, cached=True):
+    id_for_name = {p["id"]: p["name"] for p in project_data(id, cached=cached)}
+    return id_for_name(id)
+
+
 def project_users_by_role(name, cached=True):
     """Get a dict of lists of user ids indexed by role name."""
     key = "keystone:project_users_by_role:{}".format(name)

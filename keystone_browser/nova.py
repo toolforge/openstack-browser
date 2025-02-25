@@ -141,10 +141,11 @@ def server(fqdn, cached=True):
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
-        name, project, _ = fqdn.split(".", 2)
+        name, project_name, _ = fqdn.split(".", 2)
+        project_id = keystone.project_id_for_name(project_name)
         servers = []
         for region in get_regions():
-            nova = nova_client(project, region)
+            nova = nova_client(project_id, region)
             reg_servers = nova.servers.list(
                 detailed=True,
                 search_opts={
