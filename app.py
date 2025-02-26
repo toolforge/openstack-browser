@@ -188,7 +188,7 @@ def zone(project, name):
     cached = "purge" not in flask.request.args
     ctx = {
         "project": project,
-        "project_name": keystone.project_name_for_id("project"),
+        "project_name": keystone.project_name_for_id(project),
         "name": name,
     }
     try:
