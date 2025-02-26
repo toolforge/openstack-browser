@@ -99,16 +99,16 @@ def servers():
     return flask.render_template("servers.html", **ctx)
 
 
+@app.route("/projectbyname/<project_name>")
+def projectbyname(project_name):
+    project_id = keystone.project_id_for_name(project_name)
+    return redirect(url_for("project", project_id=project_id))
+
+
 @app.route("/project/<project_id>")
-def project(project_id=None, project_name=None):
+def project(project_id):
     cached = "purge" not in flask.request.args
-    if project_id:
-        project_name = keystone.project_name_for_id(project_id)
-    elif project_name:
-        project_id = keystone.project_id_for_name(project_name)
-    else:
-        app.logger.exception("No project name or ID specified")
-        return
+    project_name = keystone.project_name_for_id(project_id)
 
     ctx = {
         "project_id": project_id,
