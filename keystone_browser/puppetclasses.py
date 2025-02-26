@@ -59,9 +59,15 @@ def prefixes(classname, cached=True):
             headers={"Accept": "application/x-yaml"},
         )
         if req.status_code != 200:
-            data = []
+            data_with_ids = []
         else:
-            data = yaml.safe_load(req.text)
+            data_with_ids = yaml.safe_load(req.text)
+
+        data = {
+            keystone.project_name_for_id(key): value
+            for key, value in data_with_ids.items()
+        }
+
         cache.CACHE.save(key, data, 1200)
     return data
 
@@ -81,9 +87,15 @@ def all_classes(cached=True):
             headers={"Accept": "application/x-yaml"},
         )
         if req.status_code != 200:
-            data = []
+            data_with_ids = []
         else:
-            data = yaml.safe_load(req.text)
+            data_with_ids = yaml.safe_load(req.text)
+
+        data = {
+            keystone.project_name_for_id(key): value
+            for key, value in data_with_ids.items()
+        }
+
         cache.CACHE.save(key, data, 1200)
     return data["roles"]
 
