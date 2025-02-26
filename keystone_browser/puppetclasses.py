@@ -87,14 +87,9 @@ def all_classes(cached=True):
             headers={"Accept": "application/x-yaml"},
         )
         if req.status_code != 200:
-            data_with_ids = []
+            data = []
         else:
-            data_with_ids = yaml.safe_load(req.text)
-
-        data = {
-            keystone.project_name_for_id(key): value
-            for key, value in data_with_ids.items()
-        }
+            data = yaml.safe_load(req.text)
 
         cache.CACHE.save(key, data, 1200)
     return data["roles"]
@@ -168,7 +163,7 @@ def giant_hiera_dict(cached=True):
 
     Make a dict of the form
     {hiera_key:
-         {project_id:
+         {project_name:
              {fqdn: hiera_value}}}
     """
     key = "completehieradictt:"
@@ -177,16 +172,17 @@ def giant_hiera_dict(cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         data = {}
-        for project in keystone.all_projects().keys():
-            for prefix in project_prefixes(project):
-                hieradata = hiera(project, prefix, cached)
+        for project_id in keystone.all_projects().keys():
+            project_name = keystone.project_name_for_id(project_id)
+            for prefix in project_prefixes(project_id):
+                hieradata = hiera(project_id, prefix, cached)
                 for key in hieradata.keys():
                     if key not in data:
                         data[key] = {}
-                    if project not in data[key]:
-                        data[key][project] = {}
+                    if project_id not in data[key]:
+                        data[key][project_name] = {}
                     if key in data:
-                        data[key][project][prefix] = hieradata[key]
+                        data[key][project_name][prefix] = hieradata[key]
         cache.CACHE.save(key, data, 1200)
     return data
 
