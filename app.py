@@ -102,7 +102,7 @@ def servers():
 @app.route("/projectbyname/<project_name>")
 def projectbyname(project_name):
     project_id = keystone.project_id_for_name(project_name)
-    return flask.redirect(url_for("project", project_id=project_id))
+    return flask.redirect(flask.url_for("project", project_id=project_id))
 
 
 @app.route("/project/<project_id>")
