@@ -99,12 +99,20 @@ def servers():
     return flask.render_template("servers.html", **ctx)
 
 
+@app.route("/projectbyname/<project_name>")
+def projectbyname(project_name):
+    project_id = keystone.project_id_for_name(project_name)
+    return flask.redirect(flask.url_for("project", project_id=project_id))
+
+
 @app.route("/project/<project_id>")
 def project(project_id):
     cached = "purge" not in flask.request.args
+    project_name = keystone.project_name_for_id(project_id)
+
     ctx = {
         "project_id": project_id,
-        "project_name": project_id,
+        "project_name": project_name,
     }
     try:
         project_data = keystone.project_data(project_id, cached)
