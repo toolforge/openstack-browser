@@ -24,6 +24,7 @@ import yaml
 
 from keystoneauth1 import session as keystone_session
 from keystoneauth1.identity import v3
+from keystoneauth1 import exceptions
 from keystoneclient.v3 import client
 
 from . import cache
@@ -105,10 +106,21 @@ def project_data(project_id, cached=True):
                 "name": project.name,
                 "description": project.description,
             }
-        except keystoneauth1.exceptions.http.NotFound:
+        except exceptions.http.NotFound:
             pass
         cache.CACHE.save(key, data, 300)
     return data
+
+
+def project_name_for_id(id, cached=True):
+    return project_data(id, cached=cached)["name"]
+
+
+def project_id_for_name(name, cached=True):
+    for key, value in all_projects(cached=cached).items():
+        if value == name:
+            return key
+    return None
 
 
 def project_users_by_role(name, cached=True):
@@ -150,10 +162,9 @@ def roles_for_user(uid, cached=True):
                 projects.add(
                     (
                         assignment.scope["project"]["id"],
-                        # TODO: replace with project name,
-                        #  just assignment.scope["project"]["name"],
-                        #  does not work sadly
-                        assignment.scope["project"]["id"],
+                        project_name_for_id(
+                            assignment.scope["project"]["id"], cached=cached
+                        ),
                     )
                 )
             elif "domain" in assignment.scope:

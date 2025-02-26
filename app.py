@@ -110,7 +110,8 @@ def project(project_id):
         project_data = keystone.project_data(project_id, cached)
         if project_data:
             users = keystone.project_users_by_role(project_id, cached)
-            # Create exclusive sets of users based on descending order of "power".
+            # Create exclusive sets of users based on descending order of
+            # "power".
             # member > service accounts > viewers
             members = set(users["admin"]) | set(users["member"])
             service_accounts = {
@@ -157,6 +158,7 @@ def project_database(project, name):
     cached = "purge" not in flask.request.args
     ctx = {
         "project": project,
+        "project_name": keystone.project_name_for_id(project),
         "name": name,
     }
     try:
@@ -186,6 +188,7 @@ def zone(project, name):
     cached = "purge" not in flask.request.args
     ctx = {
         "project": project,
+        "project_name": keystone.project_name_for_id(project),
         "name": name,
     }
     try:
@@ -230,20 +233,23 @@ def user(uid):
 
 @app.route("/server/<fqdn>")
 def server(fqdn):
-    name, project, tld = fqdn.split(".", 2)
+    name, project_name, tld = fqdn.split(".", 2)
+    project_id = keystone.project_id_for_name(project_name)
     ctx = {
         "fqdn": fqdn,
-        "project": project,
+        "project": project_name,
     }
     try:
         cached = "purge" not in flask.request.args
         ctx.update(
             {
                 "server": nova.server(fqdn, cached),
-                "flavors": nova.flavors(project, cached),
+                "flavors": nova.flavors(project_id, cached),
                 "images": glance.images(cached),
-                "puppetclasses": puppetclasses.classes(project, fqdn, cached),
-                "hiera": puppetclasses.hiera(project, fqdn, cached),
+                "puppetclasses": puppetclasses.classes(
+                    project_id, fqdn, cached
+                ),
+                "hiera": puppetclasses.hiera(project_id, fqdn, cached),
             }
         )
         if "user_id" in ctx["server"]:

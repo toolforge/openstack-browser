@@ -5,7 +5,7 @@
 {% block content %}
 <ol class="breadcrumb">
   <li><a href="{{ url_for('projects') }}" rel="nofollow">Projects</a></li>
-  <li><a href="{{ url_for('project', project_id=project ) }}" rel="nofollow">{{ project }}</a></li>
+  <li><a href="{{ url_for('project', project_id=project ) }}" rel="nofollow">{{ project_name }}</a></li>
   <li>Databases</li>
   <li class="active">{{ name }}</li>
 </ol>
