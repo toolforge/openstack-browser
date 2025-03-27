@@ -41,6 +41,9 @@
             {% with classes = url_for('all_puppetclasses') %}
             <li class="{% if request.base_url|contains(classes) %}active{% endif %}"><a href="{{ classes }}"><span class="glyphicon glyphicon-wrench"></span> Puppet Classes</a></li>
             {% endwith %}
+            {% with networks = url_for('networks') %}
+            <li class="{% if request.base_url|contains(networks) %}active{% endif %}"><a href="{{ networks }}"><span class="glyphicon glyphicon-signal"></span> Networks</a></li>
+            {% endwith %}
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% block navright %}{% endblock %}

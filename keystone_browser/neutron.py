@@ -96,9 +96,9 @@ def floating_ips(project: str, cached=True):
     if cached:
         data = cache.CACHE.load(key)
     if data is None:
+        data = []
         for region in get_regions():
             neutronclient = neutron_client(project, region)
-            data = []
             data.extend(
                 [
                     _map_ip_data(ip)
@@ -110,4 +110,26 @@ def floating_ips(project: str, cached=True):
 
         cache.CACHE.save(key, data, 3600)
 
+    return data
+
+
+def networks(cached=True):
+    key = "neutron:networks"
+    data = None
+    if cached:
+        data = cache.CACHE.load(key)
+    if data is None:
+        data = {}
+        for region in get_regions():
+            neutronclient = neutron_client("admin", region)
+            subnets = {
+                subnet["id"]: subnet
+                for subnet in neutronclient.list_subnets()["subnets"]
+            }
+            for network in neutronclient.list_networks()["networks"]:
+                network["subnets"] = [
+                    subnets[subnet] for subnet in network["subnets"]
+                ]
+                data[network["id"]] = network
+        cache.CACHE.save(key, data, 3600)
     return data

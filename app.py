@@ -325,6 +325,15 @@ def all_proxies():
     return flask.render_template("proxies.html", **ctx)
 
 
+@app.route("/network/")
+def networks():
+    cached = "purge" not in flask.request.args
+    ctx = {
+        "networks": neutron.networks(cached),
+    }
+    return flask.render_template("networks.html", **ctx)
+
+
 @app.route("/api/projects.json")
 def api_projects_json():
     cached = "purge" not in flask.request.args
