@@ -11,7 +11,7 @@
       <ul class="list-unstyled column-list">
         {% for project_id, project_name in projects|dictsort(by='value') %}
         {% if project_id != 'admin' %}
-        <li><a href="{{ url_for('project', project_id=project_id) }}" rel="nofollow">{{ project_name }}</a></li>
+        <li><a href="{{ url_for('project', project=project_id) }}" rel="nofollow">{{ project_name }}</a></li>
         {% endif %}
         {% endfor %}
       </ul>

@@ -5,7 +5,7 @@
 {% block content %}
 <ol class="breadcrumb">
   <li><a href="{{ url_for('projects') }}" rel="nofollow">Projects</a></li>
-  <li><a href="{{ url_for('project', project_id=project ) }}" rel="nofollow">{{ project_name }}</a></li>
+  <li><a href="{{ url_for('project', project=project ) }}" rel="nofollow">{{ project_name }}</a></li>
   <li>DNS zones</li>
   <li class="active">{{ name }}</li>
 </ol>
@@ -26,7 +26,7 @@
     <div class="panel-body">
       <dl class="dl-horizontal">
         <dt>Project</dt>
-        <dd><a href="{{ url_for('project', project_id=project) }}" rel="nofollow">{{ project_name }}</a></dd>
+        <dd><a href="{{ url_for('project', project=project) }}" rel="nofollow">{{ project_name }}</a></dd>
         <dt>Zone ID</dt>
         <dd>{{ zone.id }}</dd>
         <dt>Type</dt>
@@ -47,6 +47,10 @@
           <span class="label label-warning">{{ zone.status }}</span>
           {% endif %}
         </dd>
+        {% if zone.description %}
+          <dt>Description</dt>
+          <dd>{{ zone.description }}</dd>
+        {% endif %}
       </dl>
     </div>
   </div>

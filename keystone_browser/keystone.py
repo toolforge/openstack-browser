@@ -116,10 +116,10 @@ def project_name_for_id(id, cached=True):
     return project_data(id, cached=cached)["name"]
 
 
-def project_id_for_name(name, cached=True):
-    for key, value in all_projects(cached=cached).items():
-        if value == name:
-            return key
+def find_project(search, cached=True):
+    for project_id, project_name in all_projects(cached=cached).items():
+        if search == project_id or search == project_name:
+            return project_id, project_name
     return None
 
 
