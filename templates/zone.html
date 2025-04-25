@@ -73,7 +73,7 @@
       </tr>
       </thead>
       <tbody>
-      {% for record in records|sort(attribute='sortkey') %}
+      {% for record in records|sort(attribute='sortkey,type') %}
       <tr>
         <td>
           {% if record.name == "@" or record.name == "*" %}
