@@ -30,7 +30,6 @@ from keystone_browser import nova
 from keystone_browser import puppetclasses
 from keystone_browser import proxies
 from keystone_browser import stats
-from keystone_browser import utils
 from keystone_browser import cinder
 from keystone_browser import neutron
 from keystone_browser import trove
@@ -444,12 +443,6 @@ def extract_hostname(backend):
     if ".svc." in hostname:
         return None
     return hostname
-
-
-@app.template_test()
-def ipv4addr(s):
-    """Is the given string an IPv4 address?"""
-    return utils.is_ipv4(s)
 
 
 if __name__ == "__main__":
