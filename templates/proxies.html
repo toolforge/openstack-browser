@@ -21,9 +21,9 @@
         </tr>
       </thead>
       <tbody>
-        {% for proxy in proxies|sort(attribute='project') %}
+        {% for proxy in proxies|sort(attribute='project_name') %}
         <tr>
-          <td><a href="{{ url_for('project', project=proxy.project) }}" rel="nofollow">{{ proxy.project }}</a></td>
+          <td><a href="{{ url_for('project', project=proxy.project) }}" rel="nofollow">{{ proxy.project_name }}</a></td>
           <td><a href="https://{{ proxy.domain }}/" rel="nofollow">{{ proxy.domain }}</a></td>
           <td>
             {% for backend in proxy.backends %}

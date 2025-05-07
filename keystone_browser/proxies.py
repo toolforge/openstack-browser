@@ -81,9 +81,11 @@ def all_proxies(cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         data = [
-            dict(project=project, **proxy)
-            for project in keystone.all_projects().keys()
-            for proxy in project_proxies(project, cached)
+            dict(project=project_id, project_name=project_name, **proxy)
+            for project_id, project_name in keystone.all_projects(
+                cached
+            ).items()
+            for proxy in project_proxies(project_id, cached)
         ]
         cache.CACHE.save(key, data, 3600)
     return data
