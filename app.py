@@ -246,6 +246,7 @@ def server(fqdn):
     ctx = {
         "fqdn": fqdn,
         "project": project_name,
+        "project_id": project_id,
     }
     try:
         cached = "purge" not in flask.request.args
