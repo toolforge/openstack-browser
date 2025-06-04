@@ -35,9 +35,7 @@ def url_template():
     """Get the url template for accessing the proxy service."""
     c = keystone.keystone_client()
     proxy = c.services.list(type="proxy")[0]
-    endpoint = c.endpoints.list(
-        service=proxy.id, interface="public", enabled=True
-    )[0]
+    endpoint = c.endpoints.list(service=proxy.id, interface="public")[0]
     return endpoint.url
 
 
