@@ -31,9 +31,7 @@ def url_template():
     """Get the url template for accessing the Puppet ENC service."""
     c = keystone.keystone_client()
     proxy = c.services.list(type="puppet-enc")[0]
-    endpoint = c.endpoints.list(
-        service=proxy.id, interface="public", enabled=True
-    )[0]
+    endpoint = c.endpoints.list(service=proxy.id, interface="public")[0]
 
     return endpoint.url.replace("/$(project_id)s", "")
 
