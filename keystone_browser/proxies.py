@@ -19,15 +19,12 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import functools
-import re
 import socket
+from urllib.parse import urlparse
 
 from . import cache
 from . import keystone
 from . import utils
-
-
-RE_BACKEND = re.compile(r"^https?://(?P<host>[^:]+):(?P<port>\d+)$")
 
 
 @functools.lru_cache(maxsize=1)
@@ -92,12 +89,11 @@ def all_proxies(cached=True):
 @functools.lru_cache(maxsize=1024)
 def parse_backend(backend):
     """Parse a proxy backend specification."""
-    m = RE_BACKEND.match(backend)
-    if not m:
-        return {"hostname": backend}
-    data = m.groupdict()
-    if utils.is_ipv4(data["host"]):
-        data["hostname"] = socket.getfqdn(data["host"])
-    else:
-        data["hostname"] = data["host"]
-    return data
+    url = urlparse(backend)
+    if not url or not url.hostname:
+        return None
+
+    if not utils.is_ip(url.hostname):
+        return None
+
+    return socket.getfqdn(url.hostname)

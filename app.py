@@ -436,7 +436,7 @@ def contains(haystack, needle):
 @app.template_filter("extract_hostname")
 def extract_hostname(backend):
     """Extract a hostname from a backend description."""
-    hostname = proxies.parse_backend(backend).get("hostname")
+    hostname = proxies.parse_backend(backend)
     if not hostname:
         return None
     if not hostname.endswith(".wikimedia.cloud"):
