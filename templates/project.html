@@ -219,6 +219,52 @@
     </table>
   </div>
   {% endif %}
+  {% if load_balancers %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-signal"></span>
+        Load balancers
+      </h3>
+    </div>
+    <table class="table table-condensed table-hover tablesorter">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Address</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lb in load_balancers|sort(attribute='name') %}
+        <tr>
+          <td>{{ lb.name }}</td>
+          <td>
+            <ul class="list-unstyled" style="margin-bottom: 0;">
+              {% for vip in lb.vips|sort %}
+              <li>{{ vip }}</li>
+              {% endfor %}
+            </ul>
+          </td>
+          <td>
+            {% if lb.provisioning_status == "ACTIVE" %}
+              Active,
+            {% else %}
+              <span class="label label-warning">{{ lb.provisioning_status }}</span>,
+            {% endif %}
+
+            {% if lb.operating_status == "ONLINE" %}
+              Online
+            {% else %}
+              <span class="label label-warning">{{ lb.operating_status }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
   {% if zones %}
   <div class="panel panel-default">
     <div class="panel-heading" role="tab">

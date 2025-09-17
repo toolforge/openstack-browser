@@ -2,6 +2,7 @@ dnspython
 flask
 gunicorn
 ldap3
+openstacksdk
 python-cinderclient
 python-glanceclient
 python-keystoneclient

@@ -33,6 +33,7 @@ from keystone_browser import stats
 from keystone_browser import cinder
 from keystone_browser import neutron
 from keystone_browser import trove
+from keystone_browser import octavia
 
 
 requests.utils.default_user_agent = lambda *args, **kwargs: (
@@ -147,6 +148,9 @@ def project(project):
                     "neutron_limits": neutron.limits(project_id, cached),
                     "databases": trove.project_instances(project_id, cached),
                     "floating_ips": neutron.floating_ips(project_id, cached),
+                    "load_balancers": octavia.project_load_balancers(
+                        project_id, cached
+                    ),
                 }
             )
     except Exception:
