@@ -238,7 +238,7 @@
       <tbody>
         {% for lb in load_balancers|sort(attribute='name') %}
         <tr>
-          <td>{{ lb.name }}</td>
+          <td><a href="{{ url_for('load_balancer', lb_id=lb.id) }}" rel="nofollow">{{ lb.name }}</a></td>
           <td>
             <ul class="list-unstyled" style="margin-bottom: 0;">
               {% for vip in lb.vips|sort %}

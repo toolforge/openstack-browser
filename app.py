@@ -277,6 +277,32 @@ def server(fqdn):
     return flask.render_template("server.html", **ctx)
 
 
+@app.route("/load-balancer/<lb_id>")
+def load_balancer(lb_id):
+    cached = "purge" not in flask.request.args
+    ctx = {
+        "id": lb_id,
+        "project": None,
+        "project_name": None,
+    }
+    try:
+        lb = octavia.load_balancer(lb_id, cached)
+
+        ctx.update(
+            {
+                "lb": lb,
+                "project": lb["project_id"],
+                "project_name": keystone.project_name_for_id(lb["project_id"]),
+            }
+        )
+    except Exception:
+        app.logger.exception(
+            'Error collecting information for load balancer "%s"',
+            lb_id,
+        )
+    return flask.render_template("loadbalancer.html", **ctx)
+
+
 @app.route("/puppetclass/")
 def all_puppetclasses():
     ctx = {}

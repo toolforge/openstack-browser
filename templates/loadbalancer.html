@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+
+{% block title %}Load balancer {% if lb %}{{ lb.name }}{% endif %} - {{ super() }}{% endblock %}
+
+{% block content %}
+{% if project %}
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('projects') }}" rel="nofollow">Projects</a></li>
+  <li><a href="{{ url_for('project', project=project ) }}" rel="nofollow">{{ project_name }}</a></li>
+  <li>Load balancers</li>
+  {% if lb.name %}
+  <li class="active">{{ lb.name }}</li>
+  {% endif %}
+</ol>
+{% endif %}
+
+{% if lb %}
+<div class="page-header">
+  <h1>{{ lb.name }} <small>Project: {{ project_name }}</small></h1>
+</div>
+
+<div class="panel-group" role="tablist">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab">
+      <h3 class="panel-title">
+        <span class="glyphicon glyphicon-signal"></span>
+        {{ lb.name }}
+      </h3>
+    </div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>Project</dt>
+        <dd><a href="{{ url_for('project', project=project) }}" rel="nofollow">{{ project_name }}</a></dd>
+        <dt>Load balancer name</dt>
+        <dd>{{ lb.name }}</dd>
+        <dt>Load balancer ID</dt>
+        <dd>{{ lb.id }}</dd>
+        <dt>Status</dt>
+        <dd>
+            {% if lb.provisioning_status == "ACTIVE" %}
+              Active,
+            {% else %}
+              <span class="label label-warning">{{ lb.provisioning_status }}</span>,
+            {% endif %}
+
+            {% if lb.operating_status == "ONLINE" %}
+              Online
+            {% else %}
+              <span class="label label-warning">{{ lb.operating_status }}</span>
+            {% endif %}
+        </dd>
+        <dt>Provider</dt>
+        <dd>{{ lb.provider }}</dd>
+        <dt>VIPs</dt>
+        <dd>
+          <ul class="list-unstyled" style="margin-bottom: 0;">
+            {% for vip in lb.vips %}
+            <li>{{ vip }}</li>
+            {% endfor %}
+          </ul>
+        </dd>
+        <dt>Listeners</dt>
+        <dd>
+          <ul class="list-unstyled" style="margin-bottom: 0;">
+            {% for listener in lb.listeners %}
+            <li>{{ listener.protocol }} (port {{ listener.port }})</li>
+            {% endfor %}
+          </ul>
+        </dd>
+        <dt>Backends</dt>
+        <dd>
+          <dl class="dl-horizontal" style="margin-bottom: 0;">
+            {% for pool in lb.pools %}
+            <dt>{{ pool.protocol }}</dt>
+            <dd>
+              <ul class="list-unstyled" style="margin-bottom: 0;">
+                {% for member in pool.members %}
+                <li>{{ member.address }} (port {{ member.port }})</li>
+                {% endfor %}
+              </ul>
+            </dd>
+            {% endfor %}
+          </dl>
+        </dd>
+      </dl>
+    </div>
+  </div>
+</div>
+{% else %}
+<p>Unknown load balancer '{{ id }}'. Are you just guessing?</p>
+{% endif %}
+{% endblock %}
