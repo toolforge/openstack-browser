@@ -126,7 +126,7 @@ def find_project(search, cached=True):
     for project_id, project_name in all_projects(cached=cached).items():
         if search == project_id or search == project_name:
             return project_id, project_name
-    return None
+    return None, None
 
 
 def project_users_by_role(name, cached=True):
