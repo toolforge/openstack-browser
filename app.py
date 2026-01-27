@@ -53,7 +53,6 @@ def home():
         ctx.update(
             {
                 "usage": stats.usage(cached),
-                "flavors": nova.flavors("observer", cached).values(),
             }
         )
     except Exception:
@@ -364,6 +363,15 @@ def networks():
         "networks": neutron.networks(cached),
     }
     return flask.render_template("networks.html", **ctx)
+
+
+@app.route("/flavors/")
+def flavors():
+    cached = "purge" not in flask.request.args
+    ctx = {
+        "flavors": nova.flavors("observer", cached).values(),
+    }
+    return flask.render_template("flavors.html", **ctx)
 
 
 @app.route("/api/projects.json")

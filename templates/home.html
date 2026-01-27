@@ -43,34 +43,6 @@
     </div>
   </div>
 {% endif %}
-{% if flavors %}
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab">
-      <h3 class="panel-title">
-        <span class="glyphicon glyphicon-tasks"></span>
-        Available flavors
-      </h3>
-    </div>
-    <table class="table table-condensed table-hover tablesorter">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>CPUs</th>
-          <th>RAM</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for flavor in flavors|sort(attribute="vcpus") %}
-        <tr>
-          <td>{{ flavor.name|default('UNKNOWN') }}</td>
-          <td class="text-right">{{ flavor.vcpus|default('-') }}</td>
-          <td class="text-right">{{ flavor.ram|default('-') }}M</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% endif %}
 </div>
 {% endblock %}
 {% block css %}

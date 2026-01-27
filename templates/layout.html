@@ -41,8 +41,16 @@
             {% with classes = url_for('all_puppetclasses') %}
             <li class="{% if request.base_url|contains(classes) %}active{% endif %}"><a href="{{ classes }}"><span class="glyphicon glyphicon-wrench"></span> Puppet Classes</a></li>
             {% endwith %}
+            {% with flavors = url_for('flavors') %}
             {% with networks = url_for('networks') %}
-            <li class="{% if request.base_url|contains(networks) %}active{% endif %}"><a href="{{ networks }}"><span class="glyphicon glyphicon-signal"></span> Networks</a></li>
+            <li class="dropdown {% if (request.base_url|contains(networks)) or (request.base_url|contains(flavors)) %}active{% endif %}">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Metadata <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li class="{% if request.base_url|contains(flavors) %}active{% endif %}"><a href="{{ flavors }}">Flavors</a></li>
+                <li class="{% if request.base_url|contains(networks) %}active{% endif %}"><a href="{{ networks }}">Networks</a></li>
+              </ul>
+            </li>
+            {% endwith %}
             {% endwith %}
           </ul>
           <ul class="nav navbar-nav navbar-right">
