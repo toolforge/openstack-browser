@@ -76,8 +76,9 @@ def project_servers(project, cached=True):
             )
         )
 
+        project_name = keystone.project_name_for_id(project)
         for server in data:
-            server["project_name"] = keystone.project_name_for_id(project)
+            server["project_name"] = project_name
 
         cache.CACHE.save(key, data, 300)
     return data

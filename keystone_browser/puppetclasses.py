@@ -57,7 +57,7 @@ def prefixes(classname, cached=True):
             headers={"Accept": "application/x-yaml"},
         )
         if req.status_code != 200:
-            data_with_ids = []
+            data_with_ids = {}
         else:
             data_with_ids = yaml.safe_load(req.text)
 
@@ -170,8 +170,7 @@ def giant_hiera_dict(cached=True):
         data = cache.CACHE.load(key)
     if data is None:
         data = {}
-        for project_id in keystone.all_projects().keys():
-            project_name = keystone.project_name_for_id(project_id)
+        for project_id, project_name in keystone.all_projects().items():
             for prefix in project_prefixes(project_id):
                 hieradata = hiera(project_id, prefix, cached)
                 for key in hieradata.keys():
