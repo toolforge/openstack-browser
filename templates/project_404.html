@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}Project {{ project }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('projects') }}" rel="nofollow">Projects</a></li>
+  <li class="active">{{ project }}</li>
+</ol>
+
+<div class="page-header">
+  <h1>Project: <a href="https://wikitech.wikimedia.org/wiki/Nova_Resource:{{ project|capitalize }}" rel="nofollow">{{ project }}</a></h1>
+</div>
+
+<p>Unknown project '{{ project }}'. Are you just guessing?</p>
+{% endblock %}
