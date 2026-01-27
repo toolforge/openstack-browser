@@ -22,7 +22,6 @@ import ipaddress
 import re
 from typing import List, Union
 
-
 RE_DIGIT = re.compile("(\\d+)")
 
 

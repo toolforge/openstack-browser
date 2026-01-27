@@ -29,7 +29,6 @@ from keystoneclient.v3 import client
 
 from . import cache
 
-
 ROLES = collections.OrderedDict(
     [
         # Admins

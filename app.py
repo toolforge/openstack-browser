@@ -35,7 +35,6 @@ from keystone_browser import neutron
 from keystone_browser import trove
 from keystone_browser import octavia
 
-
 requests.utils.default_user_agent = lambda *args, **kwargs: (
     "openstack-browser (tools.openstack-browser@toolforge.org)"
     + f" python-requests/{requests.__version__}"
