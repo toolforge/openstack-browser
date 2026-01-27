@@ -62,7 +62,7 @@ def prefixes(classname, cached=True):
             data_with_ids = yaml.safe_load(req.text)
 
         data = {
-            keystone.project_name_for_id(key): value
+            (keystone.project_name_for_id(key) or key): value
             for key, value in data_with_ids.items()
         }
 

@@ -119,7 +119,10 @@ def project_data(project_id, cached=True):
 
 
 def project_name_for_id(id, cached=True):
-    return project_data(id, cached=cached)["name"]
+    data = project_data(id, cached=cached)
+    if not data:
+        return None
+    return data["name"]
 
 
 def find_project(search, cached=True):
