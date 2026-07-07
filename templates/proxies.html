@@ -25,21 +25,15 @@
         <tr>
           <td><a href="{{ url_for('project', project=proxy.project) }}" rel="nofollow">{{ proxy.project_name }}</a></td>
           <td><a href="https://{{ proxy.domain }}/" rel="nofollow">{{ proxy.domain }}</a></td>
+          <td>{{ proxy.backend }}</td>
           <td>
-            {% for backend in proxy.backends %}
-            {{ backend }}
-            {% endfor %}
-          </td>
-          <td>
-            {% for backend in proxy.backends %}
-            {% with fqdn=backend|extract_hostname %}
+            {% with fqdn=proxy.backend|extract_hostname %}
             {% if fqdn %}
             <a href="{{ url_for('server', fqdn=fqdn) }}" rel="nofollow">{{ fqdn }}</a>
             {% else %}
             Unknown
             {% endif %}
             {% endwith %}
-            {% endfor %}
           </td>
         </tr>
         {% endfor %}
